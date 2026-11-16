@@ -61,6 +61,10 @@ export const images = {
   mittal: '/images/team/mittal.jpg',
   nilesh: '/images/team/nilesh.jpg',
   rajendra: '/images/team/rajendra.jpg',
+  shreevats: '/images/team/shreevats.jpg',
+  bharat: '/images/team/bharat.jpeg',
+  girish: '/images/team/girish.jpeg',
+  manish: '/images/team/manish.jpeg',
 };
 
 export const initiativeList = [
@@ -92,5 +96,5 @@ export const eventImages = [
 ];
 
 // Ids of states in the Federation network, used on the 17 States Map page (ids: see src/data/states.js).
-// TO VERIFY: the client has said "17 states" but has not yet sent the list. Fill this in, then set flags.networkStats to true.
-export const networkStates = [];
+// List received from the client (18 names, although the headline figure says 17: confirm which is right).
+export const networkStates = ['mp', 'rajasthan', 'gujarat', 'maharashtra', 'chhattisgarh', 'jharkhand', 'odisha', 'haryana', 'punjab', 'up', 'uttarakhand', 'goa', 'andhra', 'telangana', 'tn', 'karnataka', 'puducherry', 'jk'];

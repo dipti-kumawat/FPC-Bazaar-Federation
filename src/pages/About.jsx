@@ -28,9 +28,10 @@ const leadership = {
       agri: 'Agriculture Project Head',
       marketing: 'Marketing Head',
       project: 'Project Head',
+      advisor: 'Advisory Member',
     },
     committeeTitle: 'Advisory Committee',
-    committeeSub: 'The committee members and affiliations will be added from the approved committee list in the Federation profile.',
+    committeeSub: 'Experienced professionals advising the Federation. Details are as provided by each member.',
     committeePending: 'Advisory committee profile details to be added after final verification.',
     photo: 'Photograph to be added',
     schemesTitle: 'Key Initiatives',
@@ -67,9 +68,10 @@ const leadership = {
       agri: 'कृषि परियोजना प्रमुख',
       marketing: 'मार्केटिंग प्रमुख',
       project: 'परियोजना प्रमुख',
+      advisor: 'सलाहकार सदस्य',
     },
     committeeTitle: 'सलाहकार समिति',
-    committeeSub: 'समिति के सदस्यों और संबद्धताओं को महासंघ की स्वीकृत प्रोफ़ाइल सूची से जोड़ा जाएगा।',
+    committeeSub: 'महासंघ को सलाह देने वाले अनुभवी पेशेवर। विवरण प्रत्येक सदस्य द्वारा दी गई जानकारी के अनुसार हैं।',
     committeePending: 'अंतिम सत्यापन के बाद सलाहकार समिति के प्रोफ़ाइल विवरण जोड़े जाएँगे।',
     photo: 'फोटो जोड़ी जाएगी',
     schemesTitle: 'प्रमुख पहल',
@@ -93,6 +95,26 @@ const members = [
   { key: 'mittal', name: 'Mittal Shah', role: 'agri', image: 'mittal' },
   { key: 'nilesh', name: 'Nilesh Patel', role: 'marketing', image: 'nilesh' },
   { key: 'rajendra', name: 'Rajendra Ji', role: 'project', image: 'rajendra' },
+  { key: 'shreevats', name: 'Shreevats Sanjay', hiName: 'श्रीवत्स संजय', role: 'advisor', image: 'shreevats',
+    detail: { en: 'Retd. Deputy Director General (DDG), Ministry of Tourism, Govt. of India', hi: 'सेवानिवृत्त उप महानिदेशक (DDG), पर्यटन मंत्रालय, भारत सरकार' },
+    bio: {
+      en: ['Directed India Tourism offices for 43 countries, including Europe, Russia, CIS, Scandinavia, USA, UK, Ireland and Israel', 'Regional Director for Karnataka, Kerala, Tamil Nadu, Andhra Pradesh, Telangana, Puducherry, Lakshadweep and the North-East states', 'Principal of the Institutes of Hotel Management at Chennai and Bangalore, Govt. of India', 'Director Tourism in Rajasthan, Uttar Pradesh and Bihar', 'Addressed UNWTO in Spain and represented India at international conferences in China and Bangladesh'],
+      hi: ['यूरोप, रूस, सीआईएस, स्कैंडिनेविया, अमेरिका, ब्रिटेन, आयरलैंड और इज़राइल सहित 43 देशों के लिए भारत पर्यटन कार्यालयों के निदेशक', 'कर्नाटक, केरल, तमिलनाडु, आंध्र प्रदेश, तेलंगाना, पुडुचेरी, लक्षद्वीप और पूर्वोत्तर राज्यों के क्षेत्रीय निदेशक', 'चेन्नई और बेंगलुरु के होटल प्रबंधन संस्थानों (भारत सरकार) के प्राचार्य', 'राजस्थान, उत्तर प्रदेश और बिहार में निदेशक – पर्यटन', 'स्पेन में UNWTO को संबोधित किया तथा चीन और बांग्लादेश के अंतरराष्ट्रीय सम्मेलनों में भारत का प्रतिनिधित्व किया'] } },
+  { key: 'bharat', name: 'Bharat Singh Rajpurohit', hiName: 'भारत सिंह राजपुरोहित', role: 'advisor', image: 'bharat',
+    detail: { en: 'Dairy & Agri Consultant · President, AWARI', hi: 'डेयरी एवं कृषि सलाहकार · अध्यक्ष, AWARI' },
+    bio: {
+      en: ['President of AWARI (Animal Welfare & Agricultural Research Institute), working on cow protection and promotion', 'Rajasthan in-charge for the Animal Welfare Board of India (AWBI), Govt. of India', 'Advisor to the Tharparkar Cow Conservation Centre, Jodhpur, and the Indo-Japan Dairy Project (H2 Milk Farm)', 'Incubator at MANAGE Hyderabad (Govt. of India); Director Investment Marketing, Global Confederation of Cow Based Industries', 'Author on cow-based organic farming, Panchgavya and cow-based rural development'],
+      hi: ['AWARI (जीव जंतु कल्याण एवं कृषि शोध संस्थान) के अध्यक्ष, गौ संरक्षण एवं संवर्धन पर कार्यरत', 'भारतीय जीव जंतु कल्याण बोर्ड (AWBI), भारत सरकार के राजस्थान प्रभारी', 'थारपारकर गौ संरक्षण एवं संवर्धन केंद्र, जोधपुर तथा इंडो-जापान डेयरी प्रोजेक्ट (H2 मिल्क फ़ार्म) के सलाहकार', 'MANAGE हैदराबाद (भारत सरकार) में इन्क्यूबेटर; निदेशक निवेश मार्केटिंग, ग्लोबल कॉन्फेडरेशन ऑफ काऊ बेस्ड इंडस्ट्रीज़', 'गौ आधारित जैविक खेती, पंचगव्य और गौवंश आधारित ग्रामीण विकास पर लेखन'] } },
+  { key: 'girish', name: 'Girish Chandra Baluni', hiName: 'गिरीश चंद्र बलूनी', role: 'advisor', image: 'girish',
+    detail: { en: 'Advisor, National Council of State Agricultural Marketing Boards, New Delhi', hi: 'सलाहकार, राष्ट्रीय राज्य कृषि विपणन बोर्ड परिषद, नई दिल्ली' },
+    bio: {
+      en: ['Member, Uttarakhand Organic Commodity Board, Govt. of Uttarakhand', 'Senior journalist and editor with several national Hindi news organisations', 'Director Operations, Brand Watch Communication Pvt. Ltd.; Advisor and coordinator to media and business institutes', 'Former member, Hindi Advisory Committee (Ministry of Labour & Employment) and Central Board of Film Certification'],
+      hi: ['सदस्य, उत्तराखंड जैविक उत्पाद परिषद, उत्तराखंड सरकार', 'कई राष्ट्रीय हिंदी समाचार संस्थानों में वरिष्ठ पत्रकार एवं संपादक', 'निदेशक ऑपरेशंस, ब्रांड वॉच कम्युनिकेशन प्रा. लि.; मीडिया और बिज़नेस संस्थानों के सलाहकार व समन्वयक', 'पूर्व सदस्य, हिंदी सलाहकार समिति (श्रम एवं रोज़गार मंत्रालय) तथा केंद्रीय फिल्म प्रमाणन बोर्ड'] } },
+  { key: 'manish', name: 'Manish Bafna', hiName: 'मनीष बाफना', role: 'advisor', image: 'manish',
+    detail: { en: 'Solar Energy Professional & Project Developer · Greenfield Solutions | Vikas Solar Solutions | Solar House', hi: 'सोलर एनर्जी प्रोफेशनल एवं प्रोजेक्ट डेवलपर · ग्रीनफील्ड सॉल्यूशंस | विकास सोलर सॉल्यूशंस | सोलर हाउस' },
+    bio: {
+      en: ['Over 7 years of experience in the solar energy sector', 'Development and execution of MW-scale solar power projects; Solar EPC, installation, commissioning and O&M', 'Land identification support and supply of major solar plant components', 'Industrial, commercial, residential and utility-scale projects; across Rajasthan and Pan India through partner networks'],
+      hi: ['सोलर ऊर्जा क्षेत्र में 7 वर्ष से अधिक का अनुभव', 'मेगावाट-स्तर की सोलर परियोजनाओं का विकास और क्रियान्वयन; सोलर EPC, इंस्टॉलेशन, कमीशनिंग और O&M', 'भूमि चिन्हांकन में सहयोग तथा प्रमुख सोलर उपकरणों की आपूर्ति', 'औद्योगिक, व्यावसायिक, आवासीय और यूटिलिटी-स्तर की परियोजनाएँ; पूरे राजस्थान में और साझेदार नेटवर्क से पैन इंडिया'] } },
 ];
 
 // ADD LEADERSHIP MESSAGES HERE. Paste the approved text between the quotes, one entry per person.
@@ -167,16 +189,25 @@ At FPC Bazar Federation, our marketing efforts are driven by a commitment to bri
   },
 };
 
-function PersonCard({ person, labels, featured = false }) {
+const tx = (v, lang) => (v && typeof v === 'object' ? v[lang] || v.en : v);
+
+function PersonCard({ person, labels, lang = 'en', featured = false }) {
   return (
     <article className={`overflow-hidden rounded-sm border border-brand-100 bg-white ${featured ? 'shadow-md' : 'shadow-sm'}`}>
-      <div className={`overflow-hidden bg-brand-50 ${featured ? 'aspect-[16/9]' : 'aspect-[4/3]'}`}>
+      <div className={`overflow-hidden bg-brand-50 ${person.bio ? '' : featured ? 'aspect-[16/9]' : 'aspect-[4/3]'}`}>
         <PhotoSlot slot={person.image} person={person.name} alt={`${person.name} — ${labels.photo}`} />
       </div>
       <div className="p-5">
         <p className="text-[10px] font-bold uppercase tracking-[.18em] text-gold-600">{labels.role[person.role]}</p>
-        <h3 className="mt-1 text-lg font-extrabold text-brand-900">{person.name}</h3>
-        {person.detail && <p className="mt-1 text-xs leading-relaxed text-slate-500">{person.detail}</p>}
+        <h3 className="mt-1 text-lg font-extrabold text-brand-900">{lang === 'hi' && person.hiName ? person.hiName : person.name}</h3>
+        {person.detail && <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-500">{tx(person.detail, lang)}</p>}
+        {person.bio && (
+          <ul className="mt-3 space-y-1.5 border-t border-brand-100 pt-3">
+            {(person.bio[lang] || person.bio.en).map((line) => (
+              <li key={line} className="flex gap-2 text-[13px] leading-6 text-slate-600"><span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-gold-500" />{line}</li>
+            ))}
+          </ul>
+        )}
       </div>
     </article>
   );
@@ -191,7 +222,8 @@ export default function About() {
   const msgOf = (person) => messages[lang][person.key] || messages.en[person.key] || '';
   const hasMsg = (person) => person.message || msgOf(person);
   const messagePeople = members.filter(hasMsg);
-  const profilePeople = members.filter((person) => !hasMsg(person) && person.role !== 'chair');
+  const profilePeople = members.filter((person) => !hasMsg(person) && person.role !== 'chair' && person.role !== 'advisor');
+  const advisors = members.filter((person) => person.role === 'advisor');
 
   return (
     <>
@@ -236,7 +268,7 @@ export default function About() {
               <div className="flex flex-col justify-center p-6">
                 <p className="text-[10px] font-bold uppercase tracking-[.18em] text-gold-600">{t.role[person.role]}</p>
                 <h3 className="mt-2 text-xl font-extrabold text-brand-900">{person.name}</h3>
-                {person.detail && <p className="mt-1 text-xs leading-relaxed text-slate-500">{person.detail}</p>}
+                {person.detail && <p className="mt-1 text-xs leading-relaxed text-slate-500">{tx(person.detail, lang)}</p>}
                 <p className="mt-4 whitespace-pre-line border-l-2 border-gold-500 pl-4 text-sm leading-7 text-slate-600">{msgOf(person) || <span className="italic">{t.messagePending}</span>}</p>
               </div>
             </article>
@@ -247,18 +279,24 @@ export default function About() {
       {profilePeople.length > 0 && <Band>
         <SectionTitle sub={t.profileSub}>{t.profileTitle}</SectionTitle>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {profilePeople.map((person) => <PersonCard key={person.key} person={person} labels={t} />)}
+          {profilePeople.map((person) => <PersonCard key={person.key} person={person} labels={t} lang={lang} />)}
         </div>
       </Band>}
 
       <Band className="bg-brand-50">
         <SectionTitle sub={t.committeeSub}>{t.committeeTitle}</SectionTitle>
+        {advisors.length > 0 ? (
+          <div className="grid gap-5 sm:grid-cols-2">
+            {advisors.map((person) => <PersonCard key={person.key} person={person} labels={t} lang={lang} />)}
+          </div>
+        ) : (
         <div className="mx-auto max-w-3xl border border-brand-200 bg-white p-7 text-center">
           <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-brand-50 text-brand-700" aria-hidden="true">
             <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM20 8v6m3-3h-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
           <p className="text-sm leading-7 text-slate-600">{t.committeePending}</p>
         </div>
+        )}
       </Band>
 
       <Band className="bg-white">

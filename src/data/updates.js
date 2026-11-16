@@ -2,9 +2,26 @@
 // HOW TO ADD ONE: copy a block below, paste it at the TOP of the list (newest first) and change the text.
 //   id        unique short name, no spaces
 //   date      'YYYY-MM-DD' (optional, shown on the card; newest date is placed first automatically)
+//   focus     optional crop focus for tall photos, e.g. 'center 20%' (default 'center 35%')
 //   image     path of a photo under public/images/events/ (optional; without it a green placeholder is used)
 //   category / location / title / description   English (en) and Hindi (hi)
 export const UPDATES = [
+  {
+    id: 'bvg-chairman-pune-gaushala-approval', date: '2026-11-16', image: '/images/events/bvg-chairman-pune-meeting.jpg',
+    imageAlt: { en: 'Meeting with the BVG chairman in Pune', hi: 'पुणे में बीवीजी के चेयरमैन के साथ बैठक' },
+    category: { en: 'Gaushala initiative', hi: 'गौशाला पहल' },
+    location: { en: 'Pune, Maharashtra', hi: 'पुणे, महाराष्ट्र' },
+    title: { en: 'Gaushala project approved in meeting with BVG chairman', hi: 'बीवीजी के चेयरमैन के साथ बैठक में गौशाला परियोजना को स्वीकृति' },
+    description: { en: 'A meeting was held today in Pune with Mr. Gaikwad, Chairman of BVG. The Gaushala project received approval in the meeting.', hi: 'आज पुणे में बीवीजी के चेयरमैन श्री गायकवाड़ जी के साथ बैठक हुई। बैठक में गौशाला परियोजना पर स्वीकृति बनी।' },
+  },
+  {
+    id: 'sardar-patel-multi-state-women-loan', date: '2026-11-16', image: '/images/events/sardar-patel-women-cooperative.jpg',
+    imageAlt: { en: 'Federation team members at a meeting', hi: 'बैठक में फेडरेशन की टीम के सदस्य' },
+    category: { en: 'Women empowerment', hi: 'महिला सशक्तिकरण' },
+    location: { en: '', hi: '' },
+    title: { en: '60,000 women join through Sardar Patel Multi State Cooperative', hi: 'सरदार पटेल मल्टी स्टेट कोऑपरेटिव से जुड़ीं 60,000 महिलाएँ' },
+    description: { en: 'A group of 60,000 women has joined through Sardar Patel Multi State Cooperative. Of them, 20,000 women will be given a loan of Rs 30,000 each.', hi: 'सरदार पटेल मल्टी स्टेट कोऑपरेटिव के माध्यम से 60,000 महिलाओं का समूह जुड़ा है। इनमें से 20,000 महिलाओं को प्रति महिला 30,000 रुपये का ऋण दिया जाएगा।' },
+  },
   {
     id: "recognition-for-tribal-family-developmen", date: '', image: "/images/events/nandurbar-felicitation.jpg", imageAlt: { en: "FPC representatives being felicitated during a community engagement in Nandurbar", hi: "नंदुरबार में सामुदायिक कार्यक्रम के दौरान सम्मान" },
     category: { en: "Community engagement", hi: "सामुदायिक सहभागिता" },
