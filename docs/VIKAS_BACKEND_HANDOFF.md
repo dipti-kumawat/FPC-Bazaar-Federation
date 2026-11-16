@@ -28,7 +28,7 @@ The frontend sends the submitted field values plus:
 The backend should validate all fields server-side, enforce rate limits, sanitize inputs, apply spam protection, and return a consistent JSON response. Never rely on browser-side validation alone.
 
 ## Important coordination
-1. Ankit should confirm the final API response and error format before changing `formService.js`.
+1. Vikas should confirm the final API response and error format before changing `formService.js`.
 2. Keep backend secrets and database credentials out of this frontend repository.
 3. Do not put admin credentials, API secrets or private keys in `VITE_*` variables; Vite exposes those values to the browser.
 4. Use HTTPS in production.
