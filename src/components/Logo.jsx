@@ -1,4 +1,5 @@
 import { images } from '../config/site.js';
+import { imgSources } from '../lib/images.js';
 
 /**
  * Federation logo (client-supplied) with wordmark. `light` is for dark backgrounds.
@@ -9,7 +10,7 @@ export default function Logo({ light = false, size = 60, compact = false, taglin
   return (
     <span className="flex items-center gap-3">
       <span className={`grid shrink-0 place-items-center max-[420px]:!h-11 max-[420px]:!w-11 ${light ? 'rounded-md bg-paper p-1' : ''}`} style={{ width: size, height: size }}>
-        <img src={images.logo} alt="" width={size} height={size} className="h-full w-full object-contain" />
+        <img {...(({ src, srcSet }) => ({ src, srcSet }))(imgSources(images.logo, images.logo, 128))} sizes={`${size}px`} alt="" width={size} height={size} decoding="async" className="h-full w-full object-contain" />
       </span>
       {!compact && (
         <span className={`leading-tight max-[340px]:hidden ${light ? 'text-white' : 'text-brand-900'}`}>

@@ -8,6 +8,7 @@ import { PageHero, Band } from '../components/ui.jsx';
 import { SupplierCard, EmptyState } from '../components/market.jsx';
 import { Icon, Search, Arrow } from '../components/Icons.jsx';
 import { CATEGORIES, STATES, SUPPLIER_TYPES, visibleSuppliers } from '../data/marketplace.js';
+import AnimatedGrid from '../components/motion/AnimatedGrid.jsx';
 
 export default function Suppliers() {
   useSeo('suppliers'); useRegistryTick();
@@ -61,7 +62,7 @@ export default function Suppliers() {
         ) : list.length === 0 ? (
           <EmptyState title={d.noResults} text={d.noResultsText}><button type="button" className="btn-outline" onClick={() => setParams({}, { replace: true })}>{d.clear}</button></EmptyState>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{list.map((s) => <SupplierCard key={s.id} s={s} />)}</div>
+          <AnimatedGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" items={list} getKey={(s) => s.id} render={(s) => <SupplierCard s={s} />} />
         )}
       </Band>
 

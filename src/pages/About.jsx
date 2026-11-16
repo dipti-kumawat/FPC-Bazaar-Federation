@@ -205,7 +205,7 @@ export default function About() {
             <p className="mt-4 max-w-2xl leading-8 text-slate-600">{a.sub}</p>
             <div className="mt-6 flex flex-wrap gap-2">
               <span className="rounded-full border border-brand-200 bg-white px-4 py-2 text-xs font-bold text-brand-800">{t.registered}</span>
-              <span className="rounded-full border border-brand-200 bg-white px-4 py-2 text-xs font-bold text-brand-800">{t.cin}: U01100RJ2022NPL078043</span>
+              <span className="rounded-full border border-brand-200 bg-white px-4 py-2 text-xs font-bold text-brand-800">{t.cin}: U85197RJ2022NPL078943</span>
             </div>
           </div>
           <div className="border-l-2 border-gold-500 bg-brand-50 p-6">
@@ -266,7 +266,7 @@ export default function About() {
           <div>
             <h2 className="mb-4 text-2xl font-extrabold text-brand-900">{t.docsTitle}</h2>
             <dl className="divide-y divide-brand-100 border-y border-brand-100">
-              <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr]"><dt className="font-bold text-brand-800">{t.cin}</dt><dd>U01100RJ2022NPL078043</dd></div>
+              <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr]"><dt className="font-bold text-brand-800">{t.cin}</dt><dd>U85197RJ2022NPL078943</dd></div>
               <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr]"><dt className="font-bold text-brand-800">{t.office}</dt><dd>Jaipur, Rajasthan</dd></div>
               <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr]"><dt className="font-bold text-brand-800">{t.registered}</dt><dd>2022</dd></div>
             </dl>
