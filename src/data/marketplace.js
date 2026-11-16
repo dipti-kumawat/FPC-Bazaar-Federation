@@ -4,8 +4,23 @@
 // verified listings (set verified: true, sample: false). Unverified entries are hidden when draft mode is off.
 // All text is bilingual: { en, hi }. Prices are never shown: the model is enquiry based ("price on request").
 import { draftMode } from '../config/site.js';
+import { publicVendors } from '../services/registry.js';
 
 export const STATES = {
+  chhattisgarh: { en: 'Chhattisgarh', hi: 'छत्तीसगढ़' },
+  jharkhand: { en: 'Jharkhand', hi: 'झारखंड' },
+  odisha: { en: 'Odisha', hi: 'ओडिशा' },
+  haryana: { en: 'Haryana', hi: 'हरियाणा' },
+  punjab: { en: 'Punjab', hi: 'पंजाब' },
+  up: { en: 'Uttar Pradesh', hi: 'उत्तर प्रदेश' },
+  uttarakhand: { en: 'Uttarakhand', hi: 'उत्तराखंड' },
+  goa: { en: 'Goa', hi: 'गोवा' },
+  andhra: { en: 'Andhra Pradesh', hi: 'आंध्र प्रदेश' },
+  telangana: { en: 'Telangana', hi: 'तेलंगाना' },
+  tn: { en: 'Tamil Nadu', hi: 'तमिलनाडु' },
+  karnataka: { en: 'Karnataka', hi: 'कर्नाटक' },
+  puducherry: { en: 'Puducherry', hi: 'पुडुचेरी' },
+  jk: { en: 'Jammu & Kashmir', hi: 'जम्मू-कश्मीर' },
   rajasthan: { en: 'Rajasthan', hi: 'राजस्थान' },
   gujarat: { en: 'Gujarat', hi: 'गुजरात' },
   mp: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश' },
@@ -13,14 +28,14 @@ export const STATES = {
 };
 
 export const CATEGORIES = [
-  { id: 'grains', icon: 'grains', name: { en: 'Grains & Pulses', hi: 'अनाज और दालें' } },
-  { id: 'produce', icon: 'produce', name: { en: 'Fruits & Vegetables', hi: 'फल और सब्ज़ियाँ' } },
-  { id: 'spices', icon: 'spices', name: { en: 'Spices & Oilseeds', hi: 'मसाले और तिलहन' } },
-  { id: 'dairy', icon: 'dairy', name: { en: 'Dairy & Gaushala Products', hi: 'डेयरी और गौशाला उत्पाद' } },
-  { id: 'inputs', icon: 'inputs', name: { en: 'Organic Inputs & Fertilisers', hi: 'जैविक इनपुट और खाद' } },
-  { id: 'processed', icon: 'processed', name: { en: 'Processed & Packaged Foods', hi: 'प्रसंस्कृत और पैकेज्ड खाद्य' } },
-  { id: 'equipment', icon: 'equipment', name: { en: 'Equipment & Packaging', hi: 'उपकरण और पैकेजिंग' } },
-  { id: 'feed', icon: 'feed', name: { en: 'Animal Feed & Supplements', hi: 'पशु आहार और सप्लीमेंट' } },
+  { id: 'grains', icon: 'grains', name: { en: 'Organic Grains & Pulses', hi: 'जैविक अनाज और दालें' } },
+  { id: 'produce', icon: 'produce', name: { en: 'Organic Fruits & Vegetables', hi: 'जैविक फल और सब्ज़ियाँ' } },
+  { id: 'spices', icon: 'spices', name: { en: 'Organic Spices & Oilseeds', hi: 'जैविक मसाले और तिलहन' } },
+  { id: 'dairy', icon: 'dairy', name: { en: 'Gaushala & Desi Cow Products', hi: 'गौशाला और देसी गाय उत्पाद' } },
+  { id: 'inputs', icon: 'inputs', name: { en: 'Organic Inputs & Bio-fertilisers', hi: 'जैविक इनपुट और जैव-उर्वरक' } },
+  { id: 'processed', icon: 'processed', name: { en: 'Natural & Cold-Pressed Foods', hi: 'प्राकृतिक और कोल्ड-प्रेस खाद्य' } },
+  { id: 'equipment', icon: 'equipment', name: { en: 'Farm Tools & Eco-Packaging', hi: 'कृषि उपकरण और इको-पैकेजिंग' } },
+  { id: 'feed', icon: 'feed', name: { en: 'Natural Cattle Feed & Supplements', hi: 'प्राकृतिक पशु आहार और सप्लीमेंट' } },
 ];
 
 export const SUPPLIER_TYPES = ['farmer', 'fpo', 'manufacturer', 'supplier'];
@@ -55,45 +70,45 @@ export const SUPPLIERS = [
 ];
 
 export const PRODUCTS = [
-  { id: 'wheat-sharbati', cat: 'grains', supplier: 'malwa-grain-growers-fpo', state: 'mp', name: { en: 'Wheat (Sharbati)', hi: 'गेहूँ (शरबती)' }, moq: { en: '10 tonnes', hi: '10 टन' }, pack: { en: 'Bulk or 50 kg bags', hi: 'थोक या 50 किलो बोरे' }, season: { en: 'Mar – May harvest', hi: 'मार्च – मई की कटाई' },
-    desc: { en: 'Clean, graded wheat from member farmers. Moisture and foreign-matter limits can be agreed with the buyer.', hi: 'सदस्य किसानों का साफ़ और ग्रेडेड गेहूँ। नमी और अशुद्धि की सीमा खरीदार के साथ तय की जा सकती है।' }, ...base },
-  { id: 'chana-desi', cat: 'grains', supplier: 'hadoti-kisan-producer-company', state: 'rajasthan', name: { en: 'Desi Chana (Chickpea)', hi: 'देसी चना' }, moq: { en: '5 tonnes', hi: '5 टन' }, pack: { en: '50 kg bags', hi: '50 किलो बोरे' }, season: { en: 'Mar – Apr harvest', hi: 'मार्च – अप्रैल की कटाई' },
-    desc: { en: 'Sorted desi chana suitable for dal mills and besan makers.', hi: 'दाल मिलों और बेसन निर्माताओं के लिए उपयुक्त छँटा हुआ देसी चना।' }, ...base },
-  { id: 'bajra-pearl-millet', cat: 'grains', supplier: 'marwar-millet-farmers-group', state: 'rajasthan', name: { en: 'Bajra (Pearl Millet)', hi: 'बाजरा' }, moq: { en: '2 tonnes', hi: '2 टन' }, pack: { en: '50 kg bags', hi: '50 किलो बोरे' }, season: { en: 'Oct – Nov harvest', hi: 'अक्टूबर – नवंबर की कटाई' },
-    desc: { en: 'Naturally grown bajra from dryland farms, available whole or cleaned.', hi: 'असिंचित खेतों का प्राकृतिक रूप से उगाया बाजरा, साबुत या साफ़ किया हुआ।' }, ...base },
-  { id: 'coriander-seed', cat: 'spices', supplier: 'hadoti-kisan-producer-company', state: 'rajasthan', name: { en: 'Coriander Seed', hi: 'धनिया बीज' }, moq: { en: '3 tonnes', hi: '3 टन' }, pack: { en: '40 kg bags', hi: '40 किलो बोरे' }, season: { en: 'Mar – Apr harvest', hi: 'मार्च – अप्रैल की कटाई' },
-    desc: { en: 'Whole coriander seed, cleaned and sorted for spice grinders and traders.', hi: 'मसाला पीसने वालों और व्यापारियों के लिए साफ़ और छँटा हुआ साबुत धनिया।' }, ...base },
-  { id: 'cumin-jeera', cat: 'spices', supplier: 'saurashtra-spice-growers', state: 'gujarat', name: { en: 'Cumin (Jeera)', hi: 'जीरा' }, moq: { en: '1 tonne', hi: '1 टन' }, pack: { en: '30 kg bags', hi: '30 किलो बोरे' }, season: { en: 'Feb – Mar harvest', hi: 'फरवरी – मार्च की कटाई' },
-    desc: { en: 'Machine-cleaned cumin seed with grade options on request.', hi: 'मशीन से साफ़ किया हुआ जीरा, माँग पर अलग-अलग ग्रेड उपलब्ध।' }, ...base },
-  { id: 'mustard-seed', cat: 'spices', supplier: 'mewar-cold-press-oils', state: 'rajasthan', name: { en: 'Mustard Seed', hi: 'सरसों' }, moq: { en: '5 tonnes', hi: '5 टन' }, pack: { en: '50 kg bags', hi: '50 किलो बोरे' }, season: { en: 'Feb – Mar harvest', hi: 'फरवरी – मार्च की कटाई' },
-    desc: { en: 'Oilseed-grade mustard for expellers and cold-press units.', hi: 'एक्सपेलर और कोल्ड-प्रेस इकाइयों के लिए तेल-योग्य सरसों।' }, ...base },
-  { id: 'onion-nashik', cat: 'produce', supplier: 'nashik-onion-growers-fpo', state: 'maharashtra', name: { en: 'Onion (Graded)', hi: 'प्याज (ग्रेडेड)' }, moq: { en: '1 truckload', hi: '1 ट्रक लोड' }, pack: { en: 'Mesh bags or crates', hi: 'जालीदार बोरे या क्रेट' }, season: { en: 'Seasonal supply', hi: 'मौसमी आपूर्ति' },
-    desc: { en: 'Sorted and size-graded onions packed at a collection centre.', hi: 'संग्रह केंद्र पर छँटा और आकार के अनुसार ग्रेड किया हुआ प्याज।' }, ...base },
-  { id: 'desi-cow-ghee', cat: 'dairy', supplier: 'gaushala-panchgavya-collective', state: 'gujarat', name: { en: 'Desi Cow Ghee', hi: 'देसी गाय का घी' }, moq: { en: '50 kg', hi: '50 किलो' }, pack: { en: '500 ml, 1 L jars; bulk tins', hi: '500 मि.ली., 1 लीटर जार; थोक टिन' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
-    desc: { en: 'Traditionally prepared ghee from partner gaushalas. Batch details and lab reports on request.', hi: 'साझेदार गौशालाओं का पारंपरिक विधि से बना घी। बैच विवरण और लैब रिपोर्ट माँग पर।' }, ...base },
+  { id: 'wheat-sharbati', cat: 'grains', supplier: 'malwa-grain-growers-fpo', state: 'mp', name: { en: 'Organic Wheat (Sharbati)', hi: 'जैविक गेहूँ (शरबती)' }, moq: { en: '10 tonnes', hi: '10 टन' }, pack: { en: 'Bulk or 50 kg bags', hi: 'थोक या 50 किलो बोरे' }, season: { en: 'Mar – May harvest', hi: 'मार्च – मई की कटाई' },
+    desc: { en: 'Clean, graded wheat from member farmers. Moisture and foreign-matter limits can be agreed with the buyer. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'सदस्य किसानों का साफ़ और ग्रेडेड गेहूँ। नमी और अशुद्धि की सीमा खरीदार के साथ तय की जा सकती है। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'chana-desi', cat: 'grains', supplier: 'hadoti-kisan-producer-company', state: 'rajasthan', name: { en: 'Organic Desi Chana', hi: 'जैविक देसी चना' }, moq: { en: '5 tonnes', hi: '5 टन' }, pack: { en: '50 kg bags', hi: '50 किलो बोरे' }, season: { en: 'Mar – Apr harvest', hi: 'मार्च – अप्रैल की कटाई' },
+    desc: { en: 'Sorted desi chana suitable for dal mills and besan makers. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'दाल मिलों और बेसन निर्माताओं के लिए उपयुक्त छँटा हुआ देसी चना। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'bajra-pearl-millet', cat: 'grains', supplier: 'marwar-millet-farmers-group', state: 'rajasthan', name: { en: 'Organic Bajra (Pearl Millet)', hi: 'जैविक बाजरा' }, moq: { en: '2 tonnes', hi: '2 टन' }, pack: { en: '50 kg bags', hi: '50 किलो बोरे' }, season: { en: 'Oct – Nov harvest', hi: 'अक्टूबर – नवंबर की कटाई' },
+    desc: { en: 'Naturally grown bajra from dryland farms, available whole or cleaned. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'असिंचित खेतों का प्राकृतिक रूप से उगाया बाजरा, साबुत या साफ़ किया हुआ। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'coriander-seed', cat: 'spices', supplier: 'hadoti-kisan-producer-company', state: 'rajasthan', name: { en: 'Organic Coriander Seed', hi: 'जैविक धनिया बीज' }, moq: { en: '3 tonnes', hi: '3 टन' }, pack: { en: '40 kg bags', hi: '40 किलो बोरे' }, season: { en: 'Mar – Apr harvest', hi: 'मार्च – अप्रैल की कटाई' },
+    desc: { en: 'Whole coriander seed, cleaned and sorted for spice grinders and traders. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'मसाला पीसने वालों और व्यापारियों के लिए साफ़ और छँटा हुआ साबुत धनिया। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'cumin-jeera', cat: 'spices', supplier: 'saurashtra-spice-growers', state: 'gujarat', name: { en: 'Organic Cumin (Jeera)', hi: 'जैविक जीरा' }, moq: { en: '1 tonne', hi: '1 टन' }, pack: { en: '30 kg bags', hi: '30 किलो बोरे' }, season: { en: 'Feb – Mar harvest', hi: 'फरवरी – मार्च की कटाई' },
+    desc: { en: 'Machine-cleaned cumin seed with grade options on request. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'मशीन से साफ़ किया हुआ जीरा, माँग पर अलग-अलग ग्रेड उपलब्ध। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'mustard-seed', cat: 'spices', supplier: 'mewar-cold-press-oils', state: 'rajasthan', name: { en: 'Organic Mustard Seed', hi: 'जैविक सरसों' }, moq: { en: '5 tonnes', hi: '5 टन' }, pack: { en: '50 kg bags', hi: '50 किलो बोरे' }, season: { en: 'Feb – Mar harvest', hi: 'फरवरी – मार्च की कटाई' },
+    desc: { en: 'Oilseed-grade mustard for expellers and cold-press units. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'एक्सपेलर और कोल्ड-प्रेस इकाइयों के लिए तेल-योग्य सरसों। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'onion-nashik', cat: 'produce', supplier: 'nashik-onion-growers-fpo', state: 'maharashtra', name: { en: 'Organic Onion (Graded)', hi: 'जैविक प्याज (ग्रेडेड)' }, moq: { en: '1 truckload', hi: '1 ट्रक लोड' }, pack: { en: 'Mesh bags or crates', hi: 'जालीदार बोरे या क्रेट' }, season: { en: 'Seasonal supply', hi: 'मौसमी आपूर्ति' },
+    desc: { en: 'Sorted and size-graded onions packed at a collection centre. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'संग्रह केंद्र पर छँटा और आकार के अनुसार ग्रेड किया हुआ प्याज। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'desi-cow-ghee', cat: 'dairy', supplier: 'gaushala-panchgavya-collective', state: 'gujarat', name: { en: 'Gaushala Desi Cow Ghee', hi: 'गौशाला देसी गाय का घी' }, moq: { en: '50 kg', hi: '50 किलो' }, pack: { en: '500 ml, 1 L jars; bulk tins', hi: '500 मि.ली., 1 लीटर जार; थोक टिन' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
+    desc: { en: 'Traditionally prepared ghee from partner gaushalas. Batch details and lab reports on request. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'साझेदार गौशालाओं का पारंपरिक विधि से बना घी। बैच विवरण और लैब रिपोर्ट माँग पर। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
   { id: 'panchgavya-range', cat: 'dairy', supplier: 'gaushala-panchgavya-collective', state: 'gujarat', name: { en: 'Panchgavya Products', hi: 'पंचगव्य उत्पाद' }, moq: { en: '100 units', hi: '100 इकाइयाँ' }, pack: { en: 'Retail and bulk packs', hi: 'खुदरा और थोक पैक' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
-    desc: { en: 'A range of gaushala-based products for households, temples and wellness retailers.', hi: 'घरों, मंदिरों और वेलनेस विक्रेताओं के लिए गौशाला आधारित उत्पादों की श्रृंखला।' }, ...base },
+    desc: { en: 'A range of gaushala-based products for households, temples and wellness retailers. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'घरों, मंदिरों और वेलनेस विक्रेताओं के लिए गौशाला आधारित उत्पादों की श्रृंखला। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
   { id: 'vermicompost', cat: 'inputs', supplier: 'aravali-organics', state: 'rajasthan', name: { en: 'Vermicompost', hi: 'वर्मीकम्पोस्ट' }, moq: { en: '5 tonnes', hi: '5 टन' }, pack: { en: '5, 25 and 50 kg bags', hi: '5, 25 और 50 किलो बोरे' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
-    desc: { en: 'Screened vermicompost for field crops, orchards and nurseries.', hi: 'खेत की फसलों, बागों और नर्सरी के लिए छना हुआ वर्मीकम्पोस्ट।' }, ...base },
+    desc: { en: 'Screened vermicompost for field crops, orchards and nurseries. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'खेत की फसलों, बागों और नर्सरी के लिए छना हुआ वर्मीकम्पोस्ट। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
   { id: 'gaushala-compost', cat: 'inputs', supplier: 'gaushala-panchgavya-collective', state: 'gujarat', name: { en: 'Gaushala Organic Fertiliser', hi: 'गौशाला जैविक खाद' }, moq: { en: '10 tonnes', hi: '10 टन' }, pack: { en: 'Bio-fertiliser bags', hi: 'जैव-उर्वरक के बोरे' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
-    desc: { en: 'Organic fertiliser made from gaushala cow dung, in line with the Federation’s gaushala model.', hi: 'फेडरेशन के गौशाला मॉडल के अनुरूप, गौशाला के गोबर से बनी जैविक खाद।' }, ...base },
+    desc: { en: 'Organic fertiliser made from gaushala cow dung, in line with the Federation’s gaushala model. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'फेडरेशन के गौशाला मॉडल के अनुरूप, गौशाला के गोबर से बनी जैविक खाद। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
   { id: 'cattle-mineral-mix', cat: 'feed', supplier: 'deccan-agro-feeds', state: 'maharashtra', name: { en: 'Cattle Feed & Mineral Mixture', hi: 'पशु आहार और खनिज मिश्रण' }, moq: { en: '2 tonnes', hi: '2 टन' }, pack: { en: '25 and 50 kg bags', hi: '25 और 50 किलो बोरे' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
-    desc: { en: 'Balanced feed and mineral mixture for milch animals. Formulation sheets on request.', hi: 'दुधारू पशुओं के लिए संतुलित आहार और खनिज मिश्रण। फ़ॉर्मूलेशन शीट माँग पर।' }, ...base },
-  { id: 'cold-pressed-mustard-oil', cat: 'processed', supplier: 'mewar-cold-press-oils', state: 'rajasthan', name: { en: 'Cold-Pressed Mustard Oil', hi: 'कोल्ड-प्रेस सरसों तेल' }, moq: { en: '200 litres', hi: '200 लीटर' }, pack: { en: '1 L, 5 L and 15 L packs', hi: '1, 5 और 15 लीटर पैक' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
-    desc: { en: 'Cold-pressed oil from sourced mustard, available for retail and bulk buyers.', hi: 'खरीदी गई सरसों से बना कोल्ड-प्रेस तेल, खुदरा और थोक खरीदारों के लिए उपलब्ध।' }, ...base },
-  { id: 'jaggery-blocks', cat: 'processed', supplier: 'mewar-cold-press-oils', state: 'rajasthan', name: { en: 'Jaggery (Gur)', hi: 'गुड़' }, moq: { en: '500 kg', hi: '500 किलो' }, pack: { en: 'Blocks and powder', hi: 'ढेली और पाउडर' }, season: { en: 'Nov – Mar', hi: 'नवंबर – मार्च' },
-    desc: { en: 'Chemical-free jaggery in blocks and powder form.', hi: 'ढेली और पाउडर रूप में रसायन-मुक्त गुड़।' }, ...base },
+    desc: { en: 'Balanced feed and mineral mixture for milch animals. Formulation sheets on request. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'दुधारू पशुओं के लिए संतुलित आहार और खनिज मिश्रण। फ़ॉर्मूलेशन शीट माँग पर। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'cold-pressed-mustard-oil', cat: 'processed', supplier: 'mewar-cold-press-oils', state: 'rajasthan', name: { en: 'Chemical-Free Cold-Pressed Mustard Oil', hi: 'रसायन-मुक्त कोल्ड-प्रेस सरसों तेल' }, moq: { en: '200 litres', hi: '200 लीटर' }, pack: { en: '1 L, 5 L and 15 L packs', hi: '1, 5 और 15 लीटर पैक' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
+    desc: { en: 'Cold-pressed oil from sourced mustard, available for retail and bulk buyers. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'खरीदी गई सरसों से बना कोल्ड-प्रेस तेल, खुदरा और थोक खरीदारों के लिए उपलब्ध। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
+  { id: 'jaggery-blocks', cat: 'processed', supplier: 'mewar-cold-press-oils', state: 'rajasthan', name: { en: 'Chemical-Free Jaggery (Gur)', hi: 'रसायन-मुक्त गुड़' }, moq: { en: '500 kg', hi: '500 किलो' }, pack: { en: 'Blocks and powder', hi: 'ढेली और पाउडर' }, season: { en: 'Nov – Mar', hi: 'नवंबर – मार्च' },
+    desc: { en: 'Chemical-free jaggery in blocks and powder form. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'ढेली और पाउडर रूप में रसायन-मुक्त गुड़। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
   { id: 'woven-sacks-crates', cat: 'equipment', supplier: 'narmada-agri-packaging', state: 'gujarat', name: { en: 'Woven Sacks & Crates', hi: 'बोरे और क्रेट' }, moq: { en: '1,000 pieces', hi: '1,000 नग' }, pack: { en: 'Custom print available', hi: 'कस्टम प्रिंट उपलब्ध' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
-    desc: { en: 'Packaging for grain and produce, with FPO branding on request.', hi: 'अनाज और उपज के लिए पैकेजिंग, माँग पर एफपीओ ब्रांडिंग के साथ।' }, ...base },
+    desc: { en: 'Packaging for grain and produce, with FPO branding on request. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'अनाज और उपज के लिए पैकेजिंग, माँग पर एफपीओ ब्रांडिंग के साथ। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
   { id: 'drip-irrigation-kit', cat: 'equipment', supplier: 'sahyadri-irrigation-supplies', state: 'maharashtra', name: { en: 'Drip Irrigation Kits', hi: 'ड्रिप सिंचाई किट' }, moq: { en: '10 kits', hi: '10 किट' }, pack: { en: 'Per-acre kits', hi: 'प्रति एकड़ किट' }, season: { en: 'Year-round', hi: 'पूरे वर्ष' },
-    desc: { en: 'Per-acre drip kits with fittings, suited to orchard and vegetable plots.', hi: 'बाग और सब्ज़ी के खेतों के लिए फिटिंग सहित प्रति एकड़ ड्रिप किट।' }, ...base },
+    desc: { en: 'Per-acre drip kits with fittings, suited to orchard and vegetable plots. Chemical-free: no synthetic fertilisers or pesticides (to be certified before listing).', hi: 'बाग और सब्ज़ी के खेतों के लिए फिटिंग सहित प्रति एकड़ ड्रिप किट। रसायन-मुक्त: कोई सिंथेटिक खाद या कीटनाशक नहीं (लिस्टिंग से पहले प्रमाणित किया जाएगा)।' }, ...base },
 ];
 
 /** Hide sample/unverified entries once draft mode is switched off. */
 const show = (x) => draftMode || x.verified;
 export const visibleProducts = () => PRODUCTS.filter(show);
-export const visibleSuppliers = () => SUPPLIERS.filter(show);
-export const supplierById = (id) => SUPPLIERS.find((s) => s.id === id);
+export const visibleSuppliers = () => [...SUPPLIERS.filter(show), ...publicVendors()];
+export const supplierById = (id) => SUPPLIERS.find((s) => s.id === id) || publicVendors().find((s) => s.id === id);
 export const productById = (id) => PRODUCTS.find((p) => p.id === id);
 export const categoryById = (id) => CATEGORIES.find((c) => c.id === id);
 export const productsOf = (supplierId) => visibleProducts().filter((p) => p.supplier === supplierId);

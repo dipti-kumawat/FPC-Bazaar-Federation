@@ -1,0 +1,30 @@
+# Business Connect: new form keys (frontend contract only)
+
+The redesign adds four forms. They use the **same** frontend service and endpoint pattern as the existing forms:
+`POST {VITE_API_URL}/api/forms/{formKey}`. No backend code was changed. Until the backend supports these keys,
+the forms run in demo mode (browser-only) when `VITE_API_URL` is empty, and will fail with the normal error
+message if `VITE_API_URL` points at a backend that does not know them yet.
+
+Every submission also carries `lang`, `consent` and `page`, as for the existing forms.
+
+| formKey | Used on | Fields (required marked *) |
+|---|---|---|
+| `quote` | Product page, Supplier page | subject*, name*, phone*, organisation, quantity, state, message |
+| `supplier` | Business Connect (tab "List as a supplier") | organisation*, name*, phone*, email, supplierType*, state*, district, categories*, capacity, message |
+| `sourcing` | Product Sourcing page | need*, quantity*, frequency, destination, spec, name*, organisation, phone*, email, message |
+| `connect` | Business Connect | role*, name*, phone*, state*, offer*, organisation, email |
+
+Option values: `supplierType` = farmer, fpo, manufacturer, supplier. `frequency` = once, monthly, seasonal, contract.
+`role` = farmer, fpo, manufacturer, supplier, buyer.
+
+Server-side validation, rate limiting and spam protection should follow the same rules as the existing forms.
+
+## Marketplace and directory data
+Products and suppliers live in `src/data/marketplace.js` and are **sample listings** (`sample: true`, `verified: false`).
+They show only while `VITE_DRAFT_MODE` is not `false`. At launch replace them with real entries and set
+`verified: true`; unverified entries are hidden automatically and the pages show an "opening soon" state.
+The marketplace is enquiry based: no prices, cart or payment. Confirm the Federation's selling model
+(marketplace/middleware or direct seller) with the client before changing this.
+
+## Registration forms (fpo, vendor, projecthead, member, job)
+See `docs/ADMIN_API.md`. The earlier `career` key was replaced by `job`.

@@ -1,0 +1,40 @@
+// News & events shown on the Home page (latest few) and on /events (all of them).
+// HOW TO ADD ONE: copy a block below, paste it at the TOP of the list (newest first) and change the text.
+//   id        unique short name, no spaces
+//   date      'YYYY-MM-DD' (optional, shown on the card; newest date is placed first automatically)
+//   image     path of a photo under public/images/events/ (optional; without it a green placeholder is used)
+//   category / location / title / description   English (en) and Hindi (hi)
+export const UPDATES = [
+  {
+    id: "recognition-for-tribal-family-developmen", date: '', image: "/images/events/nandurbar-felicitation.jpg", imageAlt: { en: "FPC representatives being felicitated during a community engagement in Nandurbar", hi: "नंदुरबार में सामुदायिक कार्यक्रम के दौरान सम्मान" },
+    category: { en: "Community engagement", hi: "सामुदायिक सहभागिता" },
+    location: { en: "Nandurbar, Maharashtra", hi: "नंदुरबार, महाराष्ट्र" },
+    title: { en: "Recognition for Tribal Family Development Initiative", hi: "आदिवासी परिवार विकास पहल के लिए सम्मान" },
+    description: { en: "Felicitation and blessings received from senior local RSS and BJP representatives for work undertaken under the Samriddh Adivasi Parivar project.", hi: "समृद्ध आदिवासी परिवार परियोजना के अंतर्गत किए गए कार्यों के लिए वरिष्ठ स्थानीय आरएसएस और बीजेपी पदाधिकारियों से सम्मान एवं आशीर्वाद प्राप्त हुआ।" },
+  },
+  {
+    id: "abcd-project-memorandum-of-understanding", date: '', image: "/images/events/abcd-mou-gujarat.jpg", imageAlt: { en: "Agricultural collaboration meeting", hi: "कृषि सहयोग बैठक" },
+    category: { en: "Agricultural collaboration", hi: "कृषि सहयोग" },
+    location: { en: "Gujarat", hi: "गुजरात" },
+    title: { en: "ABCD Project – Memorandum of Understanding", hi: "ABCD परियोजना – समझौता ज्ञापन" },
+    description: { en: "An MoU initiative involving Bharatiya Kisan Sangh and Agro Unity, intended to strengthen collaboration around agricultural development.", hi: "भारतीय किसान संघ और Agro Unity की भागीदारी वाली एमओयू पहल, जिसका उद्देश्य कृषि विकास में सहयोग को मजबूत करना है।" },
+  },
+  {
+    id: "participation-in-sri-lakshmi-narayani-go", date: '', image: "/images/events/vellore-gaushala-programme.jpg", imageAlt: { en: "Programme participation in Vellore", hi: "वेल्लोर कार्यक्रम में सहभागिता" },
+    category: { en: "Gaushala initiative", hi: "गौशाला पहल" },
+    location: { en: "Vellore, Tamil Nadu", hi: "वेल्लोर, तमिलनाडु" },
+    title: { en: "Participation in Sri Lakshmi Narayani Golden Temple Programme", hi: "श्री लक्ष्मी नारायणी स्वर्ण मंदिर कार्यक्रम में सहभागिता" },
+    description: { en: "Participation in a programme at Sri Lakshmi Narayani Golden Temple, Sripuram, and an opportunity associated with the Gaushala Project.", hi: "श्रीपुरम स्थित श्री लक्ष्मी नारायणी स्वर्ण मंदिर के कार्यक्रम में शामिल होने और गौशाला परियोजना से जुड़ा अवसर प्राप्त हुआ।" },
+  },
+  {
+    id: "action-on-encroachments-from-village-gau", date: '', image: "/images/events/gauchar-land-initiative.jpg", imageAlt: { en: "Federation delegation meeting", hi: "फेडरेशन प्रतिनिधिमंडल की बैठक" },
+    category: { en: "Federation update", hi: "फेडरेशन अपडेट" },
+    location: { en: "Rajasthan", hi: "राजस्थान" },
+    title: { en: "Action on Encroachments from Village Gauchar Land", hi: "गाँवों की गौचर भूमि से अतिक्रमण हटाने की पहल" },
+    description: { en: "Acknowledgement to Cabinet Minister Shri Hemant Meena Ji for the departmental order concerning removal of encroachments from village grazing lands across Rajasthan.", hi: "राजस्थान में गाँवों की चारागाह एवं गौचर भूमि से अतिक्रमण हटाने संबंधी विभागीय आदेश के लिए कैबिनेट मंत्री श्री हेमंत मीणा जी का आभार।" },
+  },
+];
+
+/** Newest first: dated items sorted by date, undated items keep the order written above. */
+export const sortedUpdates = () => [...UPDATES].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+export const HOME_COUNT = 4;

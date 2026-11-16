@@ -8,6 +8,8 @@ import Footer from './components/Footer.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
 import ScrollProgress from './components/ScrollProgress.jsx';
 import Home from './pages/Home.jsx';
+import Admin from './admin/Admin.jsx';
+import { loadPublicVendors } from './services/registry.js';
 import About from './pages/About.jsx';
 import Ppp from './pages/Ppp.jsx';
 import Cluster from './pages/Cluster.jsx';
@@ -19,6 +21,8 @@ import Biogas from './pages/Biogas.jsx';
 import Join from './pages/Join.jsx';
 import Partners from './pages/Partners.jsx';
 import Contact from './pages/Contact.jsx';
+import Gallery from './pages/Gallery.jsx';
+import { Services, Projects, StatesMap, FpoReg, VendorReg, Career } from './pages/Hubs.jsx';
 import Privacy from './pages/Privacy.jsx';
 import GaushalaTourism from './pages/GaushalaTourism.jsx';
 import Marketplace from './pages/Marketplace.jsx';
@@ -64,11 +68,13 @@ function LangLayout() {
 
 export default function App() {
   const { i18n } = useTranslation();
+  useEffect(() => { loadPublicVendors(); }, []);
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Navigate to={`/${i18n.language === 'hi' ? 'hi' : 'en'}`} replace />} />
+        <Route path="/admin/*" element={<Admin />} />
         <Route path="/:lang" element={<LangLayout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
@@ -84,11 +90,19 @@ export default function App() {
           <Route path="marketplace/:id" element={<ProductDetail />} />
           <Route path="suppliers" element={<Suppliers />} />
           <Route path="suppliers/:id" element={<SupplierDetail />} />
+          <Route path="vendor/:id" element={<SupplierDetail />} />
           <Route path="sourcing" element={<Sourcing />} />
           <Route path="business-connect" element={<BusinessConnect />} />
           <Route path="events" element={<Events />} />
           <Route path="join-us" element={<Join />} />
           <Route path="partners-investors" element={<Partners />} />
+          <Route path="services" element={<Services />} />
+          <Route path="projects" element={<Projects />} />
+          <Route path="states-map" element={<StatesMap />} />
+          <Route path="fpo-registration" element={<FpoReg />} />
+          <Route path="vendor-registration" element={<VendorReg />} />
+          <Route path="gallery" element={<Gallery />} />
+          <Route path="career" element={<Career />} />
           <Route path="contact" element={<Contact />} />
           <Route path="privacy-policy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />

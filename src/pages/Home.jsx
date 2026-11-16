@@ -1,6 +1,9 @@
 import { useC, LLink } from '../i18n/hooks.jsx';
 import { initiativeList, site, eventImages } from '../config/site.js';
 import { useSeo } from '../lib/useSeo.js';
+import { useRegistryTick } from '../services/registry.js';
+import UpdateCard from '../components/UpdateCard.jsx';
+import { sortedUpdates, HOME_COUNT } from '../data/updates.js';
 import { SectionTitle, ProjectCard, PhotoSlot, Band, Verify } from '../components/ui.jsx';
 import { ProductCard, SupplierCard } from '../components/market.jsx';
 import { Icon, Arrow, Check, Pin } from '../components/Icons.jsx';
@@ -16,7 +19,7 @@ const ROLE_POS = { farmer: 'center', fpo: 'center', manufacturer: 'center', supp
 const TICKER_ICONS = { gaushala: 'inputs', gaushalaTourism: 'dairy', cluster: 'manufacturer', biogas: 'equipment', eauto: 'supplier', amul: 'processed', enzy: 'feed', ppp: 'connect' };
 
 export default function Home() {
-  useSeo('home');
+  useSeo('home'); useRegistryTick();
   const c = useC(); const t = useT();
   const h = c.home; const b = c.homeBiz;
   const items = initiativeList.filter((item) => !['ppp', 'gaushalaTourism'].includes(item.key)).map((item) => ({ ...item, ...c.initiatives[item.key] }));
@@ -242,20 +245,9 @@ export default function Home() {
           <LLink to="/events" className="btn-outline shrink-0">{b.eventsAll} <Arrow /></LLink>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {h.events.map((event, index) => (
-            <Reveal key={event.title} className="h-full"><article className="card card-hover group h-full overflow-hidden">
-              <div className="relative aspect-[4/3] overflow-hidden bg-brand-900">
-                <img src={eventImages[index]} alt={event.imageAlt} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-                <span className="absolute left-3 top-3 border border-white/25 bg-brand-950/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[.14em] text-white">{event.category}</span>
-              </div>
-              <div className="p-5">
-                <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.14em] text-gold-700"><Pin className="h-3.5 w-3.5" />{event.location}</p>
-                <h3 className="mt-2 font-display text-lg font-semibold leading-snug text-brand-900">{event.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{event.description}</p>
-              </div>
-            </article></Reveal>
-          ))}
+          {sortedUpdates().slice(0, HOME_COUNT).map((u) => <UpdateCard key={u.id} u={u} />)}
         </div>
+        <div className="mt-10 text-center"><LLink to="/events" className="btn-primary">{b.eventsAll} <Arrow /></LLink></div>
       </Band>
 
       {/* VIDEOS */}

@@ -48,10 +48,16 @@ export function SampleBadge() {
   return <span className="rounded-sm bg-amber-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-950">{c.network.sample}</span>;
 }
 
+/** Green verified tick: shown only for Verified FPOs and vendors. */
+export function GreenTick({ className = 'h-6 w-6' }) {
+  const c = useC();
+  return <span role="img" aria-label={c.vendorPage.verifiedFull} title={c.vendorPage.verifiedFull} className={`inline-grid shrink-0 place-items-center rounded-full bg-emerald-600 text-white shadow-sm ${className}`}><Check className="h-[62%] w-[62%]" /></span>;
+}
+
 export function VerifiedBadge({ on }) {
   const c = useC();
   if (!on) return null;
-  return <span className="inline-flex items-center gap-1 rounded-sm bg-brand-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold-300"><Check className="h-3 w-3" />{c.network.verified}</span>;
+  return <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-800 py-0.5 pl-0.5 pr-2.5 text-[10px] font-bold uppercase tracking-wider text-gold-300"><GreenTick className="h-4 w-4" />{c.network.verified}</span>;
 }
 
 export function TypeBadge({ type }) {
@@ -86,14 +92,14 @@ export function SupplierCard({ s }) {
   const c = useC(); const t = useT();
   const count = productsOf(s.id).length;
   return (
-    <Reveal className="h-full"><LLink to={`/suppliers/${s.id}`} className="card card-hover group flex h-full flex-col p-6">
+    <Reveal className="h-full"><LLink to={s.registry ? `/vendor/${s.slug}` : `/suppliers/${s.id}`} className="card card-hover group flex h-full flex-col p-6">
       <div className="flex items-start justify-between gap-3">
         <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border-2 border-gold-500 bg-brand-800 font-display text-lg font-semibold text-gold-300">{initials(s.name.en)}</span>
         <span className="flex flex-wrap justify-end gap-1"><SampleBadge /><VerifiedBadge on={s.verified} /></span>
       </div>
       <div className="mt-4"><TypeBadge type={s.type} /></div>
       <h3 className="mt-3 font-display text-lg font-semibold leading-snug text-brand-900">{t(s.name)}</h3>
-      <p className="mt-1.5 flex items-center gap-1.5 text-sm text-slate-600"><Pin className="h-3.5 w-3.5 text-gold-600" />{t(s.district)}, {t(STATES[s.state])}</p>
+      <p className="mt-1.5 flex items-center gap-1.5 text-sm text-slate-600"><Pin className="h-3.5 w-3.5 text-gold-600" />{[t(s.district), t(STATES[s.state])].filter(Boolean).join(', ')}</p>
       <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600">{t(s.about)}</p>
       <ul className="mt-4 flex flex-wrap gap-1.5">{s.cats.map((k) => <li key={k} className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-800">{t(categoryById(k).name)}</li>)}</ul>
       <div className="mt-auto flex items-center justify-between border-t border-brand-100 pt-4 mt-5">

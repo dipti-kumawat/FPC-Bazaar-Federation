@@ -3,13 +3,14 @@ import { useSearchParams } from 'react-router-dom';
 import { useC, useT, LLink } from '../i18n/hooks.jsx';
 import { useSeo } from '../lib/useSeo.js';
 import { draftMode } from '../config/site.js';
+import { useRegistryTick } from '../services/registry.js';
 import { PageHero, Band } from '../components/ui.jsx';
 import { SupplierCard, EmptyState } from '../components/market.jsx';
 import { Icon, Search, Arrow } from '../components/Icons.jsx';
 import { CATEGORIES, STATES, SUPPLIER_TYPES, visibleSuppliers } from '../data/marketplace.js';
 
 export default function Suppliers() {
-  useSeo('suppliers');
+  useSeo('suppliers'); useRegistryTick();
   const c = useC(); const t = useT(); const d = c.directory;
   const [params, setParams] = useSearchParams();
   const q = params.get('q') || ''; const type = params.get('type') || ''; const state = params.get('state') || ''; const cat = params.get('cat') || '';

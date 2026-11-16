@@ -25,3 +25,6 @@ They show only while `VITE_DRAFT_MODE` is not `false`. At launch replace them wi
 `verified: true`; unverified entries are hidden automatically and the pages show an "opening soon" state.
 The marketplace is enquiry based: no prices, cart or payment. Confirm the Federation's selling model
 (marketplace/middleware or direct seller) with the client before changing this.
+
+## Career form (`career`)
+`POST /api/forms/career` with: `name`, `phone`, `email` (required), `position` (required), `qualification`, `location`, `message`, plus the common consent flag. Same response contract as the other forms. CV upload is not part of this form.

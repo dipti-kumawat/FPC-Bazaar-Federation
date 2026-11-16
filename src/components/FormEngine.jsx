@@ -2,11 +2,22 @@ import { useRef, useState } from 'react';
 import { FORMS } from '../config/forms.js';
 import { submitForm } from '../services/formService.js';
 import { useC, useLang, LLink } from '../i18n/hooks.jsx';
+import { STATES, CATEGORIES } from '../data/marketplace.js';
+
+const MAX_MB = 5; const OK_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
+const optionsFor = (o, c, lang) => (o === 'states' ? Object.entries(STATES).map(([k, v]) => [k, v[lang] || v.en]).sort((a, b) => a[1].localeCompare(b[1]))
+  : o === 'productCats' ? CATEGORIES.map((x) => [x.id, x.name[lang] || x.name.en]) : c.options[o]);
 
 const phoneRe = /^[6-9]\d{9}$/;
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function check(f, raw, c) {
+  if (f.t === 'file') {
+    if (!raw) return f.r ? c.required : '';
+    if (!OK_TYPES.includes(raw.type)) return c.fileType;
+    if (raw.size > MAX_MB * 1024 * 1024) return c.fileBig.replace('{n}', MAX_MB);
+    return '';
+  }
   const v = (raw ?? '').toString().trim();
   if (f.r && !v) return c.required;
   if (!v) return '';
@@ -74,13 +85,15 @@ export default function FormEngine({ formKey, title, initial }) {
           const id = `${formKey}-${f.n}`;
           const label = c.fieldLabels[f.n];
           const err = errors[f.n];
-          const common = { id, name: f.n, value: values[f.n] ?? '', onChange: (e) => set(f.n, e.target.value), 'aria-invalid': err ? 'true' : undefined, 'aria-describedby': err ? `${id}-e` : undefined, className: `field ${err ? 'field-err' : ''}` };
+          const common = { id, name: f.n, value: f.t === 'file' ? undefined : values[f.n] ?? '', onChange: (e) => set(f.n, e.target.value), 'aria-invalid': err ? 'true' : undefined, 'aria-describedby': err ? `${id}-e` : undefined, className: `field ${err ? 'field-err' : ''}` };
           return (
             <div key={f.n} className={f.t === 'textarea' ? 'sm:col-span-2' : ''}>
               <label htmlFor={id} className="mb-1 block text-sm font-semibold text-slate-800">{label}{!f.r && <span className="ml-1 font-normal text-slate-500">{fc.optional}</span>}</label>
               {f.t === 'textarea' ? <textarea rows={4} {...common} />
-                : f.t === 'select' ? (
-                  <select {...common}><option value="">{fc.select}</option>{c.options[f.o].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
+                : f.t === 'file' ? (
+                  <div><input id={id} name={f.n} type="file" accept=".pdf,.jpg,.jpeg,.png" aria-invalid={err ? 'true' : undefined} onChange={(e) => set(f.n, e.target.files?.[0] || null)} className={`field file:mr-3 file:rounded file:border-0 file:bg-brand-50 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-brand-800 ${err ? 'field-err' : ''}`} /><p className="mt-1 text-xs text-slate-500">{fc.fileHint.replace('{n}', MAX_MB)}</p></div>
+                ) : f.t === 'select' ? (
+                  <select {...common}><option value="">{fc.select}</option>{optionsFor(f.o, c, lang).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
                 ) : <input type={f.t} inputMode={f.t === 'tel' || f.t === 'number' ? 'numeric' : undefined} autoComplete={f.n === 'name' ? 'name' : f.n === 'phone' ? 'tel' : f.n === 'email' ? 'email' : undefined} {...common} />}
               {err && <p id={`${id}-e`} className="mt-1 text-sm font-medium text-red-600">{err}</p>}
             </div>

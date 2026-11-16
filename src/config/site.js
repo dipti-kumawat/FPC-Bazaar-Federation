@@ -90,3 +90,7 @@ export const eventImages = [
   '/images/events/vellore-gaushala-programme.jpg',
   '/images/events/gauchar-land-initiative.jpg',
 ];
+
+// Ids of states in the Federation network, used on the 17 States Map page (ids: see src/data/states.js).
+// TO VERIFY: the client has said "17 states" but has not yet sent the list. Fill this in, then set flags.networkStats to true.
+export const networkStates = [];

@@ -1,31 +1,37 @@
-import { useC, LLink } from '../i18n/hooks.jsx';
+import { useMemo, useState } from 'react';
+import { useC, useLang, LLink } from '../i18n/hooks.jsx';
 import { useSeo } from '../lib/useSeo.js';
-import { eventImages } from '../config/site.js';
 import { PageHero, Band } from '../components/ui.jsx';
-import { Pin, Arrow } from '../components/Icons.jsx';
+import UpdateCard from '../components/UpdateCard.jsx';
+import { Arrow } from '../components/Icons.jsx';
+import { sortedUpdates } from '../data/updates.js';
+
+const PAGE = 9;
 
 export default function Events() {
   useSeo('events');
-  const c = useC(); const e = c.eventsPage; const h = c.home;
+  const c = useC(); const lang = useLang(); const e = c.eventsPage;
+  const all = useMemo(() => sortedUpdates(), []);
+  const cats = useMemo(() => [...new Set(all.map((u) => u.category?.[lang] ?? u.category?.en).filter(Boolean))], [all, lang]);
+  const [cat, setCat] = useState(''); const [shown, setShown] = useState(PAGE);
+  const list = cat ? all.filter((u) => (u.category?.[lang] ?? u.category?.en) === cat) : all;
+  const pick = (k) => { setCat(k); setShown(PAGE); };
   return (
     <>
       <PageHero title={e.title} sub={e.sub} crumb={e.crumb} />
       <Band>
-        <div className="space-y-14">
-          {h.events.map((ev, i) => (
-            <article key={ev.title} className={`grid items-center gap-8 lg:grid-cols-2 lg:gap-14 ${i % 2 ? 'lg:[&>div:first-child]:order-2' : ''}`}>
-              <div className="relative">
-                <div className="absolute -inset-3 border border-gold-400/50" aria-hidden="true" />
-                <div className="relative aspect-[16/10] overflow-hidden bg-brand-900 shadow-lift"><img src={eventImages[i]} alt={ev.imageAlt} loading="lazy" className="h-full w-full object-cover" /></div>
-              </div>
-              <div>
-                <p className="eyebrow">{ev.category}</p>
-                <h2 className="mt-4 font-display text-2xl font-semibold leading-tight text-brand-900 sm:text-3xl">{ev.title}</h2>
-                <p className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-gold-700"><Pin className="h-4 w-4" />{ev.location}</p>
-                <p className="mt-4 text-lg leading-8 text-slate-600">{ev.description}</p>
-              </div>
-            </article>
-          ))}
+        {cats.length > 1 && (
+          <div className="mb-8 flex flex-wrap gap-2" role="tablist" aria-label={e.title}>
+            {['', ...cats].map((k) => (
+              <button key={k || 'all'} type="button" role="tab" aria-selected={cat === k} onClick={() => pick(k)}
+                className={`rounded-full border-2 px-5 py-2 text-sm font-bold transition ${cat === k ? 'border-brand-700 bg-brand-700 text-white' : 'border-brand-200 bg-white text-brand-800 hover:bg-brand-50'}`}>{k || e.all}</button>
+            ))}
+          </div>
+        )}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{list.slice(0, shown).map((u) => <UpdateCard key={u.id} u={u} />)}</div>
+        <div className="mt-10 flex flex-col items-center gap-3">
+          {shown < list.length && <button type="button" onClick={() => setShown((n) => n + PAGE)} className="btn-outline">{e.more}</button>}
+          <p className="text-sm text-slate-500">{e.count.replace('{n}', list.length)}</p>
         </div>
       </Band>
       <section className="relative isolate overflow-hidden bg-brand-900 py-14 text-white">
