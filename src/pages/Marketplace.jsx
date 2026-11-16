@@ -7,6 +7,7 @@ import { PageHero, Band } from '../components/ui.jsx';
 import { ProductCard, EmptyState } from '../components/market.jsx';
 import { Icon, Search, Arrow } from '../components/Icons.jsx';
 import { CATEGORIES, STATES, visibleProducts, supplierById } from '../data/marketplace.js';
+import AnimatedGrid from '../components/motion/AnimatedGrid.jsx';
 
 export default function Marketplace() {
   useSeo('marketplace');
@@ -75,7 +76,7 @@ export default function Marketplace() {
             <button type="button" className="btn-outline" onClick={() => setParams({}, { replace: true })}>{m.clear}</button>
           </EmptyState>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{list.map((p) => <ProductCard key={p.id} p={p} />)}</div>
+          <AnimatedGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" items={list} getKey={(p) => p.id} render={(p) => <ProductCard p={p} />} />
         )}
 
         <p className="mt-10 text-sm text-slate-500">{m.modelNote}</p>

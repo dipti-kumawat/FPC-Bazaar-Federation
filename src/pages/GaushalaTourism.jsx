@@ -4,6 +4,7 @@ import { images } from '../config/site.js';
 import { PageHero, Band, SectionTitle, Steps, Checklist, Verify } from '../components/ui.jsx';
 import VideoCard from '../components/VideoCard.jsx';
 import { Icon, Arrow } from '../components/Icons.jsx';
+import Img from '../components/Img.jsx';
 
 export default function GaushalaTourism() {
   useSeo('gaushalaTourism');
@@ -32,7 +33,7 @@ export default function GaushalaTourism() {
           <figure>
             <div className="relative">
               <div className="absolute -bottom-4 -right-4 h-full w-full border border-gold-400/60" aria-hidden="true" />
-              <div className="relative overflow-hidden bg-brand-900"><img src={images.gaushalaTourism} alt={g.illus} loading="lazy" className="aspect-[4/3] w-full object-cover" /></div>
+              <div className="relative overflow-hidden bg-brand-900"><Img src={images.gaushalaTourism} alt={g.illus} sizes="(min-width: 1024px) 45vw, 100vw" wrapClassName="aspect-[4/3] w-full" /></div>
             </div>
             <figcaption className="mt-7 text-xs text-slate-500">{g.illus}</figcaption>
           </figure>

@@ -14,6 +14,20 @@ A bilingual (English / Hindi) React frontend for the FPC Bazaar Federation websi
 - Sample listings in `src/data/marketplace.js` (hidden when `VITE_DRAFT_MODE=false`). See `docs/BUSINESS_CONNECT_FORMS.md` for the four new form keys the backend must support.
 - New dependencies: `@fontsource/fraunces`, `@fontsource/noto-serif-devanagari`. Run `npm install` after pulling.
 
+## Images (fast loading)
+Photos are served as small WebP files sized for each screen, with a blurred preview while they load.
+After adding or replacing any photo in `public/images` or `src/assets/gallery`, run:
+```bash
+npm run images
+```
+This writes `public/images/opt/` and `src/data/image-manifest.json` (commit both). Originals are never changed.
+A photo that was not processed still shows, just without the speed-up.
+
+## Animations
+Framer Motion (`src/components/motion/`): hero photo slideshow, horizontal initiatives rail, animated filter grids,
+mobile menu drawer, gallery lightbox and admin detail drawer. Scroll reveals and counters are CSS (`Reveal`, `CountUp`).
+Everything respects the visitor's "reduce motion" setting.
+
 ## Technology
 - React + Vite
 - Tailwind CSS

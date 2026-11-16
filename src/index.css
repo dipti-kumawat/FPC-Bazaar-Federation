@@ -67,7 +67,8 @@
   .anim-rise { opacity: 0; animation: rise .9s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d, 0s); }
   .anim-pop { opacity: 0; animation: pop 1s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d, 0s); }
   .anim-float { animation: floaty 6s ease-in-out infinite; animation-delay: var(--d, 0s); }
-  .anim-page { animation: pagein .55s cubic-bezier(.2,.7,.2,1) both; }
+  /* 'backwards' (not 'both'): no transform is left on <main> afterwards, so fixed overlays (lightbox, drawers) stay pinned to the screen */
+  .anim-page { animation: pagein .55s cubic-bezier(.2,.7,.2,1) backwards; }
 
   /* scroll reveal (JS, via the Reveal component) */
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .85s cubic-bezier(.2,.7,.2,1), transform .85s cubic-bezier(.2,.7,.2,1); }
@@ -104,6 +105,10 @@
     :not(.reveal) > .card { animation: card-in linear backwards; animation-timeline: view(); animation-range: entry 0% entry 38%; }
   }
 }
+
+/* hide the scrollbar of horizontal card rails (they have their own arrows + progress bar) */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
 
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .marquee-track { animation: marquee 40s linear infinite; }
