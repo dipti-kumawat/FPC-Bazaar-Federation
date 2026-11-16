@@ -14,6 +14,7 @@ import '@fontsource/noto-serif-devanagari/600.css';
 import '@fontsource/noto-serif-devanagari/700.css';
 import './index.css';
 import './i18n/index.js';
+import { MotionConfig } from 'framer-motion';
 import App from './App.jsx';
 
-ReactDOM.createRoot(document.getElementById('root')).render(<React.StrictMode><App /></React.StrictMode>);
+ReactDOM.createRoot(document.getElementById('root')).render(<React.StrictMode><MotionConfig reducedMotion="user"><App /></MotionConfig></React.StrictMode>);

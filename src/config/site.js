@@ -1,7 +1,7 @@
 // Central place for contact details, verification flags and image slots.
 export const site = {
   name: 'FPC Bazaar Federation',
-  cin: 'U01100RJ2022NPL078043',
+  cin: 'U85197RJ2022NPL078943',
   phones: [
     { display: '8890656575', tel: '+918890656575' },
     // The client's documents show the second number differing by one digit. Confirm before launch.

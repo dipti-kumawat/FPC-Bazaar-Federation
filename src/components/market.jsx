@@ -4,6 +4,7 @@ import { draftMode } from '../config/site.js';
 import { STATES, categoryById, supplierById, productsOf, initials } from '../data/marketplace.js';
 import { Icon, Arrow, Pin, Check } from './Icons.jsx';
 import Reveal from './Reveal.jsx';
+import Img from './Img.jsx';
 
 const ART = {
   grains: ['from-brand-800 to-brand-600', 'text-gold-400'],
@@ -37,7 +38,7 @@ export function ProductImage({ p, className = '', iconClass, alt = '' }) {
   if (failed) return <CategoryArt cat={p.cat} className={className} iconClass={iconClass} />;
   return (
     <div className={`relative overflow-hidden bg-brand-900 ${className}`}>
-      <img src={`/images/products/${p.id}.jpg`} alt={alt} loading="lazy" onError={() => setFailed(true)} className="absolute inset-0 h-full w-full object-cover" />
+      <Img src={`/images/products/${p.id}.jpg`} alt={alt} sizes="(min-width: 1024px) 25vw, 50vw" onError={() => setFailed(true)} wrapClassName="absolute inset-0 h-full w-full" />
     </div>
   );
 }

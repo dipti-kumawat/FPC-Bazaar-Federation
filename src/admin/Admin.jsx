@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Routes, Route, NavLink, Navigate, Link, useNavigate } from 'react-router-dom';
 import { draftMode } from '../config/site.js';
 import { STATES, CATEGORIES } from '../data/marketplace.js';
@@ -115,8 +116,10 @@ function Detail({ r, s, onClose }) {
   const act = async (st) => { setBusy(true); setErr(''); try { await decide(r.id, st, reason); onClose(); } catch (e) { setErr(e.response?.data?.message || e.message); } setBusy(false); };
   useEffect(() => { const k = (e) => e.key === 'Escape' && onClose(); document.addEventListener('keydown', k); return () => document.removeEventListener('keydown', k); }, [onClose]);
   return (
-    <div role="dialog" aria-modal="true" aria-label={r.name} className="fixed inset-0 z-50 flex justify-end bg-black/50" onClick={onClose}>
-      <div className="h-full w-full max-w-lg overflow-y-auto bg-white p-6 shadow-lift" onClick={(e) => e.stopPropagation()}>
+    <motion.div role="dialog" aria-modal="true" aria-label={r.name} className="fixed inset-0 z-50 flex justify-end bg-black/50" onClick={onClose}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+      <motion.div className="h-full w-full max-w-lg overflow-y-auto bg-white p-6 shadow-lift" onClick={(e) => e.stopPropagation()}
+        initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}>
         <div className="flex items-start justify-between gap-3"><div><p className="eyebrow">{KIND_LABEL[r.kind]}</p><h2 className="mt-1 font-display text-2xl font-semibold text-brand-900">{r.name}</h2></div><button type="button" onClick={onClose} aria-label="Close" className="text-3xl leading-none text-slate-500">×</button></div>
         <div className="mt-3"><Badge status={r.status} /> <span className="ml-2 text-xs text-slate-500">Applied {fmt(r.createdAt)}</span></div>
         {r.status !== 'pending' && <p className="mt-3 text-sm text-slate-600">Decision by {r.decidedBy || '-'} on {fmt(r.decidedAt)}{r.reason && <><br /><b className="text-red-700">Reason:</b> {r.reason}</>}</p>}
@@ -140,8 +143,8 @@ function Detail({ r, s, onClose }) {
           </div>
         )}
         {!can && <p className="mt-6 rounded bg-slate-50 p-3 text-xs text-slate-600">Your role can view but not verify or reject.</p>}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -171,7 +174,7 @@ function Registrations({ s }) {
               {!rows.length && <tr><td colSpan="6" className="p-8 text-center text-slate-500">No registrations found.</td></tr>}</tbody></table>
         </div>
       )}
-      {open && <Detail r={open} s={s} onClose={close} />}
+      <AnimatePresence>{open && <Detail key={open.id} r={open} s={s} onClose={close} />}</AnimatePresence>
     </>
   );
 }
@@ -195,7 +198,7 @@ function Rejected({ s }) {
             <td><button type="button" onClick={() => setOpenId(r.id)} className="font-semibold text-brand-700 underline">View ({Object.values(r.files || {}).filter(Boolean).length})</button></td></tr>)}
             {rows && !list.length && <tr><td colSpan="5" className="p-8 text-center text-slate-500">Nothing rejected in this list.</td></tr>}</tbody></table>
       </div>
-      {open && <Detail r={open} s={s} onClose={() => setOpenId('')} />}
+      <AnimatePresence>{open && <Detail key={open.id} r={open} s={s} onClose={() => setOpenId('')} />}</AnimatePresence>
     </>
   );
 }
