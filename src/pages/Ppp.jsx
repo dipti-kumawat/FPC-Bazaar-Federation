@@ -1,6 +1,7 @@
 import { useC, LLink } from '../i18n/hooks.jsx';
 import { useSeo } from '../lib/useSeo.js';
 import { PageHero, Verify, Checklist, Band, PhotoSlot } from '../components/ui.jsx';
+import { draftMode, flags } from '../config/site.js';
 
 export default function Ppp() {
   useSeo('ppp');
@@ -8,7 +9,8 @@ export default function Ppp() {
   return (
     <>
       <PageHero title={p.title} sub={p.sub} crumb={p.crumb} kind="polyhouse" slot="ppp" />
-      <Band>
+      {/* At launch, this whole block is hidden until the claim is verified, so no empty band is left behind. */}
+      {(flags.noInvestBuyback || draftMode) && <Band>
         <Verify flag="noInvestBuyback">
           <h2 className="text-2xl font-extrabold text-brand-900 sm:text-3xl">{p.p1.h}</h2>
           <p className="mt-2 max-w-3xl text-lg text-slate-700">{p.p1.t}</p>
@@ -21,7 +23,7 @@ export default function Ppp() {
             </div>
           </div>
         </Verify>
-      </Band>
+      </Band>}
       <Band className="bg-white">
         <div className="grid gap-10 md:grid-cols-2">
           <div><h2 className="mb-4 text-2xl font-extrabold text-brand-900">{p.p2.h}</h2><Checklist items={p.p2.items} /></div>
