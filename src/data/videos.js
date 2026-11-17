@@ -20,10 +20,22 @@ export const VIDEOS = [
     desc: { en: 'Farmers, women and cooperatives coming together for chemical-free, organic farming.', hi: 'रसायन-मुक्त जैविक खेती के लिए साथ आते किसान, महिलाएँ और सहकारी संस्थाएँ।' },
   },
   {
+    id: 'desi-cow-ghee', where: ['gaushala'],
+    src: '/videos/desi-cow-ghee.mp4', poster: '/videos/desi-cow-ghee.jpg',
+    title: { en: 'Desi cow ghee', hi: 'देसी गाय का घी' },
+    desc: { en: 'The traditional method of making ghee.', hi: 'घी बनाने की पारंपरिक विधि।' },
+  },
+  {
     id: 'gaushala-breeding-centre', where: ['gaushala'],
     src: '/videos/gaushala-breeding-centre.mp4', poster: '/videos/gaushala-breeding-centre.jpg',
     title: { en: 'Bovine Breeding Centre Visit', hi: 'बोवाइन ब्रीडिंग सेंटर भ्रमण' },
     desc: { en: 'A Federation member at the Amul Dairy bovine breeding centre, Mogar, learning from a modern cattle-care model.', hi: 'अमूल डेयरी के मोगर स्थित बोवाइन ब्रीडिंग सेंटर में महासंघ के सदस्य, आधुनिक पशुपालन मॉडल को समझते हुए।' },
+  },
+  {
+    id: 'gau-rashtra-yatra-solapur', where: ['gaushala'],
+    src: '/videos/gau-rashtra-yatra-solapur.mp4', poster: '/videos/gau-rashtra-yatra-solapur.jpg',
+    title: { en: 'Gau Rashtra Yatra, Solapur', hi: 'गौ राष्ट्र यात्रा, सोलापुर' },
+    desc: { en: 'Gau Rashtra Yatra at a Gaushala in Solapur, Maharashtra: meeting caretakers and visiting the cattle.', hi: 'सोलापुर, महाराष्ट्र की एक गौशाला में गौ राष्ट्र यात्रा: गौ सेवकों से भेंट और गौवंश का भ्रमण।' },
   },
   {
     id: 'abc-agro-business-center', where: ['projects'], wide: true,
