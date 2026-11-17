@@ -1,12 +1,13 @@
-import { useC, LLink } from '../i18n/hooks.jsx';
+import { useC, useLang, LLink } from '../i18n/hooks.jsx';
+import { videosFor } from '../data/videos.js';
 import { useSeo } from '../lib/useSeo.js';
 import { images } from '../config/site.js';
 import { PageHero, Band, SectionTitle, Steps, Checklist, Verify } from '../components/ui.jsx';
 import VideoCard from '../components/VideoCard.jsx';
 import { Icon, Arrow } from '../components/Icons.jsx';
-import Img from '../components/Img.jsx';
 
 export default function GaushalaTourism() {
+  const lang = useLang();
   useSeo('gaushalaTourism');
   const c = useC(); const g = c.gaushalaTourism;
   const featIcons = ['connect', 'inputs', 'processed'];
@@ -33,7 +34,7 @@ export default function GaushalaTourism() {
           <figure>
             <div className="relative">
               <div className="absolute -bottom-4 -right-4 h-full w-full border border-gold-400/60" aria-hidden="true" />
-              <div className="relative overflow-hidden bg-brand-900"><Img src={images.gaushalaTourism} alt={g.illus} sizes="(min-width: 1024px) 45vw, 100vw" wrapClassName="aspect-[4/3] w-full" /></div>
+              <div className="relative overflow-hidden bg-brand-900"><img src={images.gaushalaTourism} alt={g.illus} loading="lazy" className="aspect-[4/3] w-full object-cover" /></div>
             </div>
             <figcaption className="mt-7 text-xs text-slate-500">{g.illus}</figcaption>
           </figure>
@@ -52,6 +53,13 @@ export default function GaushalaTourism() {
               </div>
             ))}
           </div>
+        </div>
+      </Band>
+
+      <Band className="bg-brand-50">
+        <SectionTitle eyebrow={c.homeBiz.videos.eyebrow} sub={lang === 'hi' ? 'गौशालाओं और ब्रीडिंग सेंटरों के छोटे वीडियो: गौ आधारित आजीविका व्यवहार में कैसे काम करती है।' : 'Short videos from Gaushalas and breeding centres: how cow-based livelihoods work in practice.'}>{lang === 'hi' ? 'ज़मीन पर देखिए' : 'See it on the ground'}</SectionTitle>
+        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {videosFor('gaushala').map((v) => <VideoCard key={v.id} src={v.src} poster={v.poster} title={v.title[lang]} desc={v.desc[lang]} />)}
         </div>
       </Band>
 
@@ -122,13 +130,6 @@ export default function GaushalaTourism() {
             <Table head={[g.category, g.jobsCol]} rows={g.jobs} />
             <p className="mt-3 text-xs text-slate-500">{g.jobsNote}</p>
           </Verify>
-        </div>
-      </Band>
-
-      <Band>
-        <div className="grid items-center gap-10 md:grid-cols-[.8fr_1.2fr]">
-          <div className="mx-auto w-full max-w-xs"><VideoCard src="/videos/desi-cow-ghee.mp4" poster="/videos/desi-cow-ghee.jpg" title={c.homeBiz.videos.items[1].t} desc={c.homeBiz.videos.items[1].d} /></div>
-          <div><p className="eyebrow mb-4">{c.homeBiz.videos.eyebrow}</p><h2 className="font-display text-3xl font-semibold leading-tight text-brand-900">{g.videoTitle}</h2><span className="gold-rule mt-4" /><p className="mt-5 text-lg leading-8 text-slate-600">{g.videoSub}</p></div>
         </div>
       </Band>
 
