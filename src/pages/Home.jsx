@@ -8,28 +8,19 @@ import { SectionTitle, ProjectCard, PhotoSlot, Band, Verify } from '../component
 import { ProductCard, SupplierCard } from '../components/market.jsx';
 import { Icon, Arrow, Check, Pin } from '../components/Icons.jsx';
 import VideoCard from '../components/VideoCard.jsx';
+import { videosFor } from '../data/videos.js';
 import Marquee from '../components/Marquee.jsx';
 import Reveal from '../components/Reveal.jsx';
-import Img from '../components/Img.jsx';
-import HeroSlideshow from '../components/motion/HeroSlideshow.jsx';
-import DragScroller from '../components/motion/DragScroller.jsx';
 import CountUp from '../components/CountUp.jsx';
 import { CATEGORIES, SUPPLIER_TYPES, visibleProducts, visibleSuppliers } from '../data/marketplace.js';
-import { useT } from '../i18n/hooks.jsx';
+import { useT, useLang } from '../i18n/hooks.jsx';
 
-// Hero slideshow — real federation photographs only.
-const HERO_SLIDES = [
-  { src: '/images/gaushala-hero.jpg', alt: '' },
-  { src: '/images/events/gauchar-land-initiative.jpg', alt: 'Gauchar land initiative' },
-  { src: '/images/events/vellore-gaushala-programme.jpg', alt: 'Gaushala programme' },
-  { src: '/images/events/abcd-mou-gujarat.jpg', alt: 'Federation MoU programme in Gujarat' },
-  { src: '/images/2.jpeg', alt: 'Federation programme' },
-];
 const ROLE_IMG = { farmer: '/images/gaushala-hero.jpg', fpo: '/images/events/abcd-mou-gujarat.jpg', manufacturer: '/images/1.jpeg', supplier: '/images/3.jpeg' };
 const ROLE_POS = { farmer: 'center', fpo: 'center', manufacturer: 'center', supplier: 'center 30%' };
 const TICKER_ICONS = { gaushala: 'inputs', gaushalaTourism: 'dairy', cluster: 'manufacturer', biogas: 'equipment', eauto: 'supplier', amul: 'processed', enzy: 'feed', ppp: 'connect' };
 
 export default function Home() {
+  const lang = useLang();
   useSeo('home'); useRegistryTick();
   const c = useC(); const t = useT();
   const h = c.home; const b = c.homeBiz;
@@ -60,9 +51,9 @@ export default function Home() {
           </div>
           <div style={{ '--d': '.25s' }} className="anim-pop relative mx-auto w-full max-w-md lg:ml-auto lg:mr-0">
             <div className="absolute -inset-3 arch border border-gold-400/40" aria-hidden="true" />
-            <div className="arch relative aspect-[4/5] overflow-hidden bg-brand-900 shadow-lift"><HeroSlideshow label={h.hero.imageAlt} slides={HERO_SLIDES.map((s, k) => ({ ...s, alt: k === 0 ? h.hero.imageAlt : s.alt }))} /></div>
+            <div className="arch relative aspect-[4/5] overflow-hidden bg-brand-900 shadow-lift"><PhotoSlot slot="gaushalaHero" kind="fert" alt={h.hero.imageAlt} /></div>
             <div style={{ '--d': '1s' }} className="anim-float absolute -bottom-7 -left-4 w-48 overflow-hidden rounded-sm border-4 border-brand-950 shadow-lift sm:-left-10 sm:w-60">
-              <Img src="/images/fpc-stall.jpg" alt="FPC Bazar Federation stall at an agriculture expo" sizes="240px" preferred={480} wrapClassName="aspect-[16/10] w-full" />
+              <img src="/images/fpc-stall.jpg" alt="FPC Bazar Federation stall at an agriculture expo" loading="lazy" className="aspect-[16/10] w-full object-cover" />
             </div>
             <div style={{ '--d': '2.2s' }} className="anim-float absolute -bottom-6 -right-2 max-w-[15rem] border-l-[3px] border-gold-500 bg-paper p-4 text-brand-950 shadow-lift sm:-right-6">
               <p className="text-[10px] font-bold uppercase tracking-[.2em] text-gold-700">{b.hero.statLabel}</p>
@@ -94,7 +85,7 @@ export default function Home() {
             <Reveal key={k} delay={i * 110} className="relative">
               <LLink to={`/business-connect?form=connect&role=${k}`} className="card card-hover group flex h-full flex-col overflow-hidden">
                 <div className="relative aspect-[16/10] overflow-hidden bg-brand-900">
-                  <Img src={ROLE_IMG[k]} alt="" sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw" style={{ objectPosition: ROLE_POS[k] }} wrapClassName="h-full w-full" className="transition duration-700 group-hover:scale-105" />
+                  <img src={ROLE_IMG[k]} alt="" loading="lazy" style={{ objectPosition: ROLE_POS[k] }} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-950/75 via-brand-950/10 to-transparent" aria-hidden="true" />
                   <span className="absolute left-5 top-3 font-display text-4xl font-semibold text-white [text-shadow:0_1px_8px_rgba(0,0,0,.65)]">0{i + 1}</span>
                 </div>
@@ -241,7 +232,7 @@ export default function Home() {
       {/* INITIATIVES */}
       <Band>
         <SectionTitle sub={h.projectsSub} eyebrow={c.nav.initiatives}>{h.projects}</SectionTitle>
-        <DragScroller prevLabel={c.common.prev} nextLabel={c.common.next}>{items.map((item) => <ProjectCard key={item.key} item={item} />)}</DragScroller>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{items.map((item) => <ProjectCard key={item.key} item={item} />)}</div>
       </Band>
 
       {/* EVENTS */}
@@ -264,9 +255,10 @@ export default function Home() {
       {/* VIDEOS */}
       <Band className="bg-white">
         <SectionTitle eyebrow={b.videos.eyebrow} sub={b.videos.sub}>{b.videos.title}</SectionTitle>
-        <div className="mx-auto grid max-w-3xl gap-8 sm:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <VideoCard src="/videos/mineral-mixture.mp4" poster="/videos/mineral-mixture.jpg" title={b.videos.items[0].t} desc={b.videos.items[0].d} />
           <VideoCard src="/videos/desi-cow-ghee.mp4" poster="/videos/desi-cow-ghee.jpg" title={b.videos.items[1].t} desc={b.videos.items[1].d} />
+          {videosFor('home').map((v) => <VideoCard key={v.id} src={v.src} poster={v.poster} title={v.title[lang]} desc={v.desc[lang]} />)}
         </div>
       </Band>
 

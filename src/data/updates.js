@@ -7,7 +7,7 @@
 //   category / location / title / description   English (en) and Hindi (hi)
 export const UPDATES = [
   {
-    id: 'bvg-chairman-pune-gaushala-approval', date: '2026-11-16', image: '/images/events/bvg-chairman-pune-meeting.jpg',
+    id: 'bvg-chairman-pune-gaushala-approval', date: '2026-11-16', image: '/images/events/bvg-chairman-pune-meeting.jpeg',
     imageAlt: { en: 'Meeting with the BVG chairman in Pune', hi: 'पुणे में बीवीजी के चेयरमैन के साथ बैठक' },
     category: { en: 'Gaushala initiative', hi: 'गौशाला पहल' },
     location: { en: 'Pune, Maharashtra', hi: 'पुणे, महाराष्ट्र' },
@@ -15,7 +15,7 @@ export const UPDATES = [
     description: { en: 'A meeting was held today in Pune with Mr. Gaikwad, Chairman of BVG. The Gaushala project received approval in the meeting.', hi: 'आज पुणे में बीवीजी के चेयरमैन श्री गायकवाड़ जी के साथ बैठक हुई। बैठक में गौशाला परियोजना पर स्वीकृति बनी।' },
   },
   {
-    id: 'sardar-patel-multi-state-women-loan', date: '2026-11-16', image: '/images/events/sardar-patel-women-cooperative.jpg',
+    id: 'sardar-patel-multi-state-women-loan', date: '2026-11-16', image: '/images/events/sardar-patel-women-cooperative.jpeg',
     imageAlt: { en: 'Federation team members at a meeting', hi: 'बैठक में फेडरेशन की टीम के सदस्य' },
     category: { en: 'Women empowerment', hi: 'महिला सशक्तिकरण' },
     location: { en: '', hi: '' },
