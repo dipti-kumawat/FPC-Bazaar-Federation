@@ -5,7 +5,9 @@ import { draftMode } from '../config/site.js';
 import { STATES, CATEGORIES } from '../data/marketplace.js';
 import Logo from '../components/Logo.jsx';
 import { Check } from '../components/Icons.jsx';
-import { API_MODE, ROLES, KINDS, STATUSES, DEMO_USERS, getSession, login, logout, listRegistrations, decide, fileUrl, resetDemo, useRegistryTick } from '../services/registry.js';
+import { API_MODE, ROLES, KINDS, STATUSES, DEMO_USERS, getSession, login, logout, listRegistrations, decide, downloadDocument, resetDemo, useRegistryTick, api, refreshSession, forgotPassword, downloadExport } from '../services/registry.js';
+
+import { Users, Enquiries, Notifications, Audit, ChangePassword, message } from './Management.jsx';
 
 // Admin panel. English only (staff tool). Not indexed. Roles and rules: src/services/registry.js and docs/ADMIN_API.md
 
@@ -26,7 +28,7 @@ function useRows(filters) {
   const tick = useRegistryTick();
   const [rows, setRows] = useState(null); const [err, setErr] = useState('');
   const key = JSON.stringify(filters);
-  useEffect(() => { let on = true; listRegistrations(filters).then((r) => on && setRows(r)).catch((e) => on && setErr(e.message || 'Could not load')); return () => { on = false; }; }, [key, tick]); // eslint-disable-line
+  useEffect(() => { let on = true; setErr(''); listRegistrations(filters).then((r) => on && setRows(r)).catch((e) => on && setErr(e.message || 'Could not load')); return () => { on = false; }; }, [key, tick]); // eslint-disable-line
   return { rows, err };
 }
 
@@ -34,21 +36,24 @@ function useRows(filters) {
 function Login({ onDone }) {
   const [u, setU] = useState(''); const [p, setP] = useState(''); const [err, setErr] = useState(''); const [busy, setBusy] = useState(false);
   const demoOk = draftMode && !API_MODE;
-  async function go(e) { e.preventDefault(); setBusy(true); setErr(''); try { await login(u, p); onDone(); } catch (x) { setErr(x.response?.data?.message || x.message || 'Login failed'); } setBusy(false); }
+  const [forgot, setForgot] = useState(false), [notice, setNotice] = useState('');
+  async function go(e) { e.preventDefault(); setBusy(true); setErr(''); try { if (forgot) { const r = await forgotPassword(u); setNotice(r.message); } else { await login(u, p); onDone(); } } catch (x) { setErr(x.response?.data?.message || x.message || 'Login failed'); } setBusy(false); }
   return (
     <div className="grid min-h-screen place-items-center bg-brand-950 bg-lattice p-4">
       <div className="w-full max-w-md border-t-4 border-gold-500 bg-paper p-7 shadow-lift">
         <Link to="/en" aria-label="Back to site"><Logo /></Link>
-        <h1 className="mt-6 font-display text-2xl font-semibold text-brand-900">Admin sign in</h1>
+        <h1 className="mt-6 font-display text-2xl font-semibold text-brand-900">{forgot ? 'Reset your password' : 'Admin sign in'}</h1>
         <p className="mt-1 text-sm text-slate-600">Admin &gt; State Head &gt; Project Head &gt; Vendor &gt; FPO</p>
         {!API_MODE && !draftMode ? (
           <p className="mt-6 border-l-4 border-red-500 bg-red-50 p-4 text-sm text-red-800">The admin panel needs the backend. Set VITE_API_URL and deploy the admin API (docs/ADMIN_API.md).</p>
         ) : (
           <form onSubmit={go} className="mt-6 space-y-4">
             <label className="block text-sm font-semibold text-slate-800">Username<input className="field mt-1" value={u} onChange={(e) => setU(e.target.value)} autoComplete="username" required /></label>
-            <label className="block text-sm font-semibold text-slate-800">Password<input type="password" className="field mt-1" value={p} onChange={(e) => setP(e.target.value)} autoComplete="current-password" required /></label>
+            {!forgot && <label className="block text-sm font-semibold text-slate-800">Password<input type="password" className="field mt-1" value={p} onChange={(e) => setP(e.target.value)} autoComplete="current-password" required /></label>}
             {err && <p role="alert" className="rounded bg-red-50 p-3 text-sm font-medium text-red-700">{err}</p>}
-            <button className="btn-primary w-full disabled:opacity-60" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+            <button className="btn-primary w-full disabled:opacity-60" disabled={busy}>{busy ? 'Please wait…' : forgot ? 'Send reset link' : 'Sign in'}</button>
+            {notice && <p role="status" className="text-sm text-green-800">{notice}</p>}
+            {API_MODE && <button type="button" className="text-sm underline" onClick={() => { setForgot(!forgot); setNotice(''); setErr(''); }}>{forgot ? 'Back to sign in' : 'Forgot password?'}</button>}
           </form>
         )}
         {demoOk && (
@@ -77,6 +82,9 @@ function Shell({ s, children }) {
         <nav className="container-x -mb-px flex gap-1 overflow-x-auto" aria-label="Admin">
           <NavLink end to="/admin" className={link}>Dashboard</NavLink>
           <NavLink to="/admin/registrations" className={link}>Registrations</NavLink>
+          {API_MODE && ['admin', 'state_head'].includes(s.role) && <NavLink to="/admin/users" className={link}>Users</NavLink>}
+          {API_MODE && s.role === 'admin' && <><NavLink to="/admin/enquiries" className={link}>Enquiries</NavLink><NavLink to="/admin/notifications" className={link}>Email status</NavLink><NavLink to="/admin/audit" className={link}>Activity log</NavLink></>}
+          {API_MODE && <NavLink to="/admin/password" className={link}>Change password</NavLink>}
           {role.rejected && <NavLink to="/admin/rejected" className={link}>Rejection dashboard</NavLink>}
         </nav>
       </header>
@@ -88,20 +96,26 @@ function Shell({ s, children }) {
 /* ---------- Dashboard ---------- */
 function Dashboard({ s }) {
   const { rows, err } = useRows({});
+  const tick = useRegistryTick();
+  const [stats, setStats] = useState(null), [statsError, setStatsError] = useState('');
+  useEffect(() => { if (!API_MODE) return; let active = true; api().get('/api/admin/stats').then(r => { if (active) setStats(r.data); }).catch(e => { if (active) setStatsError(message(e)); }); return () => { active = false; }; }, [tick]);
   if (err) return <p className="text-red-700">{err}</p>;
   if (!rows) return <p>Loading…</p>;
-  const count = (f) => rows.filter(f).length;
+  const countStatus = st => stats ? Object.values(stats.registrations).reduce((n, counts) => n + (counts[st] || 0), 0) : rows.filter(r => r.status === st).length;
+  const countKind = (kind, st) => stats ? stats.registrations[kind]?.[st] || 0 : rows.filter(r => r.kind === kind && r.status === st).length;
   const cards = [['pending', 'Pending review', 'border-amber-400'], ['verified', 'Verified', 'border-emerald-500'], ['rejected', 'Rejected', 'border-red-500']];
   const pending = rows.filter((r) => r.status === 'pending').slice(0, 6);
   return (
     <>
       <h1 className="font-display text-3xl font-semibold text-brand-900">Dashboard</h1>
+      {statsError && <p role="alert" className="text-red-700">{statsError}</p>}
+      {stats && s.role === 'admin' && <Link to="/admin/enquiries" className="mt-3 inline-block underline">New enquiries: {stats.enquiriesNew || 0}</Link>}
       <p className="mt-1 text-slate-600">{ROLES[s.role].scope === 'all' ? 'All registrations' : ROLES[s.role].scope === 'state' ? `Registrations in ${stateName(s.state)}` : 'Your registration'}</p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">{cards.map(([k, l, b]) => <Link key={k} to={`/admin/registrations?status=${k}`} className={`border-t-4 bg-white p-5 shadow-card ${b}`}><p className="text-4xl font-semibold text-brand-900">{count((r) => r.status === k)}</p><p className="mt-1 text-sm font-semibold text-slate-600">{l}</p></Link>)}</div>
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">{cards.map(([k, l, b]) => <Link key={k} to={`/admin/registrations?status=${k}`} className={`border-t-4 bg-white p-5 shadow-card ${b}`}><p className="text-4xl font-semibold text-brand-900">{countStatus(k)}</p><p className="mt-1 text-sm font-semibold text-slate-600">{l}</p></Link>)}</div>
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section className="bg-white p-5 shadow-card"><h2 className="mb-3 font-display text-lg font-semibold text-brand-900">By type</h2>
           <table className="w-full text-sm"><thead><tr className="text-left text-xs uppercase text-slate-500"><th className="py-1">Type</th><th>Pending</th><th>Verified</th><th>Rejected</th></tr></thead>
-            <tbody>{KINDS.map((k) => <tr key={k} className="border-t border-brand-100"><td className="py-2 font-semibold">{KIND_LABEL[k]}</td>{STATUSES.map((st) => <td key={st}>{count((r) => r.kind === k && r.status === st)}</td>)}</tr>)}</tbody></table></section>
+            <tbody>{KINDS.map((k) => <tr key={k} className="border-t border-brand-100"><td className="py-2 font-semibold">{KIND_LABEL[k]}</td>{STATUSES.map((st) => <td key={st}>{countKind(k, st)}</td>)}</tr>)}</tbody></table></section>
         <section className="bg-white p-5 shadow-card"><h2 className="mb-3 font-display text-lg font-semibold text-brand-900">Waiting for review</h2>
           {pending.length ? <ul className="divide-y divide-brand-100">{pending.map((r) => <li key={r.id} className="flex items-center justify-between gap-3 py-2.5 text-sm"><span><b>{r.name}</b><span className="block text-xs text-slate-500">{KIND_LABEL[r.kind]} · {stateName(r.state)} · {fmt(r.createdAt)}</span></span><Link to={`/admin/registrations?open=${r.id}`} className="font-semibold text-brand-700 underline">Review</Link></li>)}</ul> : <p className="text-sm text-slate-500">Nothing is waiting.</p>}</section>
       </div>
@@ -113,7 +127,8 @@ function Dashboard({ s }) {
 /* ---------- Record detail + decision ---------- */
 function Detail({ r, s, onClose }) {
   const can = ROLES[s.role].decide; const [reason, setReason] = useState(''); const [err, setErr] = useState(''); const [busy, setBusy] = useState(false);
-  const act = async (st) => { setBusy(true); setErr(''); try { await decide(r.id, st, reason); onClose(); } catch (e) { setErr(e.response?.data?.message || e.message); } setBusy(false); };
+  const [notice, setNotice] = useState(null);
+  const act = async (st) => { setBusy(true); setErr(''); try { const saved = await decide(r.id, st, reason); setNotice(saved?.account || { message: 'Decision saved.' }); } catch (e) { setErr(e.response?.data?.message || e.message); } setBusy(false); };
   useEffect(() => { const k = (e) => e.key === 'Escape' && onClose(); document.addEventListener('keydown', k); return () => document.removeEventListener('keydown', k); }, [onClose]);
   return (
     <motion.div role="dialog" aria-modal="true" aria-label={r.name} className="fixed inset-0 z-50 flex justify-end bg-black/50" onClick={onClose}
@@ -130,8 +145,9 @@ function Detail({ r, s, onClose }) {
         <h3 className="mt-5 text-sm font-bold uppercase tracking-wide text-slate-500">Documents</h3>
         {Object.entries(r.files || {}).filter(([, v]) => v).length ? <ul className="mt-2 space-y-2">{Object.entries(r.files).filter(([, v]) => v).map(([k, v]) => (
           <li key={k} className="flex items-center justify-between gap-3 rounded border border-brand-100 p-2.5 text-sm"><span><b>{FILE_LABEL[k] || k}</b><span className="block text-xs text-slate-500">{v}</span></span>
-            {API_MODE ? <a href={fileUrl(r.id, k)} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-700 underline">View</a> : <span className="text-xs text-slate-400">demo: name only</span>}</li>))}</ul> : <p className="mt-2 text-sm text-slate-500">No documents.</p>}
-        {can && (
+            {API_MODE ? <button type="button" onClick={() => downloadDocument(r.id, k, v).catch(e => setErr(message(e)))} className="font-semibold text-brand-700 underline">Download</button> : <span className="text-xs text-slate-400">demo: name only</span>}</li>))}</ul> : <p className="mt-2 text-sm text-slate-500">No documents.</p>}
+        {notice && <div role="status" className="mt-5 rounded bg-green-50 p-4 text-sm"><p>{notice.message}</p>{notice.tempPassword && <><p>Username: {notice.username}</p><p>One-time password: <code>{notice.tempPassword}</code></p><p>The user must change this at sign-in. Email delivery can be checked in Email status.</p></>}</div>}
+        {can && !notice && (
           <div className="mt-6 border-t border-brand-100 pt-5">
             <label className="block text-sm font-semibold text-slate-800">Reason (required to reject)<textarea rows={3} className="field mt-1" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. CIN does not match the certificate" /></label>
             {err && <p role="alert" className="mt-2 text-sm font-medium text-red-700">{err}</p>}
@@ -153,12 +169,15 @@ function Registrations({ s }) {
   const [sp, setSp] = useSearchParams2();
   const f = { kind: sp.get('kind') || '', status: sp.get('status') || '', state: sp.get('state') || '', q: sp.get('q') || '' };
   const { rows, err } = useRows(f);
+  const [exportError, setExportError] = useState('');
   const set = (k, v) => { const p = new URLSearchParams(sp); if (v) p.set(k, v); else p.delete(k); p.delete('open'); setSp(p); };
   const open = rows?.find((r) => r.id === sp.get('open'));
   const close = useCallback(() => { const p = new URLSearchParams(sp); p.delete('open'); setSp(p); }, [sp, setSp]);
   return (
     <>
       <h1 className="font-display text-3xl font-semibold text-brand-900">Registrations</h1>
+      {API_MODE && ROLES[s.role].scope !== 'own' && <button className="btn-outline mt-4" onClick={() => downloadExport('registrations', f).catch(e => setExportError(message(e)))}>Export Excel</button>}
+      {exportError && <p role="alert" className="text-red-700">{exportError}</p>}
       <div className="mt-5 grid gap-3 bg-white p-4 shadow-card sm:grid-cols-2 lg:grid-cols-4">
         <select aria-label="Type" className="field" value={f.kind} onChange={(e) => set('kind', e.target.value)}><option value="">All types</option>{KINDS.map((k) => <option key={k} value={k}>{KIND_LABEL[k]}</option>)}</select>
         <select aria-label="Status" className="field" value={f.status} onChange={(e) => set('status', e.target.value)}><option value="">All statuses</option>{STATUSES.map((k) => <option key={k} value={k}>{k}</option>)}</select>
@@ -209,13 +228,24 @@ const useSearchParams2 = () => { const [p, set] = useSearchParams(); return [p, 
 /* ---------- Entry ---------- */
 export default function Admin() {
   const tick = useRegistryTick(); const [, force] = useState(0);
+  const [checking, setChecking] = useState(API_MODE && !!getSession());
+  const [sessionError, setSessionError] = useState('');
+  useEffect(() => { if (!API_MODE || !getSession()) return; refreshSession().catch(e => { if (e.response?.status !== 401) setSessionError(message(e)); }).finally(() => setChecking(false)); }, []);
   useEffect(() => { document.title = 'Admin | FPC Bazaar Federation'; const m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex,nofollow'; document.head.appendChild(m); return () => m.remove(); }, []);
   const s = useMemo(() => getSession(), [tick]); // eslint-disable-line
+  if (checking) return <p className="p-8">Checking your session…</p>;
+  if (sessionError) return <div className="p-8"><p role="alert">{sessionError}</p><button className="underline" onClick={() => window.location.reload()}>Retry connection</button></div>;
+  if (s?.mustChangePassword) return <div className="min-h-screen bg-paper p-8"><ChangePassword forced /></div>;
   if (!s) return <Login onDone={() => force((n) => n + 1)} />;
   return (
     <Shell s={s}>
       <Routes>
         <Route index element={<Dashboard s={s} />} />
+        <Route path="users" element={<Users s={s} />} />
+        <Route path="enquiries" element={<Enquiries s={s} />} />
+        <Route path="notifications" element={<Notifications s={s} />} />
+        <Route path="audit" element={<Audit s={s} />} />
+        <Route path="password" element={<ChangePassword />} />
         <Route path="registrations" element={<Registrations s={s} />} />
         <Route path="rejected" element={<Rejected s={s} />} />
         <Route path="*" element={<Navigate to="/admin" replace />} />

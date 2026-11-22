@@ -49,7 +49,7 @@ export const FORMS = {
   fpo: [
     { n: 'fpoName', t: 'text', r: 1 }, { n: 'state', t: 'select', o: 'states', r: 1 }, { n: 'district', t: 'text', r: 1 },
     { n: 'cin', t: 'text', r: 1 }, { n: 'kisanCount', t: 'number', r: 1, min: 1, max: 1000000 }, { n: 'odop', t: 'text' },
-    { n: 'name', t: 'text', r: 1 }, { n: 'phone', t: 'tel', r: 1 }, { n: 'email', t: 'email' },
+    { n: 'name', t: 'text', r: 1 }, { n: 'phone', t: 'tel', r: 1 }, { n: 'email', t: 'email', r: 1 },
     { n: 'certificate', t: 'file', r: 1 }, { n: 'pan', t: 'file', r: 1 }, { n: 'boardResolution', t: 'file', r: 1 },
   ],
   vendor: [
@@ -59,6 +59,18 @@ export const FORMS = {
     { n: 'name', t: 'text', r: 1 }, { n: 'phone', t: 'tel', r: 1 }, { n: 'email', t: 'email', r: 1 },
     { n: 'about', t: 'textarea' }, { n: 'productList', t: 'textarea' }, { n: 'pastWork', t: 'textarea' },
     { n: 'logo', t: 'file' }, { n: 'certificate', t: 'file', r: 1 },
+  ],
+  ngo: [
+    { n: 'ngoName', t: 'text', r: 1 }, { n: 'ngoType', t: 'select', o: 'ngoType', r: 1 },
+    { n: 'regNumber', t: 'text', r: 1 }, { n: 'darpanId', t: 'text', r: 1 },
+    { n: 'state', t: 'select', o: 'states', r: 1 }, { n: 'district', t: 'text', r: 1 },
+    { n: 'yearEstablished', t: 'number', min: 1850, max: 2100 }, { n: 'focusArea', t: 'text', r: 1 },
+    { n: 'name', t: 'text', r: 1 }, { n: 'designation', t: 'text' },
+    { n: 'phone', t: 'tel', r: 1 }, { n: 'email', t: 'email', r: 1 }, { n: 'about', t: 'textarea' },
+    { n: 'certificate', t: 'file', r: 1 }, { n: 'pan', t: 'file', r: 1 },
+    { n: 'authorisation', t: 'file', r: 1 }, { n: 'idProof', t: 'file', r: 1 },
+    { n: 'cert12ab', t: 'file' }, { n: 'cert80g', t: 'file' }, { n: 'csr1', t: 'file' },
+    { n: 'fcra', t: 'file' }, { n: 'financials', t: 'file' },
   ],
   projecthead: [
     { n: 'name', t: 'text', r: 1 }, { n: 'phone', t: 'tel', r: 1 }, { n: 'email', t: 'email' },
@@ -74,4 +86,13 @@ export const FORMS = {
     { n: 'position', t: 'text', r: 1 }, { n: 'location', t: 'text', r: 1 }, { n: 'qualification', t: 'text' },
     { n: 'resume', t: 'file', r: 1 }, { n: 'message', t: 'textarea' },
   ],
+};
+export const EXTRA_LABELS = {
+  ngoName: ['Organisation name', 'संस्था का नाम'], ngoType: ['Organisation type', 'संस्था का प्रकार'],
+  regNumber: ['Registration number', 'पंजीकरण संख्या'], darpanId: ['NGO Darpan ID', 'NGO दर्पण आईडी'],
+  yearEstablished: ['Year established', 'स्थापना वर्ष'], focusArea: ['Focus area', 'कार्य क्षेत्र'],
+  designation: ['Designation', 'पद'], authorisation: ['Authorisation letter', 'प्राधिकरण पत्र'],
+  idProof: ['Representative ID proof', 'प्रतिनिधि का पहचान पत्र'], cert12ab: ['12AB certificate', '12AB प्रमाणपत्र'],
+  cert80g: ['80G certificate', '80G प्रमाणपत्र'], csr1: ['CSR-1 certificate', 'CSR-1 प्रमाणपत्र'],
+  fcra: ['FCRA certificate', 'FCRA प्रमाणपत्र'], financials: ['Financial statements', 'वित्तीय विवरण'],
 };

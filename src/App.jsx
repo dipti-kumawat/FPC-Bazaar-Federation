@@ -34,6 +34,7 @@ const SupplierDetail = lazy(() => import('./pages/SupplierDetail.jsx'));
 const Sourcing = lazy(() => import('./pages/Sourcing.jsx'));
 const BusinessConnect = lazy(() => import('./pages/BusinessConnect.jsx'));
 const Events = lazy(() => import('./pages/Events.jsx'));
+const NgoRegistration = lazy(() => import('./pages/NgoRegistration.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
 /** Shown for a moment while a page's code is downloaded (pages load on demand). */
@@ -107,6 +108,7 @@ export default function App() {
           <Route path="projects" element={<Projects />} />
           <Route path="states-map" element={<StatesMap />} />
           <Route path="fpo-registration" element={<FpoReg />} />
+          <Route path="ngo-registration" element={<NgoRegistration />} />
           <Route path="vendor-registration" element={<VendorReg />} />
           <Route path="gallery" element={<Gallery />} />
           <Route path="career" element={<Career />} />

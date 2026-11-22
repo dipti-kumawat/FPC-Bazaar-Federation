@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
-import { FORMS } from '../config/forms.js';
+import { FORMS, EXTRA_LABELS } from '../config/forms.js';
 import { submitForm } from '../services/formService.js';
 import { useC, useLang, LLink } from '../i18n/hooks.jsx';
 import { STATES, CATEGORIES } from '../data/marketplace.js';
 
 const MAX_MB = 5; const OK_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
 const optionsFor = (o, c, lang) => (o === 'states' ? Object.entries(STATES).map(([k, v]) => [k, v[lang] || v.en]).sort((a, b) => a[1].localeCompare(b[1]))
-  : o === 'productCats' ? CATEGORIES.map((x) => [x.id, x.name[lang] || x.name.en]) : c.options[o]);
+  : o === 'productCats' ? CATEGORIES.map((x) => [x.id, x.name[lang] || x.name.en]) : o === 'ngoType' ? [['trust', lang === 'hi' ? 'ट्रस्ट' : 'Trust'], ['society', lang === 'hi' ? 'सोसायटी' : 'Society'], ['section8', lang === 'hi' ? 'धारा 8 कंपनी' : 'Section 8 company']] : c.options[o]);
 
 const phoneRe = /^[6-9]\d{9}$/;
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,6 +41,8 @@ export default function FormEngine({ formKey, title, initial }) {
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState('idle');
   const [demo, setDemo] = useState(false);
+  const [serverMessage, setServerMessage] = useState('');
+  const [reference, setReference] = useState('');
   const opened = useRef(Date.now());
   const honey = useRef('');
 
@@ -58,21 +60,22 @@ export default function FormEngine({ formKey, title, initial }) {
       return;
     }
     // Spam protection: bots fill the hidden field or submit instantly. Pretend success, send nothing.
-    if (honey.current || Date.now() - opened.current < 2500) { setStatus('ok'); return; }
-    setStatus('sending');
+    if (honey.current) { setStatus('ok'); return; }
+    setServerMessage(''); setStatus('sending');
     try {
       const res = await submitForm(formKey, { ...values, lang, consent: true, page: window.location.pathname });
-      setDemo(!!res?.demo);
+      setDemo(!!res?.demo); setReference(res?.id || '');
       setStatus('ok');
-    } catch (err) { setStatus('error'); }
+    } catch (err) { setErrors(err.response?.data?.errors || {}); setServerMessage(err.response?.data?.message || fc.error); setStatus('error'); }
   }
 
   if (status === 'ok') {
     return (
       <div role="status" className="rounded-sm border border-brand-200 bg-brand-50 p-6">
         <p className="text-lg font-bold text-brand-800">{fc.success}</p>
+        {reference && <p className="mt-2 text-sm">Reference: {reference}</p>}
         {demo && <p className="mt-2 text-sm text-amber-800">{fc.demo}</p>}
-        <button type="button" className="btn-outline mt-4" onClick={() => { setValues(initial || {}); setConsent(false); setStatus('idle'); opened.current = Date.now(); }}>{fc.again}</button>
+        <button type="button" className="btn-outline mt-4" onClick={() => { setValues(initial || {}); setConsent(false); setStatus('idle'); setReference(''); opened.current = Date.now(); }}>{fc.again}</button>
       </div>
     );
   }
@@ -83,7 +86,7 @@ export default function FormEngine({ formKey, title, initial }) {
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map((f) => {
           const id = `${formKey}-${f.n}`;
-          const label = c.fieldLabels[f.n];
+          const label = c.fieldLabels[f.n] || EXTRA_LABELS[f.n]?.[lang === 'hi' ? 1 : 0] || f.n;
           const err = errors[f.n];
           const common = { id, name: f.n, value: f.t === 'file' ? undefined : values[f.n] ?? '', onChange: (e) => set(f.n, e.target.value), 'aria-invalid': err ? 'true' : undefined, 'aria-describedby': err ? `${id}-e` : undefined, className: `field ${err ? 'field-err' : ''}` };
           return (
@@ -109,7 +112,7 @@ export default function FormEngine({ formKey, title, initial }) {
         <span>{fc.consent} <LLink to="/privacy-policy" className="font-semibold text-brand-700 underline">{fc.privacyLink}</LLink></span>
       </label>
       {errors._consent && <p className="mt-1 text-sm font-medium text-red-600">{errors._consent}</p>}
-      {status === 'error' && <p role="alert" className="mt-4 rounded-md bg-red-50 p-3 text-sm font-medium text-red-700">{fc.error}</p>}
+      {status === 'error' && <p role="alert" className="mt-4 rounded-md bg-red-50 p-3 text-sm font-medium text-red-700">{serverMessage || fc.error}</p>}
       <button type="submit" disabled={status === 'sending'} className="btn-primary mt-6 w-full sm:w-auto disabled:opacity-60">{status === 'sending' ? fc.sending : fc.submit}</button>
     </form>
   );

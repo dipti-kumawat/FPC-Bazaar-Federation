@@ -11,7 +11,7 @@ const KEY = 'fpc_registry_v1';
 const SESSION = 'fpc_admin_session';
 
 export const KINDS = ['fpo', 'vendor', 'ngo', 'projecthead', 'member', 'job'];
-export const FORM_TO_KIND = { fpo: 'fpo', vendor: 'vendor', projecthead: 'projecthead', member: 'member', job: 'job' };
+export const FORM_TO_KIND = { fpo: 'fpo', vendor: 'vendor', projecthead: 'projecthead', member: 'member', job: 'job', ngo: 'ngo' };
 export const STATUSES = ['pending', 'verified', 'rejected'];
 
 /**
@@ -27,7 +27,9 @@ export const ROLES = {
   fpo: { label: 'FPO', scope: 'own', decide: false, rejected: false },
 };
 
-export const DEMO_USERS = [
+// Demo logins exist only in demo mode. With VITE_API_URL set at build time this becomes [] and the
+// usernames/passwords are left out of the production bundle (the backend has its own real logins).
+export const DEMO_USERS = import.meta.env.VITE_API_URL ? [] : [
   { username: 'admin', password: 'admin123', role: 'admin', name: 'Federation Admin' },
   { username: 'rajasthan-head', password: 'state123', role: 'state_head', state: 'rajasthan', name: 'State Head, Rajasthan' },
   { username: 'project-head', password: 'project123', role: 'project_head', state: 'rajasthan', name: 'Project Head, Rajasthan' },
@@ -75,7 +77,7 @@ const slugify = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
 export function addFromForm(formKey, payload, fileNames) {
   const kind = FORM_TO_KIND[formKey]; if (!kind) return;
   const list = readLocal();
-  const name = payload.fpoName || payload.companyName || payload.name || 'Applicant';
+  const name = payload.fpoName || payload.companyName || payload.ngoName || payload.name || 'Applicant';
   let slug; if (kind === 'vendor') { slug = slugify(name); let n = 2; while (list.some((r) => r.slug === slug)) slug = `${slugify(name)}-${n++}`; }
   const { fpoName, companyName, consent, page, lang, ...rest } = payload;
   const state = payload.state || payload.supplyState || '';
@@ -86,7 +88,41 @@ export function addFromForm(formKey, payload, fileNames) {
 
 // ---- API helpers ----
 const token = () => { try { return JSON.parse(sessionStorage.getItem(SESSION) || '{}').token; } catch (e) { return ''; } };
-const api = () => axios.create({ baseURL: base, timeout: 15000, headers: token() ? { Authorization: `Bearer ${token()}` } : {} });
+export function api() {
+  const client = axios.create({ baseURL: base, timeout: 15000, headers: token() ? { Authorization: `Bearer ${token()}` } : {} });
+  client.interceptors.response.use(r => r, error => {
+    if (error.response?.status === 401 && error.config?.headers?.Authorization) logout();
+    if (error.response?.data?.code === 'password_change_required') {
+      const session = getSession(); if (session) saveSession({ ...session, mustChangePassword: true });
+    }
+    return Promise.reject(error);
+  });
+  return client;
+}
+function saveSession(s) {
+  sessionStorage.setItem(SESSION, JSON.stringify(s)); emit(); return s;
+}
+function sessionFrom(data, previous = {}) {
+  return { ...previous, token: data.token || previous.token, username: data.username || previous.username,
+    role: data.role, name: data.name, state: data.state, own: data.recordId, mustChangePassword: !!data.mustChangePassword };
+}
+export async function refreshSession() {
+  if (!API_MODE || !getSession()?.token) return getSession();
+  const { data } = await api().get('/api/auth/me'); return saveSession(sessionFrom(data, getSession()));
+}
+export async function changePassword(currentPassword, newPassword) {
+  const { data } = await api().post('/api/auth/change-password', { currentPassword, newPassword });
+  return saveSession(sessionFrom(data, getSession()));
+}
+export async function forgotPassword(username) {
+  const { data } = await axios.post(`${base}/api/auth/forgot-password`, { username }, { timeout: 15000 }); return data;
+}
+export async function downloadExport(kind, filters = {}) {
+  const { data } = await api().get(`/api/admin/export/${kind}`, { params: filters, responseType: 'blob' });
+  const url = URL.createObjectURL(data); const anchor = document.createElement('a');
+  anchor.href = url; anchor.download = `fpc-${kind}.xlsx`; document.body.appendChild(anchor); anchor.click(); anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 // ---- session ----
 export const getSession = () => { try { return JSON.parse(sessionStorage.getItem(SESSION) || 'null'); } catch (e) { return null; } };
@@ -97,7 +133,7 @@ export async function login(username, password) {
   let s;
   if (API_MODE) {
     const { data } = await api().post('/api/auth/login', { username, password });
-    s = { token: data.token, role: data.role, name: data.name, state: data.state, own: data.recordId };
+    s = sessionFrom(data, { username: username.trim().toLowerCase() });
   } else {
     const u = DEMO_USERS.find((x) => x.username === username.trim() && x.password === password);
     if (!u) throw new Error('Wrong username or password');
@@ -129,21 +165,28 @@ export async function listRegistrations(filters = {}) {
 export async function decide(id, status, reason = '') {
   const s = getSession(); if (!s || !ROLES[s.role]?.decide) throw new Error('You are not allowed to do this');
   if (status === 'rejected' && !reason.trim()) throw new Error('Please write the reason for rejection');
-  if (API_MODE) { await api().patch(`/api/admin/registrations/${id}`, { status, reason }); emit(); return; }
+  if (API_MODE) { const { data } = await api().patch(`/api/admin/registrations/${id}`, { status, reason }); publicLoaded = false; loadPublicVendors(); emit(); return data; }
   const r = readLocal().find((x) => x.id === id); if (!r) throw new Error('Record not found');
   r.status = status; r.reason = status === 'rejected' ? reason.trim() : ''; r.decidedAt = new Date().toISOString(); r.decidedBy = s.name;
   writeLocal(); emit();
 }
 
+export async function downloadDocument(id, key, filename) {
+  const { data } = await api().get(`/api/admin/registrations/${encodeURIComponent(id)}/files/${encodeURIComponent(key)}`, { responseType: 'blob' });
+  const url = URL.createObjectURL(data); const anchor = document.createElement('a');
+  anchor.href = url; anchor.download = filename || 'document'; document.body.appendChild(anchor); anchor.click(); anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 export const fileUrl = (id, key) => (API_MODE ? `${base}/api/admin/registrations/${id}/files/${key}?token=${encodeURIComponent(token() || '')}` : '');
 
 export function resetDemo() { cache = seed(); writeLocal(); emit(); }
 
 // ---- public side: verified vendors shaped like marketplace suppliers ----
-let publicApi = []; let publicLoaded = false;
+let publicApi = []; let publicLoaded = false; let publicStatus = 'loading';
+export const publicVendorStatus = () => publicStatus;
 export function loadPublicVendors() {
-  if (!API_MODE || publicLoaded) return; publicLoaded = true;
-  axios.get(`${base}/api/public/vendors`, { timeout: 15000 }).then(({ data }) => { publicApi = (data.items || data).map(toSupplier); emit(); }).catch(() => { publicLoaded = false; });
+  if (!API_MODE || publicLoaded) return; publicLoaded = true; publicStatus = 'loading'; emit();
+  axios.get(`${base}/api/public/vendors`, { timeout: 15000, params: { _refresh: Date.now() } }).then(({ data }) => { publicApi = (data.items || data).map(toSupplier); publicStatus = 'ready'; emit(); }).catch(() => { publicLoaded = false; publicStatus = 'error'; emit(); });
 }
 const SUP_TYPE = { vendor: 'supplier' };
 function toSupplier(r) {

@@ -6,7 +6,7 @@ import { PageHero, Band } from '../components/ui.jsx';
 import { ProductCard, SampleBadge, VerifiedBadge, GreenTick, TypeBadge, EmptyState } from '../components/market.jsx';
 import FormEngine from '../components/FormEngine.jsx';
 import { Pin, Check } from '../components/Icons.jsx';
-import { useRegistryTick } from '../services/registry.js';
+import { useRegistryTick, API_MODE, publicVendorStatus, loadPublicVendors } from '../services/registry.js';
 import { STATES, supplierById, categoryById, productsOf, initials } from '../data/marketplace.js';
 
 export default function SupplierDetail() {
@@ -16,6 +16,7 @@ export default function SupplierDetail() {
   const c = useC(); const t = useT(); const d = c.directory;
   const s = supplierById(id);
   const ok = s && (draftMode || s.verified);
+  if (!ok && API_MODE && publicVendorStatus() !== 'ready') return <Band><p role="status">{publicVendorStatus() === 'error' ? 'Unable to load the supplier directory.' : 'Loading supplier…'}</p>{publicVendorStatus() === 'error' && <button className="btn-outline mt-4" onClick={loadPublicVendors}>Try again</button>}</Band>;
   if (!ok) {
     return (
       <>
@@ -35,7 +36,7 @@ export default function SupplierDetail() {
               <div className="flex flex-wrap items-center gap-4">
                 {s.logo ? <img src={s.logo} alt={t(s.name)} className="h-20 w-20 shrink-0 rounded-full border-2 border-gold-500 bg-white object-contain" /> : <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full border-2 border-gold-500 bg-brand-800 font-display text-2xl font-semibold text-gold-300">{initials(s.name.en)}</span>}
                 {s.verified && <span className="flex items-center gap-2 text-sm font-bold text-emerald-700"><GreenTick className="h-7 w-7" />{c.vendorPage.verifiedFull}</span>}
-                <div className="flex flex-wrap items-center gap-2"><TypeBadge type={s.type} /><SampleBadge /><VerifiedBadge on={s.verified} /></div>
+                <div className="flex flex-wrap items-center gap-2"><TypeBadge type={s.type} />{s.sample && <SampleBadge />}<VerifiedBadge on={s.verified} /></div>
               </div>
               {t(s.about) && <><p className="eyebrow mt-8">{d.about}</p>
               <p className="mt-4 text-lg leading-8 text-slate-700">{t(s.about)}</p></>}
