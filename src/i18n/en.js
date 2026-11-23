@@ -1,7 +1,7 @@
 // English content. Hindi lives in hi.js with exactly the same structure.
 export default {
   common: {
-    readMore: 'Read more', learnMore: 'Learn more', exploreInitiatives: 'Explore Initiatives', joinUs: 'Join Us',
+    prev: 'Previous', next: 'Next', readMore: 'Read more', learnMore: 'Learn more', exploreInitiatives: 'Explore Initiatives', joinUs: 'Join Us',
     registerNow: 'Register Now', toVerify: 'To verify', home: 'Home', whatsapp: 'Chat on WhatsApp', callUs: 'Call us',
     email: 'Email', address: 'Address', downloads: 'Downloads', comingSoon: 'Coming soon', visionNote: 'Vision targets, not achieved figures.',
     draftBar: 'Draft preview. Items outlined in yellow are waiting for client verification and are hidden at launch. Images are demo illustrations.',
@@ -149,7 +149,7 @@ export default {
     visionTitle: 'Stronger farmers. More resilient villages.',
     vision: 'The Federation’s stated vision includes expanding FPO participation and creating livelihood opportunities for rural youth and women.',
     stats: [
-      { v: '1,000', l: 'FPOs — vision target, not current reach' }, { v: '10,000', l: 'Youth employment — vision target' }, { v: '2022', l: 'Year registered' }, { v: 'Section 8', l: 'Company classification stated in profile; verify legal documents before launch' },
+      { v: '6,000+', l: 'FPOs in the federation network (17 states)' }, { v: '10,000', l: 'Youth employment — vision target' }, { v: '2022', l: 'Year registered' }, { v: 'Section 8', l: 'Not-for-profit company, registered with the Ministry of Corporate Affairs' },
     ],
     eauto: { eyebrow: 'Rural mobility · Youth livelihood', h: 'Connecting fresh produce with local customers', t: 'The proposed e-auto model focuses on local distribution of fruits and vegetables while creating a possible self-employment pathway for trained youth.', imageAlt: 'E-auto fruits and vegetables delivery concept', cta: 'Explore the e-auto initiative' },
     audiencesTitle: 'Who the Federation aims to work with',
@@ -164,10 +164,10 @@ export default {
       ['Tagline', 'Farmers · Youth · Women Welfare'],
       ['Official line', 'Farmer - Youth - Women Welfare Cooperative Federation'],
       ['Type', 'Producer Cooperative Federation (Section 8 / NPL company), Ministry of Corporate Affairs'],
-      ['CIN / year', 'U01100RJ2022NPL078043 / 2022'],
+      ['CIN / year', 'U85197RJ2022NPL078943 / 2022'],
       ['Registered office', 'Jaipur, Rajasthan'],
       ['Chairperson', 'Laxman Lohana'],
-      ['Mission', 'With 1,000 FPOs, create jobs for 10,000 youth: self-reliant youth, independent farmers, prosperous India.'],
+      ['Mission', 'Through a network of 6,000+ FPOs, create jobs for 10,000 youth: self-reliant youth, independent farmers, prosperous India.'],
       ['Motto', 'Cooperation - Employment - Development; Sustainable · Inclusive · Self-Reliant'],
     ],
     chairperson: 'Chairperson', chairNote: 'Photo to be added with consent.',

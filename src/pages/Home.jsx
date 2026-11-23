@@ -1,3 +1,4 @@
+
 import { useC, LLink } from '../i18n/hooks.jsx';
 import { initiativeList, site, eventImages } from '../config/site.js';
 import { useSeo } from '../lib/useSeo.js';
@@ -213,6 +214,7 @@ export default function Home() {
             <div className="img-zoom relative aspect-[4/3] overflow-hidden bg-brand-900">
               <PhotoSlot slot="gaushalaTourism" kind="fert" alt={h.gaushalaFeature.imageAlt} />
               <span className="absolute left-4 top-4 bg-paper px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-brand-800">{h.gaushalaFeature.tag}</span>
+              <span className="absolute bottom-3 right-3 bg-brand-950/80 px-2.5 py-1 text-[10px] font-semibold text-white/90">{b.concept}</span>
             </div>
           </div></Reveal>
           <Reveal variant="right"><div>

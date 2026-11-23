@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { useC } from '../i18n/hooks.jsx';
+import { useC, LLink, useLang } from '../i18n/hooks.jsx';
 import { useSeo } from '../lib/useSeo.js';
 import { PageHero, Band } from '../components/ui.jsx';
 import FormEngine from '../components/FormEngine.jsx';
@@ -8,12 +8,13 @@ const KEYS = ['register', 'eauto', 'amul', 'investor', 'product'];
 
 export default function Join() {
   useSeo('join');
-  const c = useC(); const [params, setParams] = useSearchParams();
+  const c = useC(); const lang = useLang(); const [params, setParams] = useSearchParams();
   const active = KEYS.includes(params.get('form')) ? params.get('form') : 'register';
   return (
     <>
       <PageHero title={c.join.title} sub={c.join.sub} crumb={c.join.crumb} kind="training" />
       <Band>
+        <LLink to="/ngo-registration" className="btn-outline mb-6">{lang === 'hi' ? 'NGO पंजीकरण' : 'Register an NGO'}</LLink>
         <div role="tablist" aria-label={c.join.title} className="mb-6 flex flex-wrap gap-2">
           {KEYS.map((k) => (
             <button key={k} role="tab" type="button" aria-selected={active === k} onClick={() => setParams({ form: k }, { replace: true })}

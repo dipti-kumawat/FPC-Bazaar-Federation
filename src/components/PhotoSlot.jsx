@@ -1,35 +1,71 @@
+
 import { images } from '../config/site.js';
+import Img from './Img.jsx';
 
 /**
  * Displays an approved project photograph when its slot is configured.
  * Until real photographs are supplied, show a restrained editorial placeholder
  * rather than a synthetic illustration that could be mistaken for project evidence.
  */
-export default function PhotoSlot({ slot, kind, alt = '', className = '', person, plain = false }) {
+export default function PhotoSlot({
+  slot,
+  kind,
+  alt = '',
+  className = '',
+  person,
+  plain = false,
+  sizes = '(min-width: 1024px) 40vw, 100vw',
+  priority = false
+}) {
   const src = slot && images[slot];
+
   if (src && person && plain) {
-    return <img src={src} alt={alt} loading="lazy" className={`h-full w-full object-cover object-top ${className}`} />;
-  }
-  if (src && person) {
-    return (
-      <div className={`bg-lattice relative grid h-full w-full place-items-center overflow-hidden bg-brand-800 py-6 ${className}`}>
-        <img src={src} alt={alt} loading="lazy" className="h-40 w-40 rounded-full border-[3px] border-gold-500 object-cover object-top shadow-lift sm:h-44 sm:w-44" />
-      </div>
-    );
-  }
-  if (src) {
     return (
       <img
         src={src}
         alt={alt}
         loading="lazy"
-        className={`h-full w-full object-cover ${className}`}
+        className={`h-full w-full object-cover object-top ${className}`}
+      />
+    );
+  }
+
+  if (src && person) {
+    return (
+      <div className={`bg-lattice relative grid h-full w-full place-items-center overflow-hidden bg-brand-800 py-6 ${className}`}>
+        <Img
+          src={src}
+          alt={alt}
+          sizes="176px"
+          preferred={480}
+          style={{ objectPosition: '50% 18%' }}
+          wrapClassName="h-40 w-40 rounded-full border-[3px] border-gold-500 shadow-lift sm:h-44 sm:w-44"
+        />
+      </div>
+    );
+  }
+
+  if (src) {
+    return (
+      <Img
+        src={src}
+        alt={alt}
+        sizes={sizes}
+        priority={priority}
+        wrapClassName={`h-full w-full ${className}`}
       />
     );
   }
 
   if (person) {
-    const mono = person.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+    const mono = person
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join('')
+      .toUpperCase();
+
     return (
       <div className={`bg-lattice relative grid h-full w-full place-items-center overflow-hidden bg-brand-800 ${className}`} role="img" aria-label={alt}>
         <div className="text-center">
@@ -46,8 +82,13 @@ export default function PhotoSlot({ slot, kind, alt = '', className = '', person
       role="img"
       aria-label={alt ? `${alt} — photograph to be added` : 'Project photograph to be added'}
     >
-      <div className="absolute inset-0 opacity-30" aria-hidden="true"
-        style={{ backgroundImage: 'radial-gradient(circle at 78% 18%, #B69A62 0, transparent 25%), linear-gradient(135deg, transparent 45%, rgba(246,243,234,.12) 45.2%, transparent 45.8%)' }} />
+      <div
+        className="absolute inset-0 opacity-30"
+        aria-hidden="true"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 78% 18%, #B69A62 0, transparent 25%), linear-gradient(135deg, transparent 45%, rgba(246,243,234,.12) 45.2%, transparent 45.8%)'
+        }}
+      />
       <div className="relative mx-6 max-w-xs text-center">
         <span className="mx-auto mb-4 block h-px w-12 bg-gold-500" />
         <p className="text-[10px] font-bold uppercase tracking-[.24em] text-gold-400">FPC Bazaar Federation</p>
