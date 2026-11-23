@@ -1,7 +1,7 @@
 // English content. Hindi lives in hi.js with exactly the same structure.
 export default {
   common: {
-    prev: 'Previous', next: 'Next', readMore: 'Read more', learnMore: 'Learn more', exploreInitiatives: 'Explore Initiatives', joinUs: 'Join Us',
+    readMore: 'Read more', learnMore: 'Learn more', exploreInitiatives: 'Explore Initiatives', joinUs: 'Join Us',
     registerNow: 'Register Now', toVerify: 'To verify', home: 'Home', whatsapp: 'Chat on WhatsApp', callUs: 'Call us',
     email: 'Email', address: 'Address', downloads: 'Downloads', comingSoon: 'Coming soon', visionNote: 'Vision targets, not achieved figures.',
     draftBar: 'Draft preview. Items outlined in yellow are waiting for client verification and are hidden at launch. Images are demo illustrations.',
@@ -64,6 +64,7 @@ export default {
     home: { t: 'Gaushala Development & Sustainable Rural Livelihoods', d: 'Explore FPC Bazaar Federation’s proposed Gaushala development, rural tourism, natural farming and livelihood initiatives.' },
     about: { t: 'About and Registration', d: 'Registration details, chairperson and mission of FPC Bazaar Federation, a Section 8 cooperative federation registered in 2022.' },
     ppp: { t: 'PPP Model and Special Initiatives', d: 'Polyhouse, dairy and biogas units under the PPP model, plus programs for tribal families and rural youth.' },
+    abcd: { t: 'ABCD Project', d: 'Agriculture Business Cluster Development Centre: banking, inputs, training, veterinary care, energy and a guaranteed market in every village.' },
     cluster: { t: 'Agribusiness Cluster Development Centre', d: 'One centre at Gram Panchayat level for inputs, cold storage, processing, training and a digital mandi.' },
     gaushala: { t: 'Gaushala Organic Fertilizer Model', d: 'How gaushala cow dung becomes high-quality organic fertilizer for chemical-free farming.' },
     eauto: { t: 'E-Auto Rickshaw Fruits and Vegetables Delivery', d: 'Youth employment project: fresh fruits and vegetables delivered from farmer to doorstep on electric autos.' },
@@ -85,6 +86,7 @@ export default {
     notFound: { t: 'Page not found', d: 'This page does not exist.' },
   },
   initiatives: {
+    abcd: { title: 'ABCD Project', short: 'One centre per village: banking, inputs, training and market' },
     cluster: { title: 'Agribusiness Cluster Development Centre', short: 'One centre, many solutions for farmers' },
     gaushala: { title: 'Gaushala Organic Fertilizer Model', short: 'Chemical-free farming from cow dung' },
     eauto: { title: 'E-Auto Rickshaw Delivery', short: 'Fresh fruits and vegetables to your doorstep' },
@@ -147,7 +149,7 @@ export default {
     visionTitle: 'Stronger farmers. More resilient villages.',
     vision: 'The Federation’s stated vision includes expanding FPO participation and creating livelihood opportunities for rural youth and women.',
     stats: [
-      { v: '6,000+', l: 'FPOs in the federation network (17 states)' }, { v: '10,000', l: 'Youth employment — vision target' }, { v: '2022', l: 'Year registered' }, { v: 'Section 8', l: 'Not-for-profit company, registered with the Ministry of Corporate Affairs' },
+      { v: '1,000', l: 'FPOs — vision target, not current reach' }, { v: '10,000', l: 'Youth employment — vision target' }, { v: '2022', l: 'Year registered' }, { v: 'Section 8', l: 'Company classification stated in profile; verify legal documents before launch' },
     ],
     eauto: { eyebrow: 'Rural mobility · Youth livelihood', h: 'Connecting fresh produce with local customers', t: 'The proposed e-auto model focuses on local distribution of fruits and vegetables while creating a possible self-employment pathway for trained youth.', imageAlt: 'E-auto fruits and vegetables delivery concept', cta: 'Explore the e-auto initiative' },
     audiencesTitle: 'Who the Federation aims to work with',
@@ -162,10 +164,10 @@ export default {
       ['Tagline', 'Farmers · Youth · Women Welfare'],
       ['Official line', 'Farmer - Youth - Women Welfare Cooperative Federation'],
       ['Type', 'Producer Cooperative Federation (Section 8 / NPL company), Ministry of Corporate Affairs'],
-      ['CIN / year', 'U85197RJ2022NPL078943 / 2022'],
+      ['CIN / year', 'U01100RJ2022NPL078043 / 2022'],
       ['Registered office', 'Jaipur, Rajasthan'],
       ['Chairperson', 'Laxman Lohana'],
-      ['Mission', 'Through a network of 6,000+ FPOs, create jobs for 10,000 youth: self-reliant youth, independent farmers, prosperous India.'],
+      ['Mission', 'With 1,000 FPOs, create jobs for 10,000 youth: self-reliant youth, independent farmers, prosperous India.'],
       ['Motto', 'Cooperation - Employment - Development; Sustainable · Inclusive · Self-Reliant'],
     ],
     chairperson: 'Chairperson', chairNote: 'Photo to be added with consent.',
@@ -189,14 +191,14 @@ export default {
   cluster: {
     title: 'Agribusiness Cluster Development Centre', crumb: 'Cluster Centre', sub: 'One centre · many solutions · farmer empowerment',
     intro: 'Building an Agriculture Business Cluster Development Centre at Gram Panchayat level.',
-    explore: 'Tap a number to see what each part of the centre does.', componentsTitle: 'Inside the centre',
+    explore: 'Tap any part to see what it does.', componentsTitle: 'Inside the centre',
     components: [
-      { n: 'Agricultural Input Center', d: 'Seeds, fertilizer, organic inputs, tools' },
-      { n: 'Market Linkage Center', d: 'Buyer-seller connect, supply chain, export access' },
-      { n: 'Cold Storage Facility', d: 'Perishable storage, preservation, 0-5°C' },
-      { n: 'Processing Unit', d: 'Milk, dairy & food processing, value addition' },
-      { n: 'Training & Skill Development Center', d: 'Workshops, farmer training, SHG capacity building' },
-      { n: 'Digital Mandi / E-Marketplace', d: 'Online platform, digital payments, live price' },
+      { n: 'Agricultural Input Center', d: 'Seeds, fertilizer, organic inputs, tools', p: ['Quality seeds, fertilizers and organic inputs at one place', 'Gaushala-based organic fertilizer and bio-inputs for chemical-free farming', 'Farm tools and equipment, with rental options', 'Guidance on the right input for the crop and soil'] },
+      { n: 'Market Linkage Center', d: 'Buyer-seller connect, supply chain, export access', p: ['Connects farmers directly with buyers, traders and processors', 'Better supply-chain planning, so produce reaches the market on time', 'Collective selling through FPOs for a stronger price', 'Support to reach wider and export markets'] },
+      { n: 'Cold Storage Facility', d: 'Perishable storage, preservation, 0-5°C', p: ['Cold storage at 0-5°C for fruits, vegetables and dairy', 'Reduces post-harvest wastage and distress selling', 'Farmers can wait for a better market price', 'Shared use, so small farmers can afford it'] },
+      { n: 'Processing Unit', d: 'Milk, dairy & food processing, value addition', p: ['Milk, dairy and food processing close to the village', 'Value addition: ghee, packaged and branded products', 'Local jobs, especially for women and youth', 'Better returns than selling raw produce'] },
+      { n: 'Training & Skill Development Center', d: 'Workshops, farmer training, SHG capacity building', p: ['Workshops on organic and natural farming', 'Training for farmers, women and SHG members', 'Skill development for youth in agri and allied work', 'Field demonstrations and capacity building'] },
+      { n: 'Digital Mandi / E-Marketplace', d: 'Online platform, digital payments, live price', p: ['Online platform for buying and selling farm produce', 'Live market prices on the phone', 'Digital payments and transparent records', 'One digital window for farmers, FPOs and buyers'] },
     ],
     outcomesTitle: 'Outcomes', outcomes: ['All Services for Farmers at One Place', 'Local Employment Generation', 'Value Addition & Higher Farmer Income'],
   },
@@ -450,7 +452,7 @@ export default {
     title: 'Gaushala Tourism Model', crumb: 'Gaushala Tourism',
     sub: 'A proposed model to turn traditional cow shelters into self-sustaining eco-tourism and income hubs, while improving the livelihood of Gau Palaks.',
     note: 'This is a proposed model described in the project presentation. Site readiness, operating partners, facilities and implementation status must be confirmed before it is presented as operational.',
-    illus: 'Concept illustration from the project presentation. Not a photograph of an operating site.',
+    illus: 'A cattle shed at a Gaushala. Photo: FPC Bazaar Federation.',
     summaryTitle: 'Executive summary',
     summary: [
       'Bharat has one of the largest cattle populations. Traditionally, Gaushalas (cow shelters) function as protection and welfare centres. By transforming them into Integrated Gau-Based Eco-Tourism and Sustainable Income Hubs, they can become financially self-reliant while improving the livelihood of Gau Palaks (cow caretakers).',

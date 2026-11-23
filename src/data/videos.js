@@ -43,6 +43,30 @@ export const VIDEOS = [
     title: { en: 'ABC Agro Business Centre', hi: 'एबीसी एग्रो बिज़नेस सेंटर' },
     desc: { en: 'The ABC Agro Business Centre with Amul Organic and Maha FPC: inputs, organic products and services for farmers under one roof.', hi: 'अमूल ऑर्गेनिक और महा एफपीसी के साथ एबीसी एग्रो बिज़नेस सेंटर: किसानों के लिए एक ही स्थान पर इनपुट, जैविक उत्पाद और सेवाएँ।' },
   },
+  {
+    id: 'rajasthan-cm-gau-expo', where: ['home'],
+    src: '/videos/rajasthan-cm-gau-expo.mp4', poster: '/videos/rajasthan-cm-gau-expo.jpg',
+    title: { en: 'Gau Expo: Leaders & Gaushala Vision', hi: 'गौ एक्सपो: नेतृत्व और गौशाला विज़न' },
+    desc: { en: 'Highlights from a cow-based economy exhibition: leaders interacting with Gaushala models and organic initiatives.', hi: 'गौ आधारित अर्थव्यवस्था प्रदर्शनी की झलकियाँ: गौशाला मॉडल और जैविक पहलों से रूबरू नेतृत्व।' },
+  },
+  {
+    id: 'gaushala-organic-fertilizer', where: ['home', 'gaushala'],
+    src: '/videos/gaushala-organic-fertilizer.mp4', poster: '/videos/gaushala-organic-fertilizer.jpg',
+    title: { en: 'Organic Fertilizer Made in Gaushala', hi: 'गौशाला में निर्मित जैविक खाद' },
+    desc: { en: 'An agriculture officer and farmers on how Gaushala-made organic fertilizer improves soil and crops.', hi: 'कृषि अधिकारी और किसान बता रहे हैं कि गौशाला में बनी जैविक खाद मिट्टी और फसल को कैसे बेहतर बनाती है।' },
+  },
+  {
+    id: 'gaudham-ashram-chodila', where: ['gaushala'],
+    src: '/videos/gaudham-ashram-chodila.mp4', poster: '/videos/gaudham-ashram-chodila.jpg',
+    title: { en: 'Go Dham Ashram, Murtha (Chodila, Gujarat)', hi: 'गो धाम आश्रम, मूर्था (चोदिला, गुजरात)' },
+    desc: { en: 'A visit to Go Dham Ashram Gaushala in Chodila, Gujarat, with its healthy, well-cared-for cattle.', hi: 'चोदिला, गुजरात के गो धाम आश्रम गौशाला का भ्रमण और वहाँ की स्वस्थ, सुपोषित गायें।' },
+  },
+  {
+    id: 'meeting-discussion', where: ['projects'], wide: true,
+    src: '/videos/meeting-discussion.mp4', poster: '/videos/meeting-discussion.jpg',
+    title: { en: 'Federation Meeting & Discussion', hi: 'महासंघ की बैठक एवं चर्चा' },
+    desc: { en: 'Members and leaders of the Federation in a planning discussion on the way forward.', hi: 'आगे की रूपरेखा पर महासंघ के सदस्यों और पदाधिकारियों की चर्चा।' },
+  },
 ];
 
 export const videosFor = (where) => VIDEOS.filter((v) => v.where.includes(where));

@@ -193,9 +193,9 @@ const tx = (v, lang) => (v && typeof v === 'object' ? v[lang] || v.en : v);
 
 function PersonCard({ person, labels, lang = 'en', featured = false }) {
   return (
-    <article className={`overflow-hidden rounded-sm border border-brand-100 bg-white ${featured ? 'shadow-md' : 'shadow-sm'}`}>
-      <div className={`overflow-hidden bg-brand-50 ${person.bio ? '' : featured ? 'aspect-[16/9]' : 'aspect-[4/3]'}`}>
-        <PhotoSlot slot={person.image} person={person.name} alt={`${person.name} — ${labels.photo}`} />
+    <article className={`overflow-hidden rounded-sm border border-brand-100 bg-white ${featured ? 'shadow-md' : 'shadow-sm'} ${person.bio ? 'sm:grid sm:grid-cols-[190px_1fr]' : ''}`}>
+      <div className={`overflow-hidden bg-brand-50 ${person.bio ? 'aspect-[4/5] sm:m-5 sm:mr-0 sm:self-start' : featured ? 'aspect-[16/9]' : 'aspect-[4/3]'}`}>
+        <PhotoSlot slot={person.image} person={person.name} plain={!!person.bio} alt={`${person.name} — ${labels.photo}`} />
       </div>
       <div className="p-5">
         <p className="text-[10px] font-bold uppercase tracking-[.18em] text-gold-600">{labels.role[person.role]}</p>
@@ -237,7 +237,7 @@ export default function About() {
             <p className="mt-4 max-w-2xl leading-8 text-slate-600">{a.sub}</p>
             <div className="mt-6 flex flex-wrap gap-2">
               <span className="rounded-full border border-brand-200 bg-white px-4 py-2 text-xs font-bold text-brand-800">{t.registered}</span>
-              <span className="rounded-full border border-brand-200 bg-white px-4 py-2 text-xs font-bold text-brand-800">{t.cin}: U85197RJ2022NPL078943</span>
+              <span className="rounded-full border border-brand-200 bg-white px-4 py-2 text-xs font-bold text-brand-800">{t.cin}: U01100RJ2022NPL078043</span>
             </div>
           </div>
           <div className="border-l-2 border-gold-500 bg-brand-50 p-6">
@@ -304,7 +304,7 @@ export default function About() {
           <div>
             <h2 className="mb-4 text-2xl font-extrabold text-brand-900">{t.docsTitle}</h2>
             <dl className="divide-y divide-brand-100 border-y border-brand-100">
-              <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr]"><dt className="font-bold text-brand-800">{t.cin}</dt><dd>U85197RJ2022NPL078943</dd></div>
+              <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr]"><dt className="font-bold text-brand-800">{t.cin}</dt><dd>U01100RJ2022NPL078043</dd></div>
               <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr]"><dt className="font-bold text-brand-800">{t.office}</dt><dd>Jaipur, Rajasthan</dd></div>
               <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr]"><dt className="font-bold text-brand-800">{t.registered}</dt><dd>2022</dd></div>
             </dl>

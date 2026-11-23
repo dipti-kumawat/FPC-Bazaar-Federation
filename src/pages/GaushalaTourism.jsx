@@ -4,6 +4,7 @@ import { useSeo } from '../lib/useSeo.js';
 import { images } from '../config/site.js';
 import { PageHero, Band, SectionTitle, Steps, Checklist, Verify } from '../components/ui.jsx';
 import VideoCard from '../components/VideoCard.jsx';
+import SwipeRow from '../components/SwipeRow.jsx';
 import { Icon, Arrow } from '../components/Icons.jsx';
 
 export default function GaushalaTourism() {
@@ -22,7 +23,7 @@ export default function GaushalaTourism() {
   );
   return (
     <>
-      <PageHero title={g.title} sub={g.sub} crumb={g.crumb} kind="fert" slot="gaushalaTourism" />
+      <PageHero title={g.title} sub={g.sub} crumb={g.crumb} kind="fert" slot="gaushalaHero" />
 
       <Band>
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr]">
@@ -34,7 +35,7 @@ export default function GaushalaTourism() {
           <figure>
             <div className="relative">
               <div className="absolute -bottom-4 -right-4 h-full w-full border border-gold-400/60" aria-hidden="true" />
-              <div className="relative overflow-hidden bg-brand-900"><img src={images.gaushalaTourism} alt={g.illus} loading="lazy" className="aspect-[4/3] w-full object-cover" /></div>
+              <div className="relative overflow-hidden bg-brand-900"><img src={images.gaushalaTourismReal} alt={g.illus} loading="lazy" className="aspect-[4/3] w-full object-cover" /></div>
             </div>
             <figcaption className="mt-7 text-xs text-slate-500">{g.illus}</figcaption>
           </figure>
@@ -58,8 +59,10 @@ export default function GaushalaTourism() {
 
       <Band className="bg-brand-50">
         <SectionTitle eyebrow={c.homeBiz.videos.eyebrow} sub={lang === 'hi' ? 'गौशालाओं और ब्रीडिंग सेंटरों के छोटे वीडियो: गौ आधारित आजीविका व्यवहार में कैसे काम करती है।' : 'Short videos from Gaushalas and breeding centres: how cow-based livelihoods work in practice.'}>{lang === 'hi' ? 'ज़मीन पर देखिए' : 'See it on the ground'}</SectionTitle>
-        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {videosFor('gaushala').map((v) => <VideoCard key={v.id} src={v.src} poster={v.poster} title={v.title[lang]} desc={v.desc[lang]} />)}
+        <div className="mx-auto max-w-6xl">
+          <SwipeRow label={lang === 'hi' ? 'और वीडियो देखने के लिए स्वाइप करें' : 'Swipe to see more videos'}>
+            {videosFor('gaushala').map((v) => <VideoCard key={v.id} src={v.src} poster={v.poster} title={v.title[lang]} desc={v.desc[lang]} />)}
+          </SwipeRow>
         </div>
       </Band>
 

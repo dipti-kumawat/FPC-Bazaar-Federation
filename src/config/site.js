@@ -1,7 +1,7 @@
 // Central place for contact details, verification flags and image slots.
 export const site = {
   name: 'FPC Bazaar Federation',
-  cin: 'U85197RJ2022NPL078943',
+  cin: 'U01100RJ2022NPL078043',
   phones: [
     { display: '8890656575', tel: '+918890656575' },
     // The client's documents show the second number differing by one digit. Confirm before launch.
@@ -39,11 +39,14 @@ export const images = {
 
   // Gaushala Featured Section
   gaushalaFeature: '/images/gaushala-tourism.jpg',
-  gaushalaTourism: '/images/gaushala-tourism-concept.jpg',
+  gaushalaTourism: '/images/gaushala-hero.jpg', // real photo (herd at a Gaushala); the old AI concept image is gaushala-tourism-concept.jpg
+  gaushalaTourismReal: '/images/gaushala-tourism-real.jpg', // real photo: cattle shed at a Gaushala (used on the Gaushala Tourism page)
 
   // Six Project Cards
   gaushala: '/images/1.jpeg',
   cluster: '/images/2.jpeg',
+  abcd: '/images/abcd/cover.jpg',
+  abcdHero: '/images/abcd/hero.jpg',
   biogas: '/images/3.jpeg',
   eauto: '/images/4.jpeg',
   amul: '/images/5.jpeg',

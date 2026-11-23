@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useC, useLang, LLink } from '../i18n/hooks.jsx';
 import { useSeo } from '../lib/useSeo.js';
 import { initiativeList, marketNav, flags, networkStates } from '../config/site.js';
-import { STATE_TILES } from '../data/states.js';
+import { INDIA_SHAPES, INDIA_VIEWBOX, INDIA_LABELS } from '../data/indiaMap.js';
 import { PageHero, Band, SectionTitle, ProjectCard, Checklist, Verify } from '../components/ui.jsx';
 import FormEngine from '../components/FormEngine.jsx';
 import Reveal from '../components/Reveal.jsx';
@@ -69,47 +70,139 @@ export function Projects() {
   );
 }
 
-/** 17 States Map: schematic tile map of India. Highlighted states come from `networkStates` in config. */
+/** 17 States Map: India map. Highlighted states come from `networkStates` in config; shapes live in data/indiaMap.js. */
+const MAP_CSS = `
+@keyframes fpcMapIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes fpcSheen{from{transform:translateX(-160px)}to{transform:translateX(760px)}}
+@keyframes fpcRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.fpc-st{transform-box:fill-box;transform-origin:center;animation:fpcMapIn .7s cubic-bezier(.22,.8,.24,1) backwards;transition:transform .35s cubic-bezier(.22,.8,.24,1),filter .35s}
+.fpc-st2{transform-box:fill-box;transform-origin:center}
+.fpc-st,.fpc-st2,.fpc-st:focus,.fpc-st2:focus{outline:none}
+.fpc-hi{transform-box:fill-box;transform-origin:center;transform:scale(1.05);filter:drop-shadow(0 7px 7px rgba(6,35,26,.42));pointer-events:none;transition:transform .35s}
+.fpc-sheen{animation:fpcSheen 5.5s ease-in-out 1.6s infinite}
+.fpc-rise{animation:fpcRise .8s cubic-bezier(.22,.8,.24,1) 1.2s backwards}
+@media (prefers-reduced-motion:reduce){.fpc-st,.fpc-sheen,.fpc-rise{animation:none!important}.fpc-st,.fpc-hi{transition:none}}
+`;
+// Font size so a name fits inside its state: `r` is the room around the label point.
+function labelLayout(name, r, hi) {
+  const k = hi ? 0.62 : 0.56;
+  const sp = name.indexOf(' ');
+  const one = (2 * r * 0.88) / (name.length * k);
+  if (sp > 0 && name.length > 9) {
+    const words = [name.slice(0, sp), name.slice(sp + 1)];
+    const two = (2 * r * 0.8) / (Math.max(words[0].length, words[1].length) * k);
+    if (two > one * 1.15) return { lines: words, f: Math.max(6, Math.min(10, two)) };
+  }
+  return { lines: [name], f: Math.max(6, Math.min(10, one)) };
+}
 export function StatesMap() {
   useSeo('states');
   const c = useC(); const lang = useLang(); const h = c.hub.states;
   const on = new Set(networkStates);
-  const shown = on;
-  const cols = 7; const rows = 7;
+  const nameOf = (sh) => (lang === 'hi' ? sh.hi : sh.en) || sh.en || sh.id;
+  const [hover, setHover] = useState(null);
+  const [spot, setSpot] = useState(null);
+  const [entered, setEntered] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setEntered(true), 1500); return () => clearTimeout(t); }, []);
+  const ids = INDIA_SHAPES.filter((x) => on.has(x.id));
+  // Idle spotlight: when nobody is pointing at the map, walk through the network states one by one.
+  useEffect(() => {
+    if (hover || (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) { setSpot(null); return undefined; }
+    let i = 0; const list = ids.map((x) => x.id);
+    const t = setInterval(() => { setSpot(list[i % list.length]); i += 1; }, 2200);
+    return () => clearInterval(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hover]);
+  const hi = hover || spot;
+  const shape = INDIA_SHAPES.find((x) => x.id === hi);
+  const active = ids.map((x) => ({ id: x.id, n: String(nameOf(x)) })).sort((p, q) => p.n.localeCompare(q.n, lang === 'hi' ? 'hi' : 'en'));
+  const L = lang === 'hi'
+    ? { eyebrow: 'हमारा नेटवर्क', head: 'पूरे भारत में फैला नेटवर्क', legendOn: 'महासंघ नेटवर्क वाले राज्य', legendOff: 'अन्य राज्य', hint: 'किसी राज्य पर कर्सर ले जाएँ', inNet: 'नेटवर्क में शामिल', notYet: 'अभी नेटवर्क में नहीं', list: 'नेटवर्क के राज्य', listSub: 'जहाँ महासंघ के एफपीओ और साझेदार सक्रिय हैं' }
+    : { eyebrow: 'Our network', head: 'A network spread across India', legendOn: 'States in the Federation network', legendOff: 'Other states', hint: 'Hover over a state', inNet: 'In the network', notYet: 'Not in the network yet', list: 'Network states', listSub: 'Where Federation FPOs and partners are active' };
   return (
     <>
+      <style>{MAP_CSS}</style>
       <PageHero title={h.title} sub={h.sub} crumb={h.crumb} />
       <Band>
-        <div className="grid items-start gap-10 lg:grid-cols-[1.4fr_1fr]">
+        <div className="grid items-start gap-12 lg:grid-cols-[1.2fr_1fr]">
           <Reveal>
-            <div role="img" aria-label={h.title} className="card overflow-x-auto p-4 sm:p-6">
-              <div className="mx-auto grid min-w-[360px] max-w-[640px] gap-1.5" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)` }}>
-                {STATE_TILES.map(([id, x, y, en, hi]) => {
-                  const name = lang === 'hi' ? hi : en; const active = shown.has(id);
-                  return (
-                    <div key={id} title={name} style={{ gridColumn: x - 1, gridRow: y + 1 }}
-                      className={`grid aspect-square place-items-center rounded-[3px] p-0.5 text-center text-[9px] font-semibold leading-tight transition sm:text-[10.5px] ${active ? 'bg-brand-800 text-gold-300 hover:bg-brand-700' : 'bg-brand-50 text-brand-800/70 hover:bg-gold-100'}`}>
-                      {name}
-                    </div>
-                  );
-                })}
+            <div className="relative overflow-hidden rounded-[4px] bg-gradient-to-b from-white to-[#FBF7EA] p-5 shadow-lift ring-1 ring-gold-500/50 sm:p-9">
+              <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-[#E6A23C]/15 blur-3xl" />
+              <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[#2F8F5B]/15 blur-3xl" />
+              <div className="relative flex items-start justify-between gap-4">
+                <div className="fpc-rise">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-gold-700">{L.eyebrow}</p>
+                  <p className="mt-2 max-w-[15ch] font-display text-2xl font-semibold leading-tight text-brand-900 sm:text-3xl">{L.head}</p>
+                  <span className="mt-3 block h-px w-14 bg-gradient-to-r from-[#E6A23C] to-transparent" />
+                </div>
+                <div className="pointer-events-none min-w-[168px] rounded-md border border-gold-500/50 bg-white/90 px-3.5 py-2.5 text-sm shadow-md backdrop-blur" aria-live="polite">
+                  {shape ? (<><p className="font-semibold text-brand-900">{nameOf(shape)}</p><p className={`mt-0.5 flex items-center gap-1.5 text-xs font-semibold ${on.has(shape.id) ? 'text-brand-600' : 'text-slate-500'}`}><span className={`h-1.5 w-1.5 rounded-full ${on.has(shape.id) ? 'bg-brand-600' : 'bg-slate-400'}`} />{on.has(shape.id) ? L.inNet : L.notYet}</p></>) : <p className="text-slate-500">{L.hint}</p>}
+                </div>
               </div>
-              <p className="mt-4 text-center text-xs text-slate-500">{h.note}</p>
+              <svg viewBox={INDIA_VIEWBOX} role="img" aria-label={h.title} className="relative mx-auto -mt-2 block h-auto w-full max-w-[520px]">
+                <defs>
+                  <linearGradient id="gHarvest" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#E6A23C" /><stop offset="0.5" stopColor="#2F8F5B" /><stop offset="1" stopColor="#0B5D3B" /></linearGradient>
+                  <linearGradient id="gHarvestHi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#F6B94F" /><stop offset="0.5" stopColor="#3FA46C" /><stop offset="1" stopColor="#0F7048" /></linearGradient>
+                  <linearGradient id="gSheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#fff" stopOpacity="0" /><stop offset="0.5" stopColor="#fff" stopOpacity="0.5" /><stop offset="1" stopColor="#fff" stopOpacity="0" /></linearGradient>
+                  <clipPath id="gActive">{ids.map((sh) => <path key={sh.id} d={sh.d} />)}</clipPath>
+                </defs>
+                <g>
+                  {INDIA_SHAPES.map((sh) => {
+                    const isOn = on.has(sh.id); const hv = hi === sh.id;
+                    return (
+                      <path key={sh.id + sh.d.slice(0, 8)} id={`st-${sh.id}-${sh.d.length}`} d={sh.d} onMouseEnter={() => setHover(sh.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(sh.id)} onBlur={() => setHover(null)}
+                        onClick={() => setHover(sh.id)} tabIndex={-1} className={`${entered ? 'fpc-st2' : 'fpc-st'} cursor-pointer`} style={{ animationDelay: `${(sh.d.length % 17) * 40}ms` }}
+                        fill={isOn ? (hv ? 'url(#gHarvestHi)' : 'url(#gHarvest)') : (hv ? '#D3CAAE' : '#E6E0CC')}
+                        stroke="#FBF8EF" strokeWidth={isOn ? 1.3 : 1} strokeLinejoin="round">
+                        <title>{nameOf(sh)}</title>
+                      </path>
+                    );
+                  })}
+                </g>
+                {shape && (() => { const big = shape.id; const src = INDIA_SHAPES.filter((x) => x.id === big); return src.map((x) => <use key={x.d.length} href={`#st-${x.id}-${x.d.length}`} className="fpc-hi" />); })()}
+                <g clipPath="url(#gActive)" pointerEvents="none" aria-hidden="true"><rect className="fpc-sheen" x="0" y="-20" width="90" height="760" fill="url(#gSheen)" transform="skewX(-16)" /></g>
+                <g className="pointer-events-none max-sm:hidden" fontWeight="700" textAnchor="middle" style={{ paintOrder: 'stroke', strokeLinejoin: 'round' }}>
+                  {Object.entries(INDIA_LABELS).map(([id, l]) => {
+                    const sh = INDIA_SHAPES.find((x) => x.id === id); if (!sh || !on.has(id)) return null;
+                    const name = String(nameOf(sh)); const [x, y] = l.at; const isHi = hi === id;
+                    if (l.out) {
+                      const [tx, ty] = [x + l.out[0], y + l.out[1]];
+                      return (<g key={id} style={{ fontSize: 8.5 }}><line x1={x} y1={y} x2={tx - Math.sign(l.out[0]) * 4} y2={ty - 3} stroke="#765F36" strokeWidth="0.8" /><circle cx={x} cy={y} r="2.6" fill="#E6A23C" stroke="#fff" strokeWidth="1" /><text x={tx} y={ty} textAnchor={l.out[0] < 0 ? 'end' : 'start'} fill="#0B3B2A" stroke="#fff" strokeWidth="2.4" style={isHi ? { fontSize: 9.5 } : undefined}>{name}</text></g>);
+                    }
+                    const { lines, f } = labelLayout(name, l.r, lang === 'hi');
+                    const fs = isHi ? f * 1.12 : f;
+                    return (<text key={id} x={x} y={y - ((lines.length - 1) * fs * 0.55) + fs * 0.35} fill="#fff" stroke="rgba(6,35,26,0.62)" strokeWidth={Math.max(1.6, fs * 0.28)} style={{ fontSize: fs, transition: 'font-size .3s' }}>{lines.map((w, i) => <tspan key={i} x={x} dy={i ? fs * 1.08 : 0}>{w}</tspan>)}</text>);
+                  })}
+                </g>
+              </svg>
+              <div className="relative mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-1.5 border-t border-gold-500/30 pt-4 text-xs font-medium tracking-wide text-slate-600">
+                <span className="inline-flex items-center gap-2"><span className="h-3 w-5 rounded-sm bg-gradient-to-r from-[#E6A23C] via-[#2F8F5B] to-[#0B5D3B]" />{L.legendOn}</span>
+                <span className="inline-flex items-center gap-2"><span className="h-3 w-5 rounded-sm bg-[#E6E0CC]" />{L.legendOff}</span>
+              </div>
             </div>
           </Reveal>
           <div>
+            <p className="mb-7 text-[11px] font-bold uppercase tracking-[0.28em] text-gold-700">{L.eyebrow}</p>
             <Verify flag="networkStats">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="mt-4 grid grid-cols-2 divide-x divide-gold-500/40 border-y border-gold-500/40">
                 {c.homeBiz.networkStats.slice(0, 2).map((s) => (
-                  <div key={s.l} className="border-t-[3px] border-gold-500 bg-brand-900 p-5 text-white"><p className="font-display text-3xl font-semibold text-gold-300">{s.v}</p><p className="mt-1 text-sm text-white/75">{s.l}</p></div>
+                  <div key={s.l} className="px-5 py-6 first:pl-0"><p className="font-display text-5xl font-semibold leading-none text-brand-800">{s.v}</p><p className="mt-3 text-sm font-medium uppercase tracking-wider text-slate-600">{s.l}</p></div>
                 ))}
               </div>
             </Verify>
-            <p className="mt-6 leading-8 text-slate-700">{h.body}</p>
-            <Verify flag="networkStats">
-              <p className="mt-4 text-sm text-slate-600">{h.pendingList}</p>
-            </Verify>
-            <LLink to="/fpo-registration" className="btn-primary mt-6">{c.nav.fpoReg}</LLink>
+            <p className="mt-8 text-lg leading-8 text-slate-700">{h.body}</p>
+            <h3 className="mt-10 font-display text-2xl font-semibold text-brand-900">{L.list}</h3>
+            <p className="mt-1 text-sm text-slate-500">{L.listSub}</p>
+            <ul className="mt-5 grid grid-cols-2 gap-x-8 border-t border-gold-500/40">
+              {active.map((x, i) => (<li key={x.id}><button type="button" onMouseEnter={() => setHover(x.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(x.id)} onBlur={() => setHover(null)}
+                className={`group flex w-full items-center gap-3 border-b border-gold-500/25 py-2.5 text-left font-medium transition ${hi === x.id ? 'text-gold-700' : 'text-brand-900'}`}>
+                <span className="w-5 text-xs font-bold tabular-nums text-gold-600">{String(i + 1).padStart(2, '0')}</span><span className="flex-1">{x.n}</span>
+                <span aria-hidden="true" className={`h-1.5 w-1.5 rotate-45 bg-gold-500 transition ${hi === x.id ? 'scale-150' : 'scale-75 opacity-60'}`} /></button></li>))}
+            </ul>
+            <div className="mt-8"><Verify flag="networkStats">
+              <p className="text-sm text-slate-600">{h.pendingList}</p>
+            </Verify></div>
+            <LLink to="/fpo-registration" className="btn-primary mt-8">{c.nav.fpoReg}</LLink>
           </div>
         </div>
       </Band>

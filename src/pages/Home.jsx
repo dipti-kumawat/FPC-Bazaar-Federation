@@ -8,6 +8,7 @@ import { SectionTitle, ProjectCard, PhotoSlot, Band, Verify } from '../component
 import { ProductCard, SupplierCard } from '../components/market.jsx';
 import { Icon, Arrow, Check, Pin } from '../components/Icons.jsx';
 import VideoCard from '../components/VideoCard.jsx';
+import SwipeRow from '../components/SwipeRow.jsx';
 import { videosFor } from '../data/videos.js';
 import Marquee from '../components/Marquee.jsx';
 import Reveal from '../components/Reveal.jsx';
@@ -212,7 +213,6 @@ export default function Home() {
             <div className="img-zoom relative aspect-[4/3] overflow-hidden bg-brand-900">
               <PhotoSlot slot="gaushalaTourism" kind="fert" alt={h.gaushalaFeature.imageAlt} />
               <span className="absolute left-4 top-4 bg-paper px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-brand-800">{h.gaushalaFeature.tag}</span>
-              <span className="absolute bottom-3 right-3 bg-brand-950/80 px-2.5 py-1 text-[10px] font-semibold text-white/90">{b.concept}</span>
             </div>
           </div></Reveal>
           <Reveal variant="right"><div>
@@ -232,7 +232,7 @@ export default function Home() {
       {/* INITIATIVES */}
       <Band>
         <SectionTitle sub={h.projectsSub} eyebrow={c.nav.initiatives}>{h.projects}</SectionTitle>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{items.map((item) => <ProjectCard key={item.key} item={item} />)}</div>
+        <SwipeRow three label={lang === 'hi' ? 'और पहल देखने के लिए स्वाइप करें' : 'Swipe to see more initiatives'}>{items.map((item) => <ProjectCard key={item.key} item={item} />)}</SwipeRow>
       </Band>
 
       {/* EVENTS */}
@@ -255,11 +255,11 @@ export default function Home() {
       {/* VIDEOS */}
       <Band className="bg-white">
         <SectionTitle eyebrow={b.videos.eyebrow} sub={b.videos.sub}>{b.videos.title}</SectionTitle>
-        <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto max-w-6xl"><SwipeRow label={lang === 'hi' ? 'और वीडियो देखने के लिए स्वाइप करें' : 'Swipe to see more videos'}>
           <VideoCard src="/videos/mineral-mixture.mp4" poster="/videos/mineral-mixture.jpg" title={b.videos.items[0].t} desc={b.videos.items[0].d} />
           <VideoCard src="/videos/desi-cow-ghee.mp4" poster="/videos/desi-cow-ghee.jpg" title={b.videos.items[1].t} desc={b.videos.items[1].d} />
           {videosFor('home').map((v) => <VideoCard key={v.id} src={v.src} poster={v.poster} title={v.title[lang]} desc={v.desc[lang]} />)}
-        </div>
+        </SwipeRow></div>
       </Band>
 
       {/* FOCUS AREAS */}

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useC } from './i18n/hooks.jsx';
@@ -8,38 +8,31 @@ import Footer from './components/Footer.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
 import ScrollProgress from './components/ScrollProgress.jsx';
 import Home from './pages/Home.jsx';
-const Admin = lazy(() => import('./admin/Admin.jsx'));
+import Admin from './admin/Admin.jsx';
 import { loadPublicVendors } from './services/registry.js';
-const About = lazy(() => import('./pages/About.jsx'));
-const Ppp = lazy(() => import('./pages/Ppp.jsx'));
-const Cluster = lazy(() => import('./pages/Cluster.jsx'));
-const Gaushala = lazy(() => import('./pages/Gaushala.jsx'));
-const EAuto = lazy(() => import('./pages/EAuto.jsx'));
-const Amul = lazy(() => import('./pages/Amul.jsx'));
-const Enzy = lazy(() => import('./pages/Enzy.jsx'));
-const Biogas = lazy(() => import('./pages/Biogas.jsx'));
-const Join = lazy(() => import('./pages/Join.jsx'));
-const Partners = lazy(() => import('./pages/Partners.jsx'));
-const Contact = lazy(() => import('./pages/Contact.jsx'));
-const Gallery = lazy(() => import('./pages/Gallery.jsx'));
-const hub = (name) => lazy(() => import('./pages/Hubs.jsx').then((m) => ({ default: m[name] })));
-const Services = hub('Services'); const Projects = hub('Projects'); const StatesMap = hub('StatesMap');
-const FpoReg = hub('FpoReg'); const VendorReg = hub('VendorReg'); const Career = hub('Career');
-const Privacy = lazy(() => import('./pages/Privacy.jsx'));
-const GaushalaTourism = lazy(() => import('./pages/GaushalaTourism.jsx'));
-const Marketplace = lazy(() => import('./pages/Marketplace.jsx'));
-const ProductDetail = lazy(() => import('./pages/ProductDetail.jsx'));
-const Suppliers = lazy(() => import('./pages/Suppliers.jsx'));
-const SupplierDetail = lazy(() => import('./pages/SupplierDetail.jsx'));
-const Sourcing = lazy(() => import('./pages/Sourcing.jsx'));
-const BusinessConnect = lazy(() => import('./pages/BusinessConnect.jsx'));
-const Events = lazy(() => import('./pages/Events.jsx'));
-const NotFound = lazy(() => import('./pages/NotFound.jsx'));
-
-/** Shown for a moment while a page's code is downloaded (pages load on demand). */
-function PageLoader() {
-  return <div className="grid min-h-[60vh] place-items-center" aria-busy="true"><span className="h-10 w-10 animate-spin rounded-full border-[3px] border-brand-200 border-t-gold-500" /></div>;
-}
+import About from './pages/About.jsx';
+import Ppp from './pages/Ppp.jsx';
+import Cluster from './pages/Cluster.jsx';
+import Gaushala from './pages/Gaushala.jsx';
+import EAuto from './pages/EAuto.jsx';
+import Amul from './pages/Amul.jsx';
+import Enzy from './pages/Enzy.jsx';
+import Biogas from './pages/Biogas.jsx';
+import Join from './pages/Join.jsx';
+import Partners from './pages/Partners.jsx';
+import Contact from './pages/Contact.jsx';
+import Gallery from './pages/Gallery.jsx';
+import { Services, Projects, StatesMap, FpoReg, VendorReg, Career } from './pages/Hubs.jsx';
+import Privacy from './pages/Privacy.jsx';
+import GaushalaTourism from './pages/GaushalaTourism.jsx';
+import Marketplace from './pages/Marketplace.jsx';
+import ProductDetail from './pages/ProductDetail.jsx';
+import Suppliers from './pages/Suppliers.jsx';
+import SupplierDetail from './pages/SupplierDetail.jsx';
+import Sourcing from './pages/Sourcing.jsx';
+import BusinessConnect from './pages/BusinessConnect.jsx';
+import Events from './pages/Events.jsx';
+import NotFound from './pages/NotFound.jsx';
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -66,7 +59,7 @@ function LangLayout() {
       {draftMode && <div className="bg-amber-300 px-4 py-2 text-center text-xs font-semibold text-amber-950 sm:text-sm">{c.common.draftBar}</div>}
       <ScrollProgress />
       <Header />
-      <main id="main" key={location.pathname} className="anim-page"><Suspense fallback={<PageLoader />}><Outlet /></Suspense></main>
+      <main id="main" key={location.pathname} className="anim-page"><Outlet /></main>
       <Footer />
       <WhatsAppFloat />
     </>
@@ -81,7 +74,7 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Navigate to={`/${i18n.language === 'hi' ? 'hi' : 'en'}`} replace />} />
-        <Route path="/admin/*" element={<Suspense fallback={<PageLoader />}><Admin /></Suspense>} />
+        <Route path="/admin/*" element={<Admin />} />
         <Route path="/:lang" element={<LangLayout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
