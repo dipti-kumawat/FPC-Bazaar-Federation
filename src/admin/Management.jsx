@@ -52,6 +52,7 @@ function UsersContent({ s }) {
   const [issue, setIssue] = useState(''), [issued, setIssued] = useState(null), [busy, setBusy] = useState(false);
   const [form, setForm] = useState({ username: '', name: '', role: 'project_head', state: s.state || '', recordId: '' });
   const [records, setRecords] = useState([]);
+  const [doomed, setDoomed] = useState(null), [typed, setTyped] = useState(''), [done, setDone] = useState('');
   useEffect(() => { if (s.role === 'admin') listRegistrations({ status: 'verified' }).then(setRecords).catch(e => setIssue(message(e))); }, [s.role]);
   const set = (key, value) => setForm(f => ({ ...f, [key]: value }));
   const partner = ['vendor', 'fpo'].includes(form.role);
@@ -63,6 +64,14 @@ function UsersContent({ s }) {
   return <>
     <h1 className="font-display text-3xl font-semibold text-brand-900">Users</h1>
     <ErrorText value={error || issue} />
+    {done && <p role="status" className="my-4 rounded border border-green-300 bg-green-50 p-3 text-green-900">{done} <button className="ml-2 underline" onClick={() => setDone('')}>Dismiss</button></p>}
+    {doomed && <DeleteBox u={doomed} typed={typed} setTyped={setTyped} busy={busy} onCancel={() => { setDoomed(null); setTyped(''); }}
+      onConfirm={() => action(async () => {
+        const { data: r } = await api().delete(`/api/admin/users/${doomed.id}`);
+        setDoomed(null); setTyped('');
+        setDone(`Deleted ${r.username}${r.applicationDeleted ? `, with the application and ${r.filesDeleted} document(s)` : ''}.`);
+        if (['vendor', 'fpo'].includes(r.role)) setRecords(list => list.filter(x => x.id !== doomed.recordId));
+      })} />}
     {issued && <div role="status" className="my-4 border border-green-300 bg-green-50 p-4"><b>One-time login details</b><p>Username: {issued.user.username}</p><p>Password: <code>{issued.tempPassword}</code></p><p>Shown once here. The user must change it at sign-in. Check Email status for delivery.</p><button onClick={() => setIssued(null)} className="mt-2 underline">Dismiss credentials</button></div>}
     <form className="my-6 grid gap-4 bg-white p-5 shadow-card sm:grid-cols-2 lg:grid-cols-3" onSubmit={e => { e.preventDefault(); action(async () => { const result = await api().post('/api/admin/users', form); setForm(f => ({ ...f, username: '', name: '' })); return result; }); }}>
       <Label title="Email / username"><input type="email" className="field mt-1" value={form.username} onChange={e => set('username', e.target.value)} required /></Label>
@@ -72,8 +81,26 @@ function UsersContent({ s }) {
       {partner && <Label title="Verified registration"><select className="field mt-1" value={form.recordId} onChange={e => set('recordId', e.target.value)} required><option value="">Choose registration</option>{records.filter(r => r.kind === form.role).map(r => <option value={r.id} key={r.id}>{r.name}</option>)}</select></Label>}
       <div className="self-end"><button className="btn-primary" disabled={busy}>Create login</button></div>
     </form>
-    {!data ? <p>Loading…</p> : <div className="overflow-x-auto bg-white"><table className="w-full min-w-[700px] text-sm"><thead><tr className="bg-brand-50 text-left"><th className="p-3">Name / username</th><th>Role</th><th>State</th><th>Status</th><th>Actions</th></tr></thead><tbody>{data.items.map(u => <tr key={u.id} className="border-t"><td className="p-3"><b>{u.name}</b><p>{u.username}</p></td><td>{u.role}</td><td>{u.state || '—'}</td><td>{u.active ? 'Active' : 'Disabled'}{u.mustChangePassword && <p className="text-xs">Password change required</p>}</td><td className="space-x-3"><button disabled={busy || u.username === s.username} className="underline disabled:opacity-40" onClick={() => action(() => api().patch(`/api/admin/users/${u.id}`, { active: !u.active }))}>{u.active ? 'Disable' : 'Enable'}</button><button disabled={busy || u.username === s.username} className="underline disabled:opacity-40" onClick={() => { if (window.confirm(`Reset the password for ${u.username}? Existing sessions will end.`)) action(() => api().post(`/api/admin/users/${u.id}/reset-password`)); }}>Reset password</button></td></tr>)}</tbody></table></div>}
+    {!data ? <p>Loading…</p> : <div className="overflow-x-auto bg-white"><table className="w-full min-w-[700px] text-sm"><thead><tr className="bg-brand-50 text-left"><th className="p-3">Name / username</th><th>Role</th><th>State</th><th>Status</th><th>Actions</th></tr></thead><tbody>{data.items.map(u => <tr key={u.id} className="border-t"><td className="p-3"><b>{u.name}</b><p>{u.username}</p></td><td>{u.role}</td><td>{u.state || '—'}</td><td>{u.active ? 'Active' : 'Disabled'}{u.mustChangePassword && <p className="text-xs">Password change required</p>}</td><td className="space-x-3"><button disabled={busy || u.username === s.username} className="underline disabled:opacity-40" onClick={() => action(() => api().patch(`/api/admin/users/${u.id}`, { active: !u.active }))}>{u.active ? 'Disable' : 'Enable'}</button><button disabled={busy || u.username === s.username} className="underline disabled:opacity-40" onClick={() => { if (window.confirm(`Reset the password for ${u.username}? Existing sessions will end.`)) action(() => api().post(`/api/admin/users/${u.id}/reset-password`)); }}>Reset password</button>{s.role === 'admin' && u.username !== s.username && <button disabled={busy} className="font-semibold text-red-700 underline disabled:opacity-40" onClick={() => { setDoomed(u); setTyped(''); setDone(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Delete</button>}</td></tr>)}</tbody></table></div>}
   </>;
+}
+
+/** Permanent delete needs the email typed again: it removes data from the database. */
+function DeleteBox({ u, typed, setTyped, busy, onCancel, onConfirm }) {
+  const partner = ['vendor', 'fpo'].includes(u.role);
+  const ok = typed.trim().toLowerCase() === u.username;
+  return <section role="alertdialog" aria-labelledby="del-title" className="my-6 border-l-4 border-red-600 bg-red-50 p-5">
+    <h2 id="del-title" className="font-display text-xl font-semibold text-red-900">Delete {u.name} permanently?</h2>
+    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-red-900">
+      <li>The login <b>{u.username}</b> ({u.role}) is removed from the database and signed out everywhere.</li>
+      {partner && <li>Their application, all uploaded documents{u.role === 'vendor' ? ' and their public profile page' : ''} are deleted too.</li>}
+      <li>This cannot be undone (only from a server backup). The activity log keeps a line saying who deleted it.</li>
+    </ul>
+    <label className="mt-4 block text-sm font-semibold text-red-900">Type <code className="rounded bg-white px-1">{u.username}</code> to confirm
+      <input className="field mt-2 block max-w-md" value={typed} onChange={e => setTyped(e.target.value)} autoComplete="off" autoFocus /></label>
+    <div className="mt-4 flex flex-wrap gap-3"><button type="button" disabled={!ok || busy} onClick={onConfirm} className="rounded bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50">{busy ? 'Deleting…' : 'Delete permanently'}</button>
+      <button type="button" onClick={onCancel} className="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-semibold">Cancel</button></div>
+  </section>;
 }
 
 export function Enquiries({ s }) {

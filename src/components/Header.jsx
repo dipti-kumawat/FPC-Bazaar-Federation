@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useC, useLang, LLink } from '../i18n/hooks.jsx';
 import Logo from './Logo.jsx';
 
@@ -21,7 +21,7 @@ function LangSwitch({ dark = false }) {
 
 export default function Header() {
   const c = useC(); const lang = useLang(); const loc = useLocation(); const [open, setOpen] = useState(false);
-  const link = ({ isActive }) => `relative whitespace-nowrap px-2.5 py-2 text-[14px] font-semibold transition hover:text-brand-600 after:absolute after:inset-x-2.5 after:-bottom-0.5 after:h-[2px] after:origin-left after:bg-gold-500 after:transition-transform after:duration-300 ${isActive ? 'text-brand-900 after:scale-x-100' : 'text-slate-700 after:scale-x-0 hover:after:scale-x-100'}`;
+  const link = ({ isActive }) => `relative whitespace-nowrap px-[7px] py-2 text-[14px] font-semibold transition hover:text-brand-600 after:absolute after:inset-x-[7px] after:-bottom-0.5 after:h-[2px] after:origin-left after:bg-gold-500 after:transition-transform after:duration-300 ${isActive ? 'text-brand-900 after:scale-x-100' : 'text-slate-700 after:scale-x-0 hover:after:scale-x-100'}`;
   const close = () => setOpen(false);
   useEffect(() => { setOpen(false); }, [loc.pathname]);
   // Mobile drawer: lock page scroll and close with Escape.
@@ -46,6 +46,12 @@ export default function Header() {
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="xl:hidden"><LangSwitch /></div>
             <div className="hidden xl:block"><LangSwitch /></div>
+            {/* Login: a text button while the menu is collapsed; on wide screens the nav is full, so the same square style as the menu button
+                (the nav links use 7 px side padding so it fits beside them). */}
+            <Link to="/admin" className="btn-outline hidden sm:inline-flex xl:hidden">{c.nav.login}</Link>
+            <Link to="/admin" title={c.nav.login} aria-label={c.nav.login} className="hidden h-11 w-11 place-items-center rounded-[3px] border border-brand-800/30 text-brand-900 transition hover:bg-brand-50 xl:grid">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg>
+            </Link>
             <button type="button" className="grid h-11 w-11 place-items-center rounded-[3px] border border-brand-800/30 xl:hidden" aria-expanded={open} aria-controls="mobile-nav" aria-label={open ? c.common.close : c.common.menu} onClick={() => setOpen(!open)}>
               <span className="relative block h-0.5 w-5 bg-brand-900 before:absolute before:-top-1.5 before:block before:h-0.5 before:w-5 before:bg-brand-900 after:absolute after:top-1.5 after:block after:h-0.5 after:w-5 after:bg-brand-900" style={open ? { background: 'transparent' } : undefined} />
             </button>
@@ -76,7 +82,9 @@ export default function Header() {
                   </motion.div>
                 ))}
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.35 }}>
-                  <LLink to="/business-connect" onClick={close} className="btn-primary mt-6 w-full">{c.nav.connectCta}</LLink>
+                  <LLink to="/track-application" onClick={close} className="block border-b border-brand-100 py-3.5 font-display text-lg font-semibold text-brand-900 transition hover:pl-1 hover:text-brand-600">{c.nav.track}</LLink>
+                  <Link to="/admin" onClick={close} className="btn-outline mt-6 w-full">{c.nav.login}</Link>
+                  <LLink to="/business-connect" onClick={close} className="btn-primary mt-3 w-full">{c.nav.connectCta}</LLink>
                 </motion.div>
               </div>
             </motion.nav>

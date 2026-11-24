@@ -30,7 +30,7 @@ The backend must enforce this. The frontend only hides screens.
 Other existing forms (contact, register, quote, supplier, sourcing, connect, ...) are unchanged. NGO registrations have no public form yet; the rejection dashboard already has an NGO tab (`kind = ngo`).
 
 ## Auth
-`POST /api/auth/login` `{ username, password }` returns `{ token, role, name, state?, recordId? }` (`recordId` for vendor/fpo users). Send `Authorization: Bearer <token>` on admin calls.
+`POST /api/auth/login` `{ username, password }` returns `{ otpRequired, challenge, email }` and emails a 6-digit code; `POST /api/auth/verify-otp` `{ challenge, code }` then returns `{ token, role, name, state?, recordId? }` (`recordId` for vendor/fpo users). Send `Authorization: Bearer <token>` on admin calls. Admins can delete a login with `DELETE /api/admin/users/{id}` (vendor / FPO: also their application and documents).
 
 ## Admin
 - `GET /api/admin/registrations?kind=&status=&state=&q=` returns `{ items: [Record] }`, already filtered by the caller's role scope.

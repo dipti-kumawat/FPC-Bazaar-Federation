@@ -5,9 +5,10 @@ import { draftMode } from '../config/site.js';
 import { STATES, CATEGORIES } from '../data/marketplace.js';
 import Logo from '../components/Logo.jsx';
 import { Check } from '../components/Icons.jsx';
-import { API_MODE, ROLES, KINDS, STATUSES, DEMO_USERS, getSession, login, logout, listRegistrations, decide, downloadDocument, resetDemo, useRegistryTick, api, refreshSession, forgotPassword, downloadExport } from '../services/registry.js';
+import { API_MODE, ROLES, KINDS, STATUSES, DEMO_USERS, getSession, login, logout, listRegistrations, decide, downloadDocument, resetDemo, useRegistryTick, api, refreshSession, forgotPassword, downloadExport, resendConfirmation, verifyOtp, resendOtp } from '../services/registry.js';
 
 import { Users, Enquiries, Notifications, Audit, ChangePassword, message } from './Management.jsx';
+import MyAccount from './MyAccount.jsx';
 
 // Admin panel. English only (staff tool). Not indexed. Roles and rules: src/services/registry.js and docs/ADMIN_API.md
 
@@ -33,27 +34,78 @@ function useRows(filters) {
 }
 
 /* ---------- Login ---------- */
+// Step 1: username + password. Step 2 (backend connected): the 6-digit code emailed to the user.
+function CodeStep({ otp, onDone, onBack }) {
+  const [code, setCode] = useState(''); const [err, setErr] = useState(''); const [notice, setNotice] = useState(''); const [busy, setBusy] = useState(false);
+  const [challenge, setChallenge] = useState(otp);
+  const [wait, setWait] = useState(otp.resendInSeconds || 60);
+  useEffect(() => { if (wait <= 0) return undefined; const t = setTimeout(() => setWait((w) => w - 1), 1000); return () => clearTimeout(t); }, [wait]);
+  const expired = (x) => x.response?.data?.errors?.code === 'otp_expired';
+  async function check(e) {
+    e.preventDefault(); setBusy(true); setErr(''); setNotice('');
+    try { await verifyOtp(challenge.challenge, code, challenge.username); onDone(); }
+    catch (x) { const m = x.response?.data?.message || x.message || 'Could not check the code.'; if (expired(x)) onBack(m); else { setErr(m); setCode(''); } }
+    setBusy(false);
+  }
+  async function again() {
+    setErr(''); setNotice('');
+    try { const r = await resendOtp(challenge.challenge); setChallenge({ ...challenge, ...r }); setWait(r.resendInSeconds || 60); setCode(''); setNotice('A new code has been sent. The old code no longer works.'); }
+    catch (x) { const m = x.response?.data?.message || 'Could not send a new code.'; if (expired(x)) onBack(m); else setErr(m); }
+  }
+  return (
+    <form onSubmit={check} className="mt-6 space-y-4">
+      <p className="text-sm text-slate-700">We emailed a 6-digit sign-in code to <b className="break-all">{challenge.email}</b>. It works for {Math.round((challenge.expiresInSeconds || 600) / 60)} minutes.</p>
+      <label className="block text-sm font-semibold text-slate-800">Sign-in code
+        <input className="field mt-1 text-center font-mono text-2xl tracking-[0.5em]" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+          inputMode="numeric" autoComplete="one-time-code" pattern="\d{6}" maxLength={6} required autoFocus aria-describedby="otp-help" />
+      </label>
+      <p id="otp-help" className="text-xs text-slate-500">Check spam if you cannot see the email. Never share this code with anyone.</p>
+      {err && <p role="alert" className="rounded bg-red-50 p-3 text-sm font-medium text-red-700">{err}</p>}
+      {notice && <p role="status" className="text-sm text-green-800">{notice}</p>}
+      <button className="btn-primary w-full disabled:opacity-60" disabled={busy || code.length !== 6}>{busy ? 'Please wait…' : 'Verify and sign in'}</button>
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+        <button type="button" className="underline disabled:no-underline disabled:opacity-60" disabled={wait > 0} onClick={again}>{wait > 0 ? `Send a new code in ${wait}s` : 'Send a new code'}</button>
+        <button type="button" className="underline" onClick={() => onBack('')}>Use a different login</button>
+      </div>
+    </form>
+  );
+}
+
 function Login({ onDone }) {
   const [u, setU] = useState(''); const [p, setP] = useState(''); const [err, setErr] = useState(''); const [busy, setBusy] = useState(false);
   const demoOk = draftMode && !API_MODE;
   const [forgot, setForgot] = useState(false), [notice, setNotice] = useState('');
-  async function go(e) { e.preventDefault(); setBusy(true); setErr(''); try { if (forgot) { const r = await forgotPassword(u); setNotice(r.message); } else { await login(u, p); onDone(); } } catch (x) { setErr(x.response?.data?.message || x.message || 'Login failed'); } setBusy(false); }
+  const [unconfirmed, setUnconfirmed] = useState(false);
+  const [otp, setOtp] = useState(null);
+  async function resend() { setErr(''); try { const r = await resendConfirmation(u); setNotice(r.message); setUnconfirmed(false); } catch (x) { setErr(x.response?.data?.message || 'Could not send. Try again later.'); } }
+  async function go(e) {
+    e.preventDefault(); setBusy(true); setErr(''); setNotice(''); setUnconfirmed(false);
+    try {
+      if (forgot) { const r = await forgotPassword(u); setNotice(r.message); }
+      else { const r = await login(u, p); if (r?.otpRequired) { setOtp(r); setP(''); } else onDone(); }
+    } catch (x) { setUnconfirmed(x.response?.data?.errors?.email === 'email_unconfirmed'); setErr(x.response?.data?.message || x.message || 'Login failed'); }
+    setBusy(false);
+  }
   return (
     <div className="grid min-h-screen place-items-center bg-brand-950 bg-lattice p-4">
       <div className="w-full max-w-md border-t-4 border-gold-500 bg-paper p-7 shadow-lift">
         <Link to="/en" aria-label="Back to site"><Logo /></Link>
-        <h1 className="mt-6 font-display text-2xl font-semibold text-brand-900">{forgot ? 'Reset your password' : 'Admin sign in'}</h1>
-        <p className="mt-1 text-sm text-slate-600">Admin &gt; State Head &gt; Project Head &gt; Vendor &gt; FPO</p>
+        <h1 className="mt-6 font-display text-2xl font-semibold text-brand-900">{otp ? 'Enter your sign-in code' : forgot ? 'Reset your password' : 'Sign in'}</h1>
+        {!otp && <p className="mt-1 text-sm text-slate-600">Admin &gt; State Head &gt; Project Head &gt; Vendor &gt; FPO</p>}
         {!API_MODE && !draftMode ? (
           <p className="mt-6 border-l-4 border-red-500 bg-red-50 p-4 text-sm text-red-800">The admin panel needs the backend. Set VITE_API_URL and deploy the admin API (docs/ADMIN_API.md).</p>
+        ) : otp ? (
+          <CodeStep otp={otp} onDone={onDone} onBack={(m) => { setOtp(null); setErr(m); }} />
         ) : (
           <form onSubmit={go} className="mt-6 space-y-4">
-            <label className="block text-sm font-semibold text-slate-800">Username<input className="field mt-1" value={u} onChange={(e) => setU(e.target.value)} autoComplete="username" required /></label>
+            <label className="block text-sm font-semibold text-slate-800">{API_MODE ? 'Email' : 'Username'}<input className="field mt-1" value={u} onChange={(e) => setU(e.target.value)} autoComplete="username" required /></label>
             {!forgot && <label className="block text-sm font-semibold text-slate-800">Password<input type="password" className="field mt-1" value={p} onChange={(e) => setP(e.target.value)} autoComplete="current-password" required /></label>}
             {err && <p role="alert" className="rounded bg-red-50 p-3 text-sm font-medium text-red-700">{err}</p>}
+            {unconfirmed && <button type="button" className="text-sm font-semibold text-brand-700 underline" onClick={resend}>Send the confirmation link again</button>}
             <button className="btn-primary w-full disabled:opacity-60" disabled={busy}>{busy ? 'Please wait…' : forgot ? 'Send reset link' : 'Sign in'}</button>
             {notice && <p role="status" className="text-sm text-green-800">{notice}</p>}
-            {API_MODE && <button type="button" className="text-sm underline" onClick={() => { setForgot(!forgot); setNotice(''); setErr(''); }}>{forgot ? 'Back to sign in' : 'Forgot password?'}</button>}
+            {API_MODE && <button type="button" className="text-sm underline" onClick={() => { setForgot(!forgot); setNotice(''); setErr(''); setUnconfirmed(false); }}>{forgot ? 'Back to sign in' : 'Forgot password?'}</button>}
+            {API_MODE && !forgot && <p className="text-sm text-slate-600">New FPO or company? Register as <Link to="/en/fpo-registration" className="font-semibold text-brand-700 underline">FPO</Link> or <Link to="/en/vendor-registration" className="font-semibold text-brand-700 underline">vendor</Link> and create your login with the form. <Link to="/en/track-application" className="font-semibold text-brand-700 underline">Track an application</Link></p>}
           </form>
         )}
         {demoOk && (
@@ -69,19 +121,19 @@ function Login({ onDone }) {
 
 /* ---------- Layout ---------- */
 function Shell({ s, children }) {
-  const nav = useNavigate(); const role = ROLES[s.role];
+  const nav = useNavigate(); const role = ROLES[s.role]; const own = role.scope === 'own';
   const link = ({ isActive }) => `whitespace-nowrap border-b-2 px-3 py-3 text-sm font-semibold ${isActive ? 'border-gold-400 text-white' : 'border-transparent text-white/70 hover:text-white'}`;
   return (
     <div className="min-h-screen bg-paper">
       <header className="bg-brand-900 text-white">
         <div className="container-x flex flex-wrap items-center justify-between gap-3 py-3">
-          <div className="flex items-center gap-3"><span className="font-display text-lg font-semibold">FPC Admin</span><span className="rounded-full bg-gold-500 px-2.5 py-0.5 text-xs font-bold text-brand-950">{role.label}</span></div>
+          <div className="flex items-center gap-3"><span className="font-display text-lg font-semibold">{own ? 'My account' : 'FPC Admin'}</span><span className="rounded-full bg-gold-500 px-2.5 py-0.5 text-xs font-bold text-brand-950">{role.label}</span></div>
           <div className="flex items-center gap-3 text-sm"><span className="hidden text-white/70 sm:inline">{s.name}{s.state ? ` · ${stateName(s.state)}` : ''}</span><Link to="/en" className="text-white/80 underline">View site</Link>
             <button type="button" onClick={() => { logout(); nav('/admin'); }} className="rounded border border-white/30 px-3 py-1 font-semibold hover:bg-white/10">Sign out</button></div>
         </div>
         <nav className="container-x -mb-px flex gap-1 overflow-x-auto" aria-label="Admin">
-          <NavLink end to="/admin" className={link}>Dashboard</NavLink>
-          <NavLink to="/admin/registrations" className={link}>Registrations</NavLink>
+          <NavLink end to="/admin" className={link}>{own ? 'My application' : 'Dashboard'}</NavLink>
+          {!own && <NavLink to="/admin/registrations" className={link}>Registrations</NavLink>}
           {API_MODE && ['admin', 'state_head'].includes(s.role) && <NavLink to="/admin/users" className={link}>Users</NavLink>}
           {API_MODE && s.role === 'admin' && <><NavLink to="/admin/enquiries" className={link}>Enquiries</NavLink><NavLink to="/admin/notifications" className={link}>Email status</NavLink><NavLink to="/admin/audit" className={link}>Activity log</NavLink></>}
           {API_MODE && <NavLink to="/admin/password" className={link}>Change password</NavLink>}
@@ -237,6 +289,16 @@ export default function Admin() {
   if (sessionError) return <div className="p-8"><p role="alert">{sessionError}</p><button className="underline" onClick={() => window.location.reload()}>Retry connection</button></div>;
   if (s?.mustChangePassword) return <div className="min-h-screen bg-paper p-8"><ChangePassword forced /></div>;
   if (!s) return <Login onDone={() => force((n) => n + 1)} />;
+  // Vendor and FPO logins: only their own application, its status and their password.
+  if (ROLES[s.role]?.scope === 'own') return (
+    <Shell s={s}>
+      <Routes>
+        <Route index element={<MyAccount s={s} />} />
+        <Route path="password" element={<ChangePassword />} />
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
+    </Shell>
+  );
   return (
     <Shell s={s}>
       <Routes>

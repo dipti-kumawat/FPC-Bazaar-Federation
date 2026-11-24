@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useC, LLink } from '../i18n/hooks.jsx';
 import { site, initiativeList, marketNav } from '../config/site.js';
 import { Verify } from './ui.jsx';
@@ -29,7 +30,8 @@ export default function Footer() {
         <div>
           <h3 className={h}>{c.footer.quick}</h3>
           <ul className="space-y-2.5">
-            {[['', c.nav.home], ['/about', c.nav.about], ['/events', c.nav.events], ['/partners-investors', c.nav.partners], ['/join-us', c.nav.join], ['/contact', c.nav.contact], ['/privacy-policy', c.footer.privacy]].map(([to, t]) => <li key={to}><LLink to={to} className={a}>{t}</LLink></li>)}
+            {[['', c.nav.home], ['/about', c.nav.about], ['/events', c.nav.events], ['/partners-investors', c.nav.partners], ['/join-us', c.nav.join], ['/track-application', c.nav.track], ['/contact', c.nav.contact], ['/privacy-policy', c.footer.privacy]].map(([to, t]) => <li key={to}><LLink to={to} className={a}>{t}</LLink></li>)}
+            <li><Link to="/admin" className={a}>{c.nav.login}</Link></li>
           </ul>
         </div>
         <div>

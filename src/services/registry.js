@@ -114,6 +114,14 @@ export async function changePassword(currentPassword, newPassword) {
   const { data } = await api().post('/api/auth/change-password', { currentPassword, newPassword });
   return saveSession(sessionFrom(data, getSession()));
 }
+/** Public: status of an application by its reference number and the mobile number used in the form. */
+export async function trackApplication(reference, phone) {
+  const { data } = await axios.post(`${base}/api/public/track`, { reference: reference.trim(), phone: phone.trim() }, { timeout: 15000 }); return data;
+}
+/** Sends a new email-confirmation link to a self-registered login that has not been switched on yet. */
+export async function resendConfirmation(username) {
+  const { data } = await axios.post(`${base}/api/auth/resend-confirmation`, { username }, { timeout: 15000 }); return data;
+}
 export async function forgotPassword(username) {
   const { data } = await axios.post(`${base}/api/auth/forgot-password`, { username }, { timeout: 15000 }); return data;
 }
@@ -128,11 +136,15 @@ export async function downloadExport(kind, filters = {}) {
 export const getSession = () => { try { return JSON.parse(sessionStorage.getItem(SESSION) || 'null'); } catch (e) { return null; } };
 export const logout = () => { try { sessionStorage.removeItem(SESSION); } catch (e) { /* ignore */ } emit(); };
 
-/** Resolves to the session object or throws. */
+/**
+ * Resolves to the session object, or (API mode) to { otpRequired, challenge, email, ... } when the server
+ * emailed a sign-in code: then call verifyOtp(challenge, code). Throws on a wrong password.
+ */
 export async function login(username, password) {
   let s;
   if (API_MODE) {
     const { data } = await api().post('/api/auth/login', { username, password });
+    if (data.otpRequired) return { ...data, username: username.trim().toLowerCase() };
     s = sessionFrom(data, { username: username.trim().toLowerCase() });
   } else {
     const u = DEMO_USERS.find((x) => x.username === username.trim() && x.password === password);
@@ -141,6 +153,16 @@ export async function login(username, password) {
   }
   try { sessionStorage.setItem(SESSION, JSON.stringify(s)); } catch (e) { /* ignore */ }
   emit(); return s;
+}
+
+/** Second sign-in step: the 6-digit code from the email. Saves and returns the session. */
+export async function verifyOtp(challenge, code, username) {
+  const { data } = await axios.post(`${base}/api/auth/verify-otp`, { challenge, code }, { timeout: 15000 });
+  return saveSession(sessionFrom(data, { username }));
+}
+/** Emails a new code for the same sign-in. */
+export async function resendOtp(challenge) {
+  const { data } = await axios.post(`${base}/api/auth/resend-otp`, { challenge }, { timeout: 15000 }); return data;
 }
 
 const inScope = (r, s) => {

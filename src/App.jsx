@@ -21,6 +21,7 @@ const Biogas = lazy(() => import('./pages/Biogas.jsx'));
 const Join = lazy(() => import('./pages/Join.jsx'));
 const Partners = lazy(() => import('./pages/Partners.jsx'));
 const Contact = lazy(() => import('./pages/Contact.jsx'));
+const TrackApplication = lazy(() => import('./pages/TrackApplication.jsx'));
 const Gallery = lazy(() => import('./pages/Gallery.jsx'));
 const hub = (name) => lazy(() => import('./pages/Hubs.jsx').then((m) => ({ default: m[name] })));
 const Services = hub('Services'); const Projects = hub('Projects'); const StatesMap = hub('StatesMap');
@@ -113,6 +114,7 @@ export default function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="career" element={<Career />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="track-application" element={<TrackApplication />} />
           <Route path="privacy-policy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
         </Route>

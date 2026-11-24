@@ -23,7 +23,7 @@ export async function submitForm(formKey, payload) {
     return data;
   }
   const names = {}; const clean = {};
-  Object.entries(payload).forEach(([k, v]) => { if (isFile(v)) names[k] = v.name; else clean[k] = v; });
+  Object.entries(payload).forEach(([k, v]) => { if (k === 'password' || k === 'passwordConfirm') return; if (isFile(v)) names[k] = v.name; else clean[k] = v; });
   try {
     const list = JSON.parse(localStorage.getItem('fpc_demo_submissions') || '[]');
     list.push({ formKey, ...clean, files: names, savedAt: new Date().toISOString() });
