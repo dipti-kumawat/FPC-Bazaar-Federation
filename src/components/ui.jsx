@@ -4,18 +4,10 @@ import PhotoSlot from './PhotoSlot.jsx';
 import { Arrow, Check } from './Icons.jsx';
 import Reveal from './Reveal.jsx';
 
-/** Hides content until its verification flag is true. In draft mode it is shown with a yellow outline. */
-export function Verify({ flag, children, inline = false }) {
-  const c = useC();
-  if (!flag || flags[flag]) return children;
-  if (!draftMode) return null;
-  const Tag = inline ? 'span' : 'div';
-  return (
-    <Tag className={`relative rounded-md outline outline-2 outline-offset-4 outline-amber-400 ${inline ? 'mt-4 inline-block px-1' : 'p-4 pt-6'}`}>
-      <span className="absolute -top-3 left-2 z-10 rounded bg-amber-400 px-2 py-0.5 text-[11px] font-bold text-amber-950">{c.common.toVerify}</span>
-      {children}
-    </Tag>
-  );
+/** Kept as a wrapper for content still awaiting client confirmation. No outline or label is shown. */
+export function Verify({ children }) {
+  // Draft outline and "To verify" label are switched off; the content stays visible.
+  return children;
 }
 
 export function SectionTitle({ children, sub, light = false, left = false, eyebrow }) {
@@ -29,13 +21,20 @@ export function SectionTitle({ children, sub, light = false, left = false, eyebr
   );
 }
 
-export function PageHero({ title, sub, crumb, crumbs, kind, slot }) {
+export function PageHero({ title, sub, crumb, crumbs, kind, slot, float = false }) {
   const c = useC();
   const img = slot && images[slot];
   const trail = crumbs || [];
   return (
     <section className="relative isolate overflow-hidden bg-brand-900 text-white">
       <div className="bg-lattice absolute inset-0 -z-10 opacity-90" aria-hidden="true" />
+      {float && (
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+          {[['8%', '70%', 14, '0s'], ['22%', '30%', 9, '2s'], ['48%', '78%', 18, '4s'], ['66%', '20%', 10, '1s'], ['80%', '64%', 14, '3s'], ['92%', '28%', 8, '5s']].map(([l, t, z, d]) => (
+            <span key={l} className="fpc-drift absolute border border-gold-400/70 bg-gold-500/10" style={{ left: l, top: t, width: z, height: z, animationDelay: d }} />
+          ))}
+        </div>
+      )}
       <div className={`container-x grid items-center gap-10 py-14 lg:py-20 ${img ? 'lg:grid-cols-[1.35fr_.65fr]' : ''}`}>
         <div>
           <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-2 text-[13px] text-white/60">

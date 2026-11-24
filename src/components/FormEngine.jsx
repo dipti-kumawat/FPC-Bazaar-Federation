@@ -54,6 +54,10 @@ export default function FormEngine({ formKey, title, initial }) {
   const opened = useRef(Date.now());
   const honey = useRef('');
 
+  const requiredFields = fields.filter((f) => f.r);
+  const done = requiredFields.filter((f) => (f.t === 'file' ? !!values[f.n] : String(values[f.n] ?? '').trim() !== '')).length + (consent ? 1 : 0);
+  const pct = Math.round((done / (requiredFields.length + 1)) * 100);
+
   const set = (n, v) => { setValues((o) => ({ ...o, [n]: v })); if (errors[n]) setErrors((e) => ({ ...e, [n]: '' })); };
 
   async function onSubmit(e) {
@@ -85,6 +89,7 @@ export default function FormEngine({ formKey, title, initial }) {
   if (status === 'ok') {
     return (
       <div role="status" className="rounded-sm border border-brand-200 bg-brand-50 p-6">
+        <span className="tick-pop tick-now mb-4 grid h-16 w-16 place-items-center rounded-full bg-brand-900 text-gold-300"><svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path className="tick-draw" d="m5 12.5 4.5 4.5L19 7.5" /></svg></span>
         <p className="text-lg font-bold text-brand-800">{fc.success}</p>
         {reference && <p className="mt-2 text-sm">{fc.reference}: <b className="select-all">{reference}</b></p>}
         {reference && <p className="mt-1 text-sm"><LLink to={`/track-application?ref=${reference}`} className="font-semibold text-brand-700 underline">{fc.trackLink}</LLink></p>}
@@ -98,7 +103,11 @@ export default function FormEngine({ formKey, title, initial }) {
 
   return (
     <form id={`${formKey}-form`} onSubmit={onSubmit} noValidate className="rounded-sm border border-brand-100 bg-white p-5 shadow-sm sm:p-7">
-      {title && <h3 className="mb-5 text-xl font-extrabold text-brand-900">{title}</h3>}
+      {title && <h3 className="mb-3 text-xl font-extrabold text-brand-900">{title}</h3>}
+      <div className="mb-6" aria-hidden="true">
+        <div className="h-1.5 overflow-hidden rounded-full bg-brand-100"><div className="h-full rounded-full bg-gradient-to-r from-gold-500 to-brand-700 transition-all duration-700 ease-out" style={{ width: `${pct}%` }} /></div>
+        <p className="mt-1.5 text-right text-[11px] font-bold tracking-wide text-gold-600">{pct}%</p>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map((f) => {
           const id = `${formKey}-${f.n}`;
@@ -155,7 +164,7 @@ export default function FormEngine({ formKey, title, initial }) {
       </label>
       {errors._consent && <p className="mt-1 text-sm font-medium text-red-600">{errors._consent}</p>}
       {status === 'error' && <p role="alert" className="mt-4 rounded-md bg-red-50 p-3 text-sm font-medium text-red-700">{serverMessage || fc.error}</p>}
-      <button type="submit" disabled={status === 'sending'} className="btn-primary mt-6 w-full sm:w-auto disabled:opacity-60">{status === 'sending' ? fc.sending : fc.submit}</button>
+      <button type="submit" disabled={status === 'sending'} className="btn-primary btn-shimmer mt-6 w-full sm:w-auto disabled:opacity-60">{status === 'sending' ? fc.sending : fc.submit}</button>
     </form>
   );
 }

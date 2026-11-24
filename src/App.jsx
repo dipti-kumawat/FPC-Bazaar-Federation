@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useC } from './i18n/hooks.jsx';
-import { draftMode } from './config/site.js';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
@@ -65,7 +64,6 @@ function LangLayout() {
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:p-3">{c.common.skip}</a>
-      {draftMode && <div className="bg-amber-300 px-4 py-2 text-center text-xs font-semibold text-amber-950 sm:text-sm">{c.common.draftBar}</div>}
       <ScrollProgress />
       <Header />
       <main id="main" key={location.pathname} className="anim-page"><Suspense fallback={<PageLoader />}><Outlet /></Suspense></main>

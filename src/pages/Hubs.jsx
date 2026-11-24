@@ -70,7 +70,7 @@ export function Projects() {
   );
 }
 
-/** 17 States Map: India map. Highlighted states come from `networkStates` in config; shapes live in data/indiaMap.js. */
+/** 18 States Map: India map. Highlighted states come from `networkStates` in config; shapes live in data/indiaMap.js. */
 const MAP_CSS = `
 @keyframes fpcMapIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 @keyframes fpcSheen{from{transform:translateX(-160px)}to{transform:translateX(760px)}}
@@ -199,9 +199,6 @@ export function StatesMap() {
                 <span className="w-5 text-xs font-bold tabular-nums text-gold-600">{String(i + 1).padStart(2, '0')}</span><span className="flex-1">{x.n}</span>
                 <span aria-hidden="true" className={`h-1.5 w-1.5 rotate-45 bg-gold-500 transition ${hi === x.id ? 'scale-150' : 'scale-75 opacity-60'}`} /></button></li>))}
             </ul>
-            <div className="mt-8"><Verify flag="networkStats">
-              <p className="text-sm text-slate-600">{h.pendingList}</p>
-            </Verify></div>
             <LLink to="/fpo-registration" className="btn-primary mt-8">{c.nav.fpoReg}</LLink>
           </div>
         </div>
@@ -210,23 +207,77 @@ export function StatesMap() {
   );
 }
 
+const CAREER_STEPS = {
+  en: [['Apply', 'Fill in the form with your details and upload your documents.'], ['Review', 'The Federation team reviews every application.'], ['Get in touch', 'Suitable applicants are contacted by the team.']],
+  hi: [['आवेदन करें', 'अपने विवरण के साथ फ़ॉर्म भरें और दस्तावेज़ अपलोड करें।'], ['समीक्षा', 'फेडरेशन की टीम हर आवेदन की समीक्षा करती है।'], ['संपर्क', 'उपयुक्त आवेदकों से टीम संपर्क करती है।']],
+};
+
+const REG_STEPS = {
+  en: [['Register', 'Fill in the form and upload your documents.'], ['Federation review', 'The team verifies your details and documents.'], ['Verified and connected', 'Verified members are listed and introduced to partners.']],
+  hi: [['पंजीकरण करें', 'फ़ॉर्म भरें और अपने दस्तावेज़ अपलोड करें।'], ['फेडरेशन समीक्षा', 'टीम आपके विवरण और दस्तावेज़ों की जाँच करती है।'], ['सत्यापित और जुड़ा हुआ', 'सत्यापित सदस्यों को सूची में जोड़ा जाता है और भागीदारों से मिलाया जाता है।']],
+};
+
+function RegSteps({ lang, steps: custom }) {
+  const steps = custom || REG_STEPS[lang] || REG_STEPS.en;
+  return (
+    <section className="relative z-10 -mt-8 pb-2">
+      <div className="container-x">
+        <Reveal variant="zoom">
+          <div className="relative overflow-hidden border border-brand-100 border-t-4 border-t-gold-500 bg-white px-6 py-7 shadow-lift">
+            <div className="absolute left-[16.6%] right-[16.6%] top-[3.35rem] hidden h-px bg-brand-100 md:block" aria-hidden="true"><span className="line-grow absolute inset-0 bg-gold-500" /></div>
+            <ol className="relative grid gap-6 md:grid-cols-3">
+              {steps.map(([h, t], i) => (
+                <li key={h} className="group flex items-start gap-4 md:flex-col md:items-center md:text-center">
+                  <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-brand-900 font-display text-xl font-semibold text-gold-300 transition duration-500 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-brand-950">
+                    <span className="absolute inset-0 animate-ping rounded-full bg-gold-500/30 [animation-duration:3s]" style={{ animationDelay: `${i * 0.9}s` }} aria-hidden="true" />
+                    <span className="relative">{i + 1}</span>
+                  </span>
+                  <div><p className="font-display text-lg font-semibold text-brand-900">{h}</p><p className="mt-1 text-sm leading-6 text-slate-600">{t}</p></div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function AnimList({ items, tick = false }) {
+  return (
+    <ul className={tick ? 'divide-y divide-brand-100 border-y border-brand-100' : 'space-y-2.5'}>
+      {items.map((d, i) => (
+        <Reveal key={d} variant="left" delay={i * 90}>
+          <li className={`group flex items-start gap-3 text-slate-700 transition duration-300 hover:translate-x-1.5 ${tick ? 'py-3.5 hover:bg-gold-50/70' : ''}`}>
+            {tick ? (
+              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-100 text-brand-800 transition group-hover:bg-gold-500 group-hover:text-brand-950"><svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path className="tick-draw" d="m5 12.5 4.5 4.5L19 7.5" /></svg></span>
+            ) : <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500 transition group-hover:scale-150" />}
+            <span>{d}</span>
+          </li>
+        </Reveal>
+      ))}
+    </ul>
+  );
+}
+
 function RegPage({ seo, k, formKey }) {
   useSeo(seo);
-  const c = useC(); const h = c.hub[k];
+  const c = useC(); const lang = useLang(); const h = c.hub[k];
   return (
     <>
-      <PageHero title={h.title} sub={h.sub} crumb={h.crumb} />
+      <PageHero title={h.title} sub={h.sub} crumb={h.crumb} float />
+      <RegSteps lang={lang} />
       <Band>
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.15fr]">
           <div>
-            <h2 className="mb-5 font-display text-2xl font-semibold text-brand-900">{h.whyTitle}</h2>
-            <Checklist items={h.why} />
-            <h3 className="mb-3 mt-8 font-display text-lg font-semibold text-brand-900">{h.docsTitle}</h3>
-            <ul className="space-y-2 text-slate-700">{h.docs.map((d) => <li key={d} className="flex items-start gap-2.5"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />{d}</li>)}</ul>
-            <p className="mt-6 border-l-4 border-gold-500 bg-white p-4 text-sm leading-6 text-slate-700">{h.statusNote}</p>
+            <Reveal variant="none" stagger><h2 className="mb-5 font-display text-2xl font-semibold text-brand-900">{h.whyTitle}</h2></Reveal>
+            <AnimList items={h.why} tick />
+            <Reveal><h3 className="mb-3 mt-8 font-display text-lg font-semibold text-brand-900">{h.docsTitle}</h3></Reveal>
+            <AnimList items={h.docs} />
+            <Reveal><p className="mt-6 border-l-4 border-gold-500 bg-white p-4 text-sm leading-6 text-slate-700">{h.statusNote}</p></Reveal>
             {h.note && <p className="mt-4 text-sm leading-6 text-slate-600">{h.note}</p>}
           </div>
-          <FormEngine key={formKey} formKey={formKey} title={c.formTitles[formKey]} />
+          <Reveal variant="right"><FormEngine key={formKey} formKey={formKey} title={c.formTitles[formKey]} /></Reveal>
         </div>
       </Band>
     </>
@@ -239,32 +290,37 @@ export const VendorReg = () => <RegPage seo="vendorReg" k="vendorReg" formKey="v
 const CAREER_TABS = ['job', 'projecthead', 'member'];
 export function Career() {
   useSeo('career');
-  const c = useC(); const h = c.hub.career;
+  const c = useC(); const lang = useLang(); const h = c.hub.career;
   const [params, setParams] = useSearchParams();
   const active = CAREER_TABS.includes(params.get('form')) ? params.get('form') : 'job';
   return (
     <>
-      <PageHero title={h.title} sub={h.sub} crumb={h.crumb} />
+      <PageHero title={h.title} sub={h.sub} crumb={h.crumb} float />
+      <RegSteps lang={lang} steps={CAREER_STEPS[lang] || CAREER_STEPS.en} />
       <Band>
         <div role="tablist" aria-label={h.title} className="mb-8 flex flex-wrap gap-2">
-          {CAREER_TABS.map((k) => (
-            <button key={k} type="button" role="tab" aria-selected={active === k} onClick={() => setParams({ form: k }, { replace: true })}
-              className={`rounded-full border-2 px-5 py-2.5 text-sm font-bold transition ${active === k ? 'border-brand-700 bg-brand-700 text-white' : 'border-brand-200 bg-white text-brand-800 hover:bg-brand-50'}`}>{h.tabs[k]}</button>
+          {CAREER_TABS.map((k, i) => (
+            <Reveal key={k} variant="up" delay={i * 90}>
+              <button type="button" role="tab" aria-selected={active === k} onClick={() => setParams({ form: k }, { replace: true })}
+                className={`rounded-full border-2 px-5 py-2.5 text-sm font-bold transition duration-300 hover:-translate-y-0.5 hover:shadow-md ${active === k ? 'border-brand-700 bg-brand-700 text-white shadow-md' : 'border-brand-200 bg-white text-brand-800 hover:border-gold-500 hover:bg-brand-50'}`}>{h.tabs[k]}</button>
+            </Reveal>
           ))}
         </div>
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.15fr]">
           <div>
             <h2 className="mb-3 font-display text-2xl font-semibold text-brand-900">{h.tabs[active]}</h2>
             <p className="mb-6 text-slate-600">{h.tabNote[active]}</p>
-            <Checklist items={h.why} />
+            <AnimList key={active} items={h.why} tick />
             {active === 'job' && (
-              <div className="mt-8 border border-dashed border-brand-200 bg-white p-6">
-                <h3 className="font-display text-lg font-semibold text-brand-900">{h.openTitle}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{h.openText}</p>
-              </div>
+              <Reveal>
+                <div className="mt-8 border border-dashed border-brand-200 bg-white p-6 transition duration-300 hover:border-gold-500 hover:shadow-md">
+                  <h3 className="font-display text-lg font-semibold text-brand-900">{h.openTitle}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{h.openText}</p>
+                </div>
+              </Reveal>
             )}
           </div>
-          <FormEngine key={active} formKey={active} title={c.formTitles[active]} />
+          <Reveal variant="right"><FormEngine key={active} formKey={active} title={c.formTitles[active]} /></Reveal>
         </div>
       </Band>
     </>

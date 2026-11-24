@@ -10,7 +10,7 @@ export default {
   },
   nav: {
     login: 'Login', track: 'Track application',
-    gallery: 'Gallery', services: 'Services', projects: 'Projects', statesMap: '17 States Map', fpoReg: 'FPO Registration', vendorReg: 'Vendor Registration', career: 'Career',
+    gallery: 'Gallery', services: 'Services', projects: 'Projects', statesMap: '18 States Map', fpoReg: 'FPO Registration', vendorReg: 'Vendor Registration', career: 'Career',
     home: 'Home', about: 'About', initiatives: 'Initiatives', partners: 'Partners & Investors', contact: 'Contact', join: 'Join Us', register: 'Register Now',
     marketplace: 'Product Marketplace', suppliers: 'Supplier Directory', sourcing: 'Product Sourcing', connect: 'Business Connect', events: 'Events', marketplaceMenu: 'Marketplace', connectCta: 'Business Connect',
     desc: { marketplace: 'Browse products from the network', suppliers: 'Find farmers, FPOs, manufacturers and suppliers', sourcing: 'Share a requirement and get introductions', connect: 'Register and connect with partners' },
@@ -26,10 +26,9 @@ export default {
     },
     projects: { title: 'Our Projects', crumb: 'Projects', sub: 'Gaushala development, clusters, biogas, e-delivery and other initiatives of the Federation.', events: 'View events', partners: 'Partner with us' },
     states: {
-      title: '17 States Map', crumb: '17 States Map', sub: 'The Federation network across Indian states.',
+      title: '18 States Map', crumb: '18 States Map', sub: 'The Federation network across Indian states.',
       note: 'Schematic map. Each tile is one state or union territory, not to scale.',
-      body: 'FPC Bazaar Federation works with FPOs across 17 states. Register your FPO to be placed on the map and connected to markets, schemes and government programmes.',
-      pendingList: 'Count to confirm: the client listed 18 states, but the headline figure says 17.',
+      body: 'FPC Bazaar Federation works with FPOs across 18 states. Register your FPO to be placed on the map and connected to markets, schemes and government programmes.',
     },
     fpoReg: {
       statusNote: 'After you submit, your application is Pending. The team verifies the documents. You will be told whether it is Verified or Rejected, with the reason. Only Verified FPOs and vendors appear on the website.', docsTitle: 'Keep these ready', docs: ['Registration certificate', 'PAN card', 'Board resolution'],
@@ -59,7 +58,7 @@ export default {
     gallery: { t: 'Gallery', d: 'Photos from the events, field work and programmes of FPC Bazaar Federation.' },
     services: { t: 'Services', d: 'Marketplace, supplier directory, sourcing and business linkage from FPC Bazaar Federation.' },
     projects: { t: 'Projects', d: 'Gaushala development, clusters, biogas, e-delivery and other initiatives of FPC Bazaar Federation.' },
-    states: { t: '17 States Map', d: 'The FPC Bazaar Federation network across Indian states.' },
+    states: { t: '18 States Map', d: 'The FPC Bazaar Federation network across Indian states.' },
     fpoReg: { t: 'FPO Registration', d: 'Register your Farmer Producer Organisation with FPC Bazaar Federation.' },
     vendorReg: { t: 'Vendor Registration', d: 'Apply to be listed as a manufacturer, supplier or service provider in the Federation Supplier Directory.' },
     career: { t: 'Career', d: 'Work with FPC Bazaar Federation on rural livelihoods and agri-business.' },
@@ -151,7 +150,7 @@ export default {
     visionTitle: 'Stronger farmers. More resilient villages.',
     vision: 'The Federation’s stated vision includes expanding FPO participation and creating livelihood opportunities for rural youth and women.',
     stats: [
-      { v: '6,000+', l: 'FPOs in the federation network (17 states)' }, { v: '10,000', l: 'Youth employment — vision target' }, { v: '2022', l: 'Year registered' }, { v: 'Section 8', l: 'Not-for-profit company, registered with the Ministry of Corporate Affairs' },
+      { v: '6,000+', l: 'FPOs in the federation network (18 states)' }, { v: '10,000', l: 'Youth employment — vision target' }, { v: '2022', l: 'Year registered' }, { v: 'Section 8', l: 'Not-for-profit company, registered with the Ministry of Corporate Affairs' },
     ],
     eauto: { eyebrow: 'Rural mobility · Youth livelihood', h: 'Connecting fresh produce with local customers', t: 'The proposed e-auto model focuses on local distribution of fruits and vegetables while creating a possible self-employment pathway for trained youth.', imageAlt: 'E-auto fruits and vegetables delivery concept', cta: 'Explore the e-auto initiative' },
     audiencesTitle: 'Who the Federation aims to work with',
@@ -344,7 +343,7 @@ export default {
     sourcingCta: 'Submit a sourcing request', sourcingMore: 'How sourcing works',
     eventsAll: 'Explore more',
     joinAs: 'Join as {role}',
-    networkStats: [{ v: '17', l: 'States in the network' }, { v: '6,000+', l: 'FPOs connected' }, { v: 'Section 8', l: 'Non-profit federation' }, { v: '2022', l: 'Year registered' }],
+    networkStats: [{ v: '18', l: 'States in the network' }, { v: '6,000+', l: 'FPOs connected' }, { v: 'Section 8', l: 'Non-profit federation' }, { v: '2022', l: 'Year registered' }],
     videos: {
       eyebrow: 'Videos', title: 'Watch: products from the network', sub: 'Short product videos shared by the Federation team.',
       items: [{ t: 'Herbal & Chelated Mineral Mixture', d: 'Product video: Super Maps mineral mixture.' }, { t: 'Desi cow ghee', d: 'The traditional method of making ghee.' }],

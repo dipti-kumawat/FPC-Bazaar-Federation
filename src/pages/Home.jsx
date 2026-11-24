@@ -1,6 +1,5 @@
-
 import { useC, LLink } from '../i18n/hooks.jsx';
-import { initiativeList, site, eventImages } from '../config/site.js';
+import { initiativeList, site, eventImages, networkStates } from '../config/site.js';
 import { useSeo } from '../lib/useSeo.js';
 import { useRegistryTick } from '../services/registry.js';
 import UpdateCard from '../components/UpdateCard.jsx';
@@ -21,6 +20,12 @@ const ROLE_IMG = { farmer: '/images/gaushala-hero.jpg', fpo: '/images/events/abc
 const ROLE_POS = { farmer: 'center', fpo: 'center', manufacturer: 'center', supplier: 'center 30%' };
 const TICKER_ICONS = { gaushala: 'inputs', gaushalaTourism: 'dairy', cluster: 'manufacturer', biogas: 'equipment', eauto: 'supplier', amul: 'processed', enzy: 'feed', ppp: 'connect' };
 
+const MKT_BADGES = {
+  en: [['grains', 'Organic'], ['shield', 'Chemical-free'], ['dairy', 'Gaushala-based'], ['fpo', 'Direct from FPOs']],
+  hi: [['grains', 'जैविक'], ['shield', 'रसायन-मुक्त'], ['dairy', 'गौशाला-आधारित'], ['fpo', 'सीधे एफपीओ से']],
+};
+const MKT_LABELS = { en: ['Products', 'Suppliers', 'Categories', 'States'], hi: ['उत्पाद', 'आपूर्तिकर्ता', 'श्रेणियाँ', 'राज्य'] };
+
 export default function Home() {
   const lang = useLang();
   useSeo('home'); useRegistryTick();
@@ -29,6 +34,7 @@ export default function Home() {
   const items = initiativeList.filter((item) => !['ppp', 'gaushalaTourism'].includes(item.key)).map((item) => ({ ...item, ...c.initiatives[item.key] }));
   const products = visibleProducts().filter((_, i) => [0, 3, 7, 10].includes(i)).slice(0, 4);
   const suppliers = visibleSuppliers().filter((_, i) => [0, 5, 6, 8].includes(i)).slice(0, 4);
+  const mktStats = [[String(visibleProducts().length), ''], [String(visibleSuppliers().length), ''], [String(CATEGORIES.length), ''], [String(networkStates.length), '']].map(([v], i) => [v, MKT_LABELS[lang === 'hi' ? 'hi' : 'en'][i]]);
 
   return (
     <>
@@ -121,44 +127,62 @@ export default function Home() {
 
       {/* MARKETPLACE */}
       <Band className="bg-white">
-        <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-10 grid items-center gap-10 lg:grid-cols-[1.15fr_.85fr]">
           <div className="max-w-2xl">
-            <p className="eyebrow mb-4">{b.marketEyebrow}</p>
-            <h2 className="font-display text-3xl font-semibold leading-tight text-brand-900 sm:text-4xl">{b.marketTitle}</h2>
-            <span className="gold-rule mt-5" />
-            <p className="mt-5 text-lg leading-8 text-slate-600">{b.marketSub}</p>
+            <Reveal variant="left"><p className="eyebrow mb-4">{b.marketEyebrow}</p></Reveal>
+            <Reveal variant="left" delay={80}><h2 className="font-display text-3xl font-semibold leading-tight text-brand-900 sm:text-4xl">{b.marketTitle}</h2></Reveal>
+            <Reveal variant="none"><span className="gold-rule gold-grow mt-5 block" /></Reveal>
+            <Reveal variant="left" delay={160}><p className="mt-5 text-lg leading-8 text-slate-600">{b.marketSub}</p></Reveal>
+            <Reveal variant="up" delay={220}>
+              <ul className="mt-6 flex flex-wrap gap-2.5">
+                {MKT_BADGES[lang === 'hi' ? 'hi' : 'en'].map(([ic, label], i) => (
+                  <li key={label} className="group flex items-center gap-2 border border-brand-100 bg-paper px-3.5 py-2 text-[13px] font-semibold text-brand-900 transition duration-300 hover:-translate-y-0.5 hover:border-gold-500 hover:bg-gold-50 hover:shadow-md">
+                    <span className="grid h-6 w-6 place-items-center rounded-full bg-brand-800 text-gold-400 transition duration-500 group-hover:rotate-[360deg] group-hover:bg-gold-500 group-hover:text-brand-950"><Icon name={ic} className="h-3.5 w-3.5" /></span>{label}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+            <Reveal variant="up" delay={300}><LLink to="/marketplace" className="btn-primary btn-shimmer mt-8 inline-flex">{b.marketCta} <Arrow /></LLink></Reveal>
           </div>
-          <LLink to="/marketplace" className="btn-primary shrink-0">{b.marketCta} <Arrow /></LLink>
+          <Reveal variant="right" delay={120}>
+            <div className="relative mx-auto hidden h-[340px] w-full max-w-[420px] lg:block" aria-hidden="true">
+              <span className="absolute -right-3 -top-3 h-28 w-28 border-2 border-gold-500/60" />
+              <span className="absolute -bottom-3 -left-3 h-24 w-24 bg-gold-100/70" />
+              <img src="/images/products/wheat-sharbati.jpg" alt="" loading="lazy" className="absolute left-0 top-6 h-48 w-56 border-4 border-white object-cover shadow-lift transition duration-500 hover:-translate-y-1.5 hover:rotate-[-2deg]" />
+              <img src="/images/products/desi-cow-ghee.jpg" alt="" loading="lazy" className="absolute right-0 top-0 h-44 w-44 border-4 border-white object-cover shadow-lift transition duration-500 hover:-translate-y-1.5 hover:rotate-2" />
+              <img src="/images/products/vermicompost.jpg" alt="" loading="lazy" className="absolute bottom-0 right-6 h-44 w-60 border-4 border-white object-cover shadow-lift transition duration-500 hover:-translate-y-1.5 hover:rotate-[-1.5deg]" />
+              <span className="fpc-drift absolute left-[46%] top-[44%] h-3.5 w-3.5 rotate-45 bg-gold-500" />
+            </div>
+          </Reveal>
         </div>
+
+        <Reveal variant="zoom">
+          <div className="mb-10 grid grid-cols-2 gap-px overflow-hidden border-y-2 border-gold-500 bg-brand-800 md:grid-cols-4">
+            {mktStats.map(([v, l]) => (
+              <div key={l} className="group bg-brand-900 px-5 py-6 text-center transition duration-300 hover:bg-brand-800">
+                <p className="font-display text-4xl font-semibold text-gold-300 transition duration-300 group-hover:scale-110"><CountUp value={v} /></p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-brand-100/80">{l}</p>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+
         <div className="mb-12 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {CATEGORIES.map((k) => (
-            <LLink key={k.id} to={`/marketplace?cat=${k.id}`} className="group flex items-center gap-3 border border-brand-100 bg-paper px-4 py-3.5 transition hover:border-gold-400 hover:bg-gold-50">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-800 text-gold-400"><Icon name={k.icon} className="h-5 w-5" /></span>
-              <span className="min-w-0 break-words text-[13.5px] font-semibold leading-snug text-brand-900">{t(k.name)}</span>
-            </LLink>
+          {CATEGORIES.map((k, i) => (
+            <Reveal key={k.id} variant="up" delay={(i % 4) * 90 + Math.floor(i / 4) * 120}>
+              <LLink to={`/marketplace?cat=${k.id}`} className="group relative flex items-center gap-3 overflow-hidden border border-brand-100 bg-paper px-4 py-3.5 transition duration-300 hover:-translate-y-1 hover:border-gold-400 hover:bg-gold-50 hover:shadow-lift">
+                <span className="absolute left-0 top-0 h-0.5 w-full origin-left scale-x-0 bg-gold-500 transition-transform duration-500 group-hover:scale-x-100" aria-hidden="true" />
+                <span className="absolute bottom-0 right-0 h-0.5 w-full origin-right scale-x-0 bg-gold-500 transition-transform delay-150 duration-500 group-hover:scale-x-100" aria-hidden="true" />
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-800 text-gold-400 transition duration-500 group-hover:rotate-[360deg] group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-brand-950"><Icon name={k.icon} className="h-5 w-5" /></span>
+                <span className="min-w-0 break-words text-[13.5px] font-semibold leading-snug text-brand-900">{t(k.name)}</span>
+                <span className="ml-auto -translate-x-2 text-gold-600 opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100" aria-hidden="true"><Arrow /></span>
+              </LLink>
+            </Reveal>
           ))}
         </div>
         {products.length > 0 && (<><p className="mb-6 font-display text-xl font-semibold text-brand-900">{b.featured}</p>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{products.map((p) => <ProductCard key={p.id} p={p} />)}</div></>)}
       </Band>
-
-      {/* BUSINESS CONNECT FLOW */}
-      <section className="relative isolate overflow-hidden bg-brand-900 py-16 text-white sm:py-20">
-        <div className="bg-lattice absolute inset-0 -z-10" aria-hidden="true" />
-        <div className="container-x">
-          <SectionTitle light eyebrow={b.flowEyebrow} sub={b.flowSub}>{b.flowTitle}</SectionTitle>
-          <ol className="grid gap-px overflow-hidden border border-white/15 bg-white/15 md:grid-cols-4">
-            {c.connect.steps.map((s, i) => (
-              <li key={s.h} className="list-none bg-brand-900 p-7">
-                <span className="font-display text-4xl font-semibold text-gold-400">0{i + 1}</span>
-                <h3 className="mt-3 font-display text-lg font-semibold text-white">{s.h}</h3>
-                <p className="mt-2 text-sm leading-6 text-white/70">{s.t}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="mt-10 text-center"><LLink to="/business-connect" className="btn-gold">{c.nav.connectCta} <Arrow /></LLink></div>
-        </div>
-      </section>
 
       {/* SUPPLIER DIRECTORY */}
       <Band>
@@ -175,34 +199,57 @@ export default function Home() {
       </Band>
 
       {/* SOURCING */}
-      <section className="bg-brand-50 py-16 sm:py-20">
-        <div className="container-x grid items-center gap-12 lg:grid-cols-2">
+      <section className="relative overflow-hidden bg-brand-50 py-16 sm:py-24">
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <span className="fpc-drift absolute left-[6%] top-[14%] h-3 w-3 rotate-45 border border-gold-500/60" />
+          <span className="fpc-drift absolute right-[8%] top-[10%] h-4 w-4 rotate-45 border border-gold-500/50" style={{ animationDelay: '1.2s' }} />
+          <span className="fpc-drift absolute bottom-[12%] left-[44%] h-2.5 w-2.5 rotate-45 bg-gold-500/40" style={{ animationDelay: '2.4s' }} />
+          <span className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gold-100/50 blur-3xl" />
+        </div>
+        <div className="container-x relative grid items-center gap-12 lg:grid-cols-2">
           <div>
-            <p className="eyebrow mb-4">{b.sourcingEyebrow}</p>
-            <h2 className="font-display text-3xl font-semibold leading-tight text-brand-900 sm:text-4xl">{b.sourcingTitle}</h2>
-            <span className="gold-rule mt-5" />
-            <p className="mt-5 text-lg leading-8 text-slate-600">{b.sourcingBody}</p>
-            <div className="mt-8 flex flex-wrap gap-3"><LLink to="/sourcing" className="btn-primary">{b.sourcingCta} <Arrow /></LLink><LLink to="/sourcing" className="btn-outline">{b.sourcingMore}</LLink></div>
+            <Reveal variant="left"><p className="eyebrow mb-4">{b.sourcingEyebrow}</p></Reveal>
+            <Reveal variant="left" delay={80}><h2 className="font-display text-3xl font-semibold leading-tight text-brand-900 sm:text-4xl">{b.sourcingTitle}</h2></Reveal>
+            <Reveal variant="none"><span className="gold-rule gold-grow mt-5 block" /></Reveal>
+            <Reveal variant="left" delay={160}><p className="mt-5 text-lg leading-8 text-slate-600">{b.sourcingBody}</p></Reveal>
+            <Reveal variant="up" delay={240}>
+              <div className="mt-8 flex flex-wrap gap-3"><LLink to="/sourcing" className="btn-primary btn-shimmer">{b.sourcingCta} <Arrow /></LLink><LLink to="/sourcing" className="btn-outline">{b.sourcingMore}</LLink></div>
+            </Reveal>
           </div>
-          <div className="border-t-[3px] border-gold-500 bg-white p-8 shadow-card">
-            <ul className="space-y-5">
-              {b.sourcingPoints.map((x, i) => (
-                <li key={x} className="flex items-start gap-4">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-gold-500 font-display text-lg font-semibold text-brand-800">{i + 1}</span>
-                  <p className="pt-1.5 text-lg font-semibold leading-snug text-brand-900">{x}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Reveal variant="right">
+            <div className="relative border-t-[3px] border-gold-500 bg-white p-8 shadow-card transition duration-500 hover:-translate-y-1 hover:shadow-lift sm:p-10">
+              <ol className="relative space-y-2">
+                <span className="absolute bottom-6 left-5 top-6 w-px bg-brand-100" aria-hidden="true"><span className="bar-grow absolute inset-0 origin-top bg-gold-500" /></span>
+                {b.sourcingPoints.map((x, i) => (
+                  <Reveal key={x} variant="left" delay={200 + i * 140}>
+                    <li className="group relative flex items-start gap-4 rounded-sm p-2 transition duration-300 hover:translate-x-1.5 hover:bg-gold-50/70">
+                      <span className="relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-gold-500 bg-white font-display text-lg font-semibold text-brand-800 transition duration-500 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-brand-950">
+                        <span className="absolute inset-0 animate-ping rounded-full bg-gold-500/25 [animation-duration:3s]" style={{ animationDelay: `${i * 0.9}s` }} aria-hidden="true" />
+                        <span className="relative">{i + 1}</span>
+                      </span>
+                      <p className="pt-1.5 text-lg font-semibold leading-snug text-brand-900">{x}</p>
+                    </li>
+                  </Reveal>
+                ))}
+              </ol>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* COMMITMENT */}
-      <section className="bg-paper-grain py-16 text-center sm:py-24">
-        <div className="container-x">
-          <p className="eyebrow eyebrow-center mb-6">{h.hero.motto}</p>
-          <p className="mx-auto max-w-4xl font-display text-4xl font-semibold leading-[1.15] text-brand-900 sm:text-6xl">{h.hero.l1} <span className="text-gold-600">{h.hero.l2}</span></p>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">{h.hero.sub}</p>
+      <section className="group relative cursor-default overflow-hidden bg-paper-grain py-16 text-center transition-colors duration-700 hover:bg-gold-50/60 sm:py-24">
+        {/* hover frame: four gold lines draw around the section like a card border */}
+        <span className="pointer-events-none absolute left-[6%] right-[6%] top-8 h-0.5 origin-left scale-x-0 bg-gold-500 transition-transform duration-500 ease-out group-hover:scale-x-100" aria-hidden="true" />
+        <span className="pointer-events-none absolute bottom-8 right-[6%] top-8 w-0.5 origin-top scale-y-0 bg-gold-500 transition-transform delay-500 duration-500 ease-out group-hover:scale-y-100" aria-hidden="true" />
+        <span className="pointer-events-none absolute bottom-8 left-[6%] right-[6%] h-0.5 origin-right scale-x-0 bg-gold-500 transition-transform delay-[1000ms] duration-500 ease-out group-hover:scale-x-100" aria-hidden="true" />
+        <span className="pointer-events-none absolute bottom-8 left-[6%] top-8 w-0.5 origin-bottom scale-y-0 bg-gold-500 transition-transform delay-[1500ms] duration-500 ease-out group-hover:scale-y-100" aria-hidden="true" />
+        <div className="container-x relative">
+          <Reveal variant="fade"><p className="eyebrow eyebrow-center mb-6">{h.hero.motto}</p></Reveal>
+          <Reveal variant="up" delay={100}>
+            <p className="mx-auto max-w-4xl font-display text-4xl font-semibold leading-[1.15] text-brand-900 sm:text-6xl">{h.hero.l1} <span className="text-gold-600">{h.hero.l2}</span></p>
+          </Reveal>
+          <Reveal variant="up" delay={220}><p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">{h.hero.sub}</p></Reveal>
         </div>
       </section>
 

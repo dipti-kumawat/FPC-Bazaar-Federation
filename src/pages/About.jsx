@@ -1,6 +1,8 @@
 import { useC, useLang } from '../i18n/hooks.jsx';
 import { useSeo } from '../lib/useSeo.js';
 import { PageHero, Verify, SectionTitle, Band, PhotoSlot } from '../components/ui.jsx';
+import { Icon } from '../components/Icons.jsx';
+import Reveal from '../components/Reveal.jsx';
 
 const leadership = {
   en: {
@@ -41,6 +43,14 @@ const leadership = {
     cin: 'CIN',
     office: 'Registered Office',
     organisation: 'Organisation',
+    whoTitle: 'Who we are',
+    whoParas: [
+      'FPC Bazaar Federation is a Farmer - Youth - Women Welfare Cooperative Federation, registered in 2022 under the Ministry of Corporate Affairs, Government of India, with its registered office in Jaipur, Rajasthan. It works as a common platform for farmers, Farmer Producer Organisations (FPOs), rural youth and women.',
+      'The Federation connects those who grow, aggregate, make and supply, so that produce finds fair markets and inputs reach the farm gate. Its work brings together Gaushala care, natural and organic farming, agribusiness clusters, clean energy, rural livelihoods and market linkages.',
+      'Guided by the motto of Cooperation, Employment and Development, the Federation works through a network of FPOs to build self-reliant youth, independent farmers and a prosperous India.',
+    ],
+    glance: 'At a glance',
+    detailsTitle: 'Company details', detailsSub: 'Who we are and how the Federation is set up.',
     motto: 'Cooperation · Employment · Development',
   },
   hi: {
@@ -81,6 +91,14 @@ const leadership = {
     cin: 'सीआईएन',
     office: 'पंजीकृत कार्यालय',
     organisation: 'संगठन',
+    whoTitle: 'हम कौन हैं',
+    whoParas: [
+      'एफपीसी बाज़ार फेडरेशन एक किसान - युवा - महिला कल्याण सहकारी महासंघ है, जो 2022 में भारत सरकार के कॉर्पोरेट कार्य मंत्रालय के अंतर्गत पंजीकृत हुआ और जिसका पंजीकृत कार्यालय जयपुर, राजस्थान में है। यह किसानों, किसान उत्पादक संगठनों (एफपीओ), ग्रामीण युवाओं और महिलाओं के लिए एक साझा मंच के रूप में काम करता है।',
+      'फेडरेशन उन सभी को जोड़ता है जो उगाते, एकत्र करते, बनाते और आपूर्ति करते हैं, ताकि उपज को उचित बाज़ार मिले और जरूरी सामग्री खेत तक पहुँचे। इसके कार्यों में गौशाला सेवा, प्राकृतिक और जैविक खेती, एग्रीबिजनेस क्लस्टर, स्वच्छ ऊर्जा, ग्रामीण आजीविका और बाज़ार संपर्क शामिल हैं।',
+      'सहकारिता, रोजगार और विकास के आदर्श वाक्य के साथ फेडरेशन एफपीओ के नेटवर्क के माध्यम से आत्मनिर्भर युवा, स्वतंत्र किसान और समृद्ध भारत के निर्माण के लिए काम करता है।',
+    ],
+    glance: 'एक नज़र में',
+    detailsTitle: 'संगठन का विवरण', detailsSub: 'हम कौन हैं और फेडरेशन का ढांचा।',
     motto: 'सहकारिता · रोजगार · विकास',
   },
 };
@@ -229,49 +247,84 @@ export default function About() {
     <>
       <PageHero title={a.title} crumb={a.crumb} sub={a.sub} kind="centre" slot="cluster" />
 
-      <Band>
-        <div className="grid gap-10 lg:grid-cols-[1.25fr_.75fr]">
-          <div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-[.22em] text-gold-600">{t.organisation}</p>
-            <h2 className="font-display text-3xl font-extrabold text-brand-900 sm:text-4xl">{c.footer.about}</h2>
-            <p className="mt-4 max-w-2xl leading-8 text-slate-600">{a.sub}</p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <span className="rounded-full border border-brand-200 bg-white px-4 py-2 text-xs font-bold text-brand-800">{t.registered}</span>
-              <span className="rounded-full border border-brand-200 bg-white px-4 py-2 text-xs font-bold text-brand-800">{t.cin}: U85197RJ2022NPL078943</span>
+      <section className="relative z-10 -mt-8 pb-4">
+        <div className="container-x">
+          <Reveal variant="zoom"><div className="grid overflow-hidden border border-brand-100 border-t-4 border-t-gold-500 bg-white shadow-lift md:grid-cols-[1.5fr_1fr_1.2fr_1fr] md:divide-x md:divide-brand-100 max-md:divide-y max-md:divide-brand-100">
+            <div className="p-6">
+              <p className="text-[10px] font-bold uppercase tracking-[.2em] text-gold-600">{t.organisation}</p>
+              <p className="mt-2 font-display text-xl font-semibold leading-snug text-brand-900">{c.footer.about}</p>
             </div>
-          </div>
-          <div className="border-l-2 border-gold-500 bg-brand-50 p-6">
-            <p className="text-xs font-bold uppercase tracking-[.2em] text-gold-600">{t.motto}</p>
-            <p className="mt-3 text-xl font-semibold leading-relaxed text-brand-900">{a.rows.find(([key]) => key.toLowerCase().includes('tagline') || key.toLowerCase().includes('टैगलाइन'))?.[1] || t.motto}</p>
+            <div className="group flex items-center gap-4 p-6 transition hover:bg-brand-50/60">
+              <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-brand-900 text-gold-300 transition duration-500 group-hover:rotate-[360deg] group-hover:bg-gold-500 group-hover:text-brand-950"><span className="absolute inset-0 animate-ping rounded-full bg-gold-500/30 [animation-duration:3s]" aria-hidden="true" /><Icon name="doc" className="relative h-6 w-6" /></span>
+              <p className="font-display text-lg font-semibold leading-snug text-brand-900">{t.registered}</p>
+            </div>
+            <div className="group flex items-center gap-4 p-6 transition hover:bg-brand-50/60">
+              <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-brand-900 text-gold-300 transition duration-500 group-hover:rotate-[360deg] group-hover:bg-gold-500 group-hover:text-brand-950"><span className="absolute inset-0 animate-ping rounded-full bg-gold-500/30 [animation-delay:1.2s] [animation-duration:3s]" aria-hidden="true" /><Icon name="shield" className="relative h-6 w-6" /></span>
+              <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-gold-600">{t.cin}</p><p className="mt-1 break-all text-sm font-bold text-brand-900">U85197RJ2022NPL078943</p></div>
+            </div>
+            <div className="p-6">
+              <ul className="space-y-1.5">
+                {t.motto.split('·').map((w, i) => (
+                  <li key={w} className="fpc-slide flex items-center gap-2 text-sm font-semibold text-brand-900" style={{ animationDelay: `${0.5 + i * 0.18}s` }}><span className="h-1.5 w-1.5 rounded-full bg-gold-500" />{w.trim()}</li>
+                ))}
+              </ul>
+            </div>
+          </div></Reveal>
+        </div>
+      </section>
+
+      <Band>
+        <div className="mx-auto max-w-5xl">
+          <Reveal variant="none" stagger>
+            <p className="eyebrow mb-4">{t.organisation}</p>
+            <h2 className="font-display text-3xl font-semibold leading-tight text-brand-900 sm:text-4xl">{t.whoTitle}</h2>
+            <span className="gold-rule gold-grow mt-5" />
+          </Reveal>
+          <div className="mt-6 space-y-5 text-[17px] leading-8 text-slate-600">
+            {t.whoParas.map((para, i) => <Reveal key={i} delay={i * 140} variant={i % 2 ? 'right' : 'left'}><p>{para}</p></Reveal>)}
           </div>
         </div>
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
-          {[t.vision, t.mission].map((item) => (
-            <article key={item.title} className="border border-brand-100 bg-white p-7 shadow-sm">
-              <span className="mb-4 block h-1 w-12 bg-gold-500" />
-              <h3 className="font-display text-2xl font-extrabold text-brand-900">{item.title}</h3>
-              <p className="mt-3 leading-7 text-slate-600">{item.text}</p>
-            </article>
+        <div className="mt-12 grid gap-5 md:grid-cols-2">
+          {[t.vision, t.mission].map((item, i) => (
+            <Reveal key={item.title} variant={i ? 'right' : 'left'} delay={i * 120}>
+              <article className="group relative h-full overflow-hidden border border-brand-100 bg-white p-7 shadow-sm transition duration-500 hover:-translate-y-1.5 hover:border-gold-500/70 hover:shadow-lift">
+                <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-gold-500 to-gold-300 transition duration-700 group-hover:scale-x-100" aria-hidden="true" />
+                <span className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gold-500/10 transition duration-700 group-hover:scale-[2.2]" aria-hidden="true" />
+                <span className="mb-4 block h-1 w-12 bg-gold-500 transition-all duration-500 group-hover:w-24" />
+                <h3 className="relative font-display text-2xl font-extrabold text-brand-900">{item.title}</h3>
+                <p className="relative mt-3 leading-7 text-slate-600">{item.text}</p>
+              </article>
+            </Reveal>
           ))}
         </div>
-        <p className="mt-3 text-xs text-slate-500">{t.visionNote}</p>
       </Band>
 
       <Band className="bg-white">
-        <SectionTitle sub={t.messagesSub}>{t.messagesTitle}</SectionTitle>
+        <SectionTitle>{t.messagesTitle}</SectionTitle>
         <div className="mx-auto grid max-w-5xl gap-6">
-          {messagePeople.map((person) => (
-            <article key={person.key} className="grid overflow-hidden border border-brand-100 bg-paper sm:grid-cols-[260px_1fr]">
-              <div className="min-h-56 bg-brand-50">
-                <PhotoSlot slot={person.image} person={person.name} alt={`${person.name} — ${t.photo}`} />
-              </div>
-              <div className="flex flex-col justify-center p-6">
-                <p className="text-[10px] font-bold uppercase tracking-[.18em] text-gold-600">{t.role[person.role]}</p>
-                <h3 className="mt-2 text-xl font-extrabold text-brand-900">{person.name}</h3>
-                {person.detail && <p className="mt-1 text-xs leading-relaxed text-slate-500">{tx(person.detail, lang)}</p>}
-                <p className="mt-4 whitespace-pre-line border-l-2 border-gold-500 pl-4 text-sm leading-7 text-slate-600">{msgOf(person) || <span className="italic">{t.messagePending}</span>}</p>
-              </div>
-            </article>
+          {messagePeople.map((person, idx) => (
+            <Reveal key={person.key} variant={idx % 2 ? 'right' : 'left'}>
+              <article className={`group relative grid overflow-hidden border border-brand-100 bg-paper shadow-sm transition duration-500 hover:-translate-y-1 hover:border-gold-500/60 hover:shadow-lift ${idx % 2 ? 'sm:grid-cols-[1fr_260px]' : 'sm:grid-cols-[260px_1fr]'}`}>
+                <div className={`relative min-h-56 overflow-hidden bg-brand-50 ${idx % 2 ? 'sm:order-2' : ''}`}>
+                  <PhotoSlot slot={person.image} person={person.name} alt={`${person.name} — ${t.photo}`} />
+                  <div className="pointer-events-none absolute inset-0 grid place-items-center" aria-hidden="true">
+                    <span className="absolute h-[11.4rem] w-[11.4rem] animate-ping rounded-full border border-gold-400/50 [animation-duration:3.2s] sm:h-[12.4rem] sm:w-[12.4rem]" />
+                    <span className="absolute h-[12.6rem] w-[12.6rem] animate-spin rounded-full border border-dashed border-gold-400/60 [animation-duration:28s] sm:h-[13.6rem] sm:w-[13.6rem]" />
+                  </div>
+                </div>
+                <div className="relative flex flex-col justify-center overflow-hidden p-6 sm:p-8">
+                  <span className="pointer-events-none absolute right-5 top-0 select-none font-display text-[9rem] leading-none text-gold-500/15 transition duration-700 group-hover:-translate-y-1 group-hover:text-gold-500/25" aria-hidden="true">&rdquo;</span>
+                  <p className="relative text-[10px] font-bold uppercase tracking-[.18em] text-gold-600">{t.role[person.role]}</p>
+                  <h3 className="relative mt-2 text-xl font-extrabold text-brand-900">{person.name}</h3>
+                  <span className="gold-rule gold-grow relative mt-3" />
+                  {person.detail && <p className="relative mt-2 text-xs leading-relaxed text-slate-500">{tx(person.detail, lang)}</p>}
+                  <div className="relative mt-5 pl-4">
+                    <span className="bar-grow absolute inset-y-0 left-0 w-0.5 bg-gold-500" aria-hidden="true" />
+                    <p className="whitespace-pre-line text-sm leading-7 text-slate-600">{msgOf(person) || <span className="italic">{t.messagePending}</span>}</p>
+                  </div>
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
       </Band>
