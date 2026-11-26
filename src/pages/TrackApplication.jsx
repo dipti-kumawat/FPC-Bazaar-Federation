@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useC, useLang } from '../i18n/hooks.jsx';
+import { LOCALES } from '../i18n/langs.js';
 import { useSeo } from '../lib/useSeo.js';
 import { PageHero, Band } from '../components/ui.jsx';
 import { API_MODE, trackApplication } from '../services/registry.js';
@@ -15,7 +16,7 @@ export default function TrackApplication() {
   const [reference, setReference] = useState(params.get('ref') || '');
   const [phone, setPhone] = useState('');
   const [busy, setBusy] = useState(false); const [error, setError] = useState(''); const [result, setResult] = useState(null);
-  const day = (v) => (v ? new Date(v).toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
+  const day = (v) => (v ? new Date(v).toLocaleDateString(LOCALES[lang] || 'en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
 
   async function submit(e) {
     e.preventDefault(); setBusy(true); setError(''); setResult(null);

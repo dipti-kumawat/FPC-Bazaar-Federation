@@ -3,17 +3,24 @@ import { FORMS, EXTRA_LABELS } from '../config/forms.js';
 import { submitForm } from '../services/formService.js';
 import { API_MODE } from '../services/registry.js';
 import { useC, useLang, LLink } from '../i18n/hooks.jsx';
+import { pick, LOCALES } from '../i18n/langs.js';
 import { STATES, CATEGORIES } from '../data/marketplace.js';
 
 const MAX_MB = 5; const OK_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
 const optionsFor = (o, c, lang) => (o === 'states' ? Object.entries(STATES).map(([k, v]) => [k, v[lang] || v.en]).sort((a, b) => a[1].localeCompare(b[1]))
-  : o === 'productCats' ? CATEGORIES.map((x) => [x.id, x.name[lang] || x.name.en]) : o === 'ngoType' ? [['trust', lang === 'hi' ? 'ट्रस्ट' : 'Trust'], ['society', lang === 'hi' ? 'सोसायटी' : 'Society'], ['section8', lang === 'hi' ? 'धारा 8 कंपनी' : 'Section 8 company']] : c.options[o]);
+  : o === 'productCats' ? CATEGORIES.map((x) => [x.id, x.name[lang] || x.name.en]) : o === 'ngoType' ? NGO_TYPES.map(([k, t]) => [k, pick(t, lang)]) : c.options[o]);
+
+const NGO_TYPES = [
+  ['trust', { en: 'Trust', hi: 'ट्रस्ट', mr: 'ट्रस्ट', gu: 'ટ્રસ્ટ' }],
+  ['society', { en: 'Society', hi: 'सोसायटी', mr: 'सोसायटी', gu: 'સોસાયટી' }],
+  ['section8', { en: 'Section 8 company', hi: 'धारा 8 कंपनी', mr: 'कलम 8 कंपनी', gu: 'કલમ 8 કંપની' }],
+];
 
 const phoneRe = /^[6-9]\d{9}$/;
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // FPO and vendor applicants may choose their own password with the form (only when the backend is connected).
 const LOGIN_FORMS = ['fpo', 'vendor'];
-const passwordOk = (p) => p.length >= 10 && /[A-Za-z\u0900-\u097F]/.test(p) && /\d/.test(p) && new TextEncoder().encode(p).length <= 72;
+const passwordOk = (p) => p.length >= 10 && /\p{L}/u.test(p) && /\d/.test(p) && new TextEncoder().encode(p).length <= 72;
 
 function check(f, raw, c) {
   if (f.t === 'file') {
@@ -111,7 +118,7 @@ export default function FormEngine({ formKey, title, initial }) {
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map((f) => {
           const id = `${formKey}-${f.n}`;
-          const label = c.fieldLabels[f.n] || EXTRA_LABELS[f.n]?.[lang === 'hi' ? 1 : 0] || f.n;
+          const label = c.fieldLabels[f.n] || pick(EXTRA_LABELS[f.n], lang) || f.n;
           const err = errors[f.n];
           const common = { id, name: f.n, value: f.t === 'file' ? undefined : values[f.n] ?? '', onChange: (e) => set(f.n, e.target.value), 'aria-invalid': err ? 'true' : undefined, 'aria-describedby': err ? `${id}-e` : undefined, className: `field ${err ? 'field-err' : ''}` };
           return (

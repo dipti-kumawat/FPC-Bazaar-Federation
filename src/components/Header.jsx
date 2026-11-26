@@ -1,19 +1,59 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useC, useLang, LLink } from '../i18n/hooks.jsx';
 import Logo from './Logo.jsx';
+import { LANGS, LANG_NAMES, LANG_SHORT, LANG_PREFIX } from '../i18n/langs.js';
 
 const PAGES = [['/about', 'about'], ['/services', 'services'], ['/projects', 'projects'], ['/states-map', 'statesMap'], ['/fpo-registration', 'fpoReg'], ['/vendor-registration', 'vendorReg'], ['/gallery', 'gallery'], ['/career', 'career'], ['/contact', 'contact']];
 
-function LangSwitch({ dark = false }) {
-  const lang = useLang(); const c = useC(); const nav = useNavigate(); const loc = useLocation();
-  const go = (l) => { if (l !== lang) nav(`${loc.pathname.replace(/^\/(en|hi)/, `/${l}`)}${loc.search}${loc.hash}`); };
+function useGoLang() {
+  const lang = useLang(); const nav = useNavigate(); const loc = useLocation();
+  return (l) => { if (l !== lang) nav(`${loc.pathname.replace(LANG_PREFIX, `/${l}`)}${loc.search}${loc.hash}`); };
+}
+
+/** Header: one compact button (the bar has no room for four), with a menu of the four languages. */
+function LangMenu() {
+  const lang = useLang(); const c = useC(); const go = useGoLang();
+  const [open, setOpen] = useState(false); const box = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const out = (e) => { if (box.current && !box.current.contains(e.target)) setOpen(false); };
+    const esc = (e) => { if (e.key === 'Escape') { setOpen(false); box.current?.querySelector('button')?.focus(); } };
+    document.addEventListener('mousedown', out); document.addEventListener('touchstart', out); document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('mousedown', out); document.removeEventListener('touchstart', out); document.removeEventListener('keydown', esc); };
+  }, [open]);
   return (
-    <div role="group" aria-label={c.common.switchLang} className={`inline-flex overflow-hidden rounded-full border p-0.5 text-[13px] font-bold ${dark ? 'border-white/25' : 'border-brand-800/30'}`}>
-      {['en', 'hi'].map((l) => (
-        <button key={l} type="button" onClick={() => go(l)} aria-pressed={lang === l} lang={l}
-          className={`min-w-[38px] rounded-full px-2.5 py-1 transition sm:min-w-[44px] sm:px-3 ${lang === l ? 'bg-gold-500 text-brand-950' : dark ? 'text-white/80 hover:text-white' : 'text-brand-800 hover:bg-brand-50'}`}>{l === 'en' ? 'EN' : 'हिं'}</button>
+    <div ref={box} className="relative">
+      <button type="button" onClick={() => setOpen(!open)} aria-haspopup="menu" aria-expanded={open} aria-label={`${c.common.switchLang}: ${LANG_NAMES[lang]}`}
+        className="inline-flex items-center gap-1 rounded-full border border-brand-800/30 p-0.5 pr-2 text-[13px] font-bold text-brand-800 transition hover:bg-brand-50">
+        <span lang={lang} className="min-w-[38px] rounded-full bg-gold-500 px-2.5 py-1 text-center text-brand-950 sm:min-w-[44px]">{LANG_SHORT[lang]}</span>
+        <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" className={`transition-transform ${open ? 'rotate-180' : ''}`}><path d="M5 8l5 5 5-5" /></svg>
+      </button>
+      {open && (
+        <ul role="menu" aria-label={c.common.switchLang} className="absolute right-0 top-full z-50 mt-2 min-w-[160px] overflow-hidden rounded-[3px] border border-brand-100 bg-white py-1 shadow-lift">
+          {LANGS.map((l) => (
+            <li key={l} role="none">
+              <button type="button" role="menuitemradio" aria-checked={lang === l} lang={l} onClick={() => { setOpen(false); go(l); }}
+                className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-[15px] font-semibold transition ${lang === l ? 'bg-brand-50 text-brand-900' : 'text-slate-700 hover:bg-brand-50 hover:text-brand-900'}`}>
+                {LANG_NAMES[l]}{lang === l && <span aria-hidden="true" className="h-2 w-2 rounded-full bg-gold-500" />}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Mobile menu: all four as buttons (there is room there). */
+function LangPills() {
+  const lang = useLang(); const c = useC(); const go = useGoLang();
+  return (
+    <div role="group" aria-label={c.common.switchLang} className="inline-flex overflow-hidden rounded-full border border-brand-800/30 p-0.5 text-[13px] font-bold">
+      {LANGS.map((l) => (
+        <button key={l} type="button" onClick={() => go(l)} aria-pressed={lang === l} lang={l} aria-label={LANG_NAMES[l]}
+          className={`min-w-[40px] rounded-full px-2.5 py-1 transition ${lang === l ? 'bg-gold-500 text-brand-950' : 'text-brand-800 hover:bg-brand-50'}`}>{LANG_SHORT[l]}</button>
       ))}
     </div>
   );
@@ -44,8 +84,7 @@ export default function Header() {
             {PAGES.map(([to, k]) => <NavLink key={to} to={`/${lang}${to}`} className={link}>{c.nav[k]}</NavLink>)}
           </nav>
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="xl:hidden"><LangSwitch /></div>
-            <div className="hidden xl:block"><LangSwitch /></div>
+            <LangMenu />
             {/* Login: a text button while the menu is collapsed; on wide screens the nav is full, so the same square style as the menu button
                 (the nav links use 7 px side padding so it fits beside them). */}
             <Link to="/admin" className="btn-outline hidden sm:inline-flex xl:hidden">{c.nav.login}</Link>
@@ -72,7 +111,7 @@ export default function Header() {
               className="absolute right-0 top-0 flex h-full w-[88%] max-w-sm flex-col border-l-2 border-gold-500/70 bg-white shadow-lift"
             >
               <div className="flex h-[76px] shrink-0 items-center justify-between border-b border-brand-100 px-4">
-                <LangSwitch />
+                <LangPills />
                 <button type="button" onClick={close} aria-label={c.common.close} className="grid h-11 w-11 place-items-center rounded-[3px] border border-brand-800/30 text-2xl leading-none text-brand-900">×</button>
               </div>
               <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2">

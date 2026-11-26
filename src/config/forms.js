@@ -87,12 +87,20 @@ export const FORMS = {
     { n: 'resume', t: 'file', r: 1 }, { n: 'message', t: 'textarea' },
   ],
 };
+// Labels of NGO form fields that are not in the translation files: { en, hi, mr, gu }.
 export const EXTRA_LABELS = {
-  ngoName: ['Organisation name', 'संस्था का नाम'], ngoType: ['Organisation type', 'संस्था का प्रकार'],
-  regNumber: ['Registration number', 'पंजीकरण संख्या'], darpanId: ['NGO Darpan ID', 'NGO दर्पण आईडी'],
-  yearEstablished: ['Year established', 'स्थापना वर्ष'], focusArea: ['Focus area', 'कार्य क्षेत्र'],
-  designation: ['Designation', 'पद'], authorisation: ['Authorisation letter', 'प्राधिकरण पत्र'],
-  idProof: ['Representative ID proof', 'प्रतिनिधि का पहचान पत्र'], cert12ab: ['12AB certificate', '12AB प्रमाणपत्र'],
-  cert80g: ['80G certificate', '80G प्रमाणपत्र'], csr1: ['CSR-1 certificate', 'CSR-1 प्रमाणपत्र'],
-  fcra: ['FCRA certificate', 'FCRA प्रमाणपत्र'], financials: ['Financial statements', 'वित्तीय विवरण'],
+  ngoName: { en: 'Organisation name', hi: 'संस्था का नाम', mr: 'संस्थेचे नाव', gu: 'સંસ્થાનું નામ' },
+  ngoType: { en: 'Organisation type', hi: 'संस्था का प्रकार', mr: 'संस्थेचा प्रकार', gu: 'સંસ્થાનો પ્રકાર' },
+  regNumber: { en: 'Registration number', hi: 'पंजीकरण संख्या', mr: 'नोंदणी क्रमांक', gu: 'નોંધણી નંબર' },
+  darpanId: { en: 'NGO Darpan ID', hi: 'NGO दर्पण आईडी', mr: 'NGO दर्पण आयडी', gu: 'NGO દર્પણ આઈડી' },
+  yearEstablished: { en: 'Year established', hi: 'स्थापना वर्ष', mr: 'स्थापना वर्ष', gu: 'સ્થાપના વર્ષ' },
+  focusArea: { en: 'Focus area', hi: 'कार्य क्षेत्र', mr: 'कार्यक्षेत्र', gu: 'કાર્યક્ષેત્ર' },
+  designation: { en: 'Designation', hi: 'पद', mr: 'पद', gu: 'હોદ્દો' },
+  authorisation: { en: 'Authorisation letter', hi: 'प्राधिकरण पत्र', mr: 'प्राधिकार पत्र', gu: 'અધિકૃતતા પત્ર' },
+  idProof: { en: 'Representative ID proof', hi: 'प्रतिनिधि का पहचान पत्र', mr: 'प्रतिनिधीचा ओळख पुरावा', gu: 'પ્રતિનિધિનો ઓળખ પુરાવો' },
+  cert12ab: { en: '12AB certificate', hi: '12AB प्रमाणपत्र', mr: '12AB प्रमाणपत्र', gu: '12AB પ્રમાણપત્ર' },
+  cert80g: { en: '80G certificate', hi: '80G प्रमाणपत्र', mr: '80G प्रमाणपत्र', gu: '80G પ્રમાણપત્ર' },
+  csr1: { en: 'CSR-1 certificate', hi: 'CSR-1 प्रमाणपत्र', mr: 'CSR-1 प्रमाणपत्र', gu: 'CSR-1 પ્રમાણપત્ર' },
+  fcra: { en: 'FCRA certificate', hi: 'FCRA प्रमाणपत्र', mr: 'FCRA प्रमाणपत्र', gu: 'FCRA પ્રમાણપત્ર' },
+  financials: { en: 'Financial statements', hi: 'वित्तीय विवरण', mr: 'आर्थिक विवरणपत्रे', gu: 'નાણાકીય પત્રકો' },
 };

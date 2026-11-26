@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useC } from './i18n/hooks.jsx';
+import { useC, useLangReady } from './i18n/hooks.jsx';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
@@ -9,6 +9,7 @@ import ScrollProgress from './components/ScrollProgress.jsx';
 import Home from './pages/Home.jsx';
 const Admin = lazy(() => import('./admin/Admin.jsx'));
 import { loadPublicVendors } from './services/registry.js';
+import { isLang } from './i18n/langs.js';
 const About = lazy(() => import('./pages/About.jsx'));
 const Ppp = lazy(() => import('./pages/Ppp.jsx'));
 const Cluster = lazy(() => import('./pages/Cluster.jsx'));
@@ -52,7 +53,7 @@ function LangLayout() {
   const { lang } = useParams();
   const location = useLocation();
   const { i18n } = useTranslation();
-  const valid = lang === 'en' || lang === 'hi';
+  const valid = isLang(lang);
   if (valid && i18n.language !== lang) i18n.changeLanguage(lang);
   useEffect(() => {
     if (!valid) return;
@@ -60,7 +61,9 @@ function LangLayout() {
     try { localStorage.setItem('fpc_lang', lang); } catch (e) { /* ignore */ }
   }, [lang, valid]);
   const c = useC();
+  const ready = useLangReady(valid ? lang : 'en');
   if (!valid) return <Navigate to="/en" replace />;
+  if (!ready) return <PageLoader />;
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:p-3">{c.common.skip}</a>
@@ -80,7 +83,7 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Navigate to={`/${i18n.language === 'hi' ? 'hi' : 'en'}`} replace />} />
+        <Route path="/" element={<Navigate to={`/${isLang(i18n.language) ? i18n.language : 'en'}`} replace />} />
         <Route path="/admin/*" element={<Suspense fallback={<PageLoader />}><Admin /></Suspense>} />
         <Route path="/:lang" element={<LangLayout />}>
           <Route index element={<Home />} />

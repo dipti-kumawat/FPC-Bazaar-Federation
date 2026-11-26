@@ -25,7 +25,8 @@ export default function Suppliers() {
       if (state && s.state !== state) return false;
       if (cat && !s.cats.includes(cat)) return false;
       if (!needle) return true;
-      const hay = [s.name.en, s.name.hi, s.district.en, s.district.hi, STATES[s.state].en, STATES[s.state].hi, ...s.cats.map((k) => CATEGORIES.find((x) => x.id === k)?.name.en)].join(' ').toLowerCase();
+      const all = (o) => (o ? Object.values(o) : []); // search matches the name in any language
+      const hay = [...all(s.name), ...all(s.district), ...all(STATES[s.state]), ...s.cats.flatMap((k) => all(CATEGORIES.find((x) => x.id === k)?.name))].join(' ').toLowerCase();
       return hay.includes(needle);
     });
   }, [all, q, type, state, cat]);

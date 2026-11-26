@@ -1,4 +1,16 @@
 import { useC, useLang, LLink } from '../i18n/hooks.jsx';
+import { pick } from '../i18n/langs.js';
+
+const VIDEOS_TEXT = {
+  title: { en: 'See it on the ground', hi: 'ज़मीन पर देखिए', mr: 'प्रत्यक्ष पाहा', gu: 'જમીન પર જુઓ' },
+  sub: {
+    en: 'Short videos from Gaushalas and breeding centres: how cow-based livelihoods work in practice.',
+    hi: 'गौशालाओं और ब्रीडिंग सेंटरों के छोटे वीडियो: गौ आधारित आजीविका व्यवहार में कैसे काम करती है।',
+    mr: 'गोशाळा आणि प्रजनन केंद्रांचे छोटे व्हिडिओ: गोआधारित उपजीविका प्रत्यक्षात कशी चालते.',
+    gu: 'ગૌશાળાઓ અને બ્રીડિંગ સેન્ટરોના ટૂંકા વિડિયો: ગાય આધારિત આજીવિકા વ્યવહારમાં કેવી રીતે ચાલે છે.',
+  },
+  swipe: { en: 'Swipe to see more videos', hi: 'और वीडियो देखने के लिए स्वाइप करें', mr: 'आणखी व्हिडिओ पाहण्यासाठी स्वाइप करा', gu: 'વધુ વિડિયો જોવા માટે સ્વાઇપ કરો' },
+};
 import { videosFor } from '../data/videos.js';
 import { useSeo } from '../lib/useSeo.js';
 import { images } from '../config/site.js';
@@ -58,9 +70,9 @@ export default function GaushalaTourism() {
       </Band>
 
       <Band className="bg-brand-50">
-        <SectionTitle eyebrow={c.homeBiz.videos.eyebrow} sub={lang === 'hi' ? 'गौशालाओं और ब्रीडिंग सेंटरों के छोटे वीडियो: गौ आधारित आजीविका व्यवहार में कैसे काम करती है।' : 'Short videos from Gaushalas and breeding centres: how cow-based livelihoods work in practice.'}>{lang === 'hi' ? 'ज़मीन पर देखिए' : 'See it on the ground'}</SectionTitle>
+        <SectionTitle eyebrow={c.homeBiz.videos.eyebrow} sub={pick(VIDEOS_TEXT.sub, lang)}>{pick(VIDEOS_TEXT.title, lang)}</SectionTitle>
         <div className="mx-auto max-w-6xl">
-          <SwipeRow label={lang === 'hi' ? 'और वीडियो देखने के लिए स्वाइप करें' : 'Swipe to see more videos'}>
+          <SwipeRow label={pick(VIDEOS_TEXT.swipe, lang)}>
             {videosFor('gaushala').map((v) => <VideoCard key={v.id} src={v.src} poster={v.poster} title={v.title[lang]} desc={v.desc[lang]} />)}
           </SwipeRow>
         </div>

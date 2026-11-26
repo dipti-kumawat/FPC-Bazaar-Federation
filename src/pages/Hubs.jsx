@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useC, useLang, LLink } from '../i18n/hooks.jsx';
+import { pick, LOCALES } from '../i18n/langs.js';
 import { useSeo } from '../lib/useSeo.js';
 import { initiativeList, marketNav, flags, networkStates } from '../config/site.js';
 import { INDIA_SHAPES, INDIA_VIEWBOX, INDIA_LABELS } from '../data/indiaMap.js';
@@ -95,11 +96,18 @@ function labelLayout(name, r, hi) {
   }
   return { lines: [name], f: Math.max(6, Math.min(10, one)) };
 }
+const MAP_TEXT = {
+  en: { eyebrow: 'Our network', head: 'A network spread across India', legendOn: 'States in the Federation network', legendOff: 'Other states', hint: 'Hover over a state', inNet: 'In the network', notYet: 'Not in the network yet', list: 'Network states', listSub: 'Where Federation FPOs and partners are active' },
+  hi: { eyebrow: 'हमारा नेटवर्क', head: 'पूरे भारत में फैला नेटवर्क', legendOn: 'महासंघ नेटवर्क वाले राज्य', legendOff: 'अन्य राज्य', hint: 'किसी राज्य पर कर्सर ले जाएँ', inNet: 'नेटवर्क में शामिल', notYet: 'अभी नेटवर्क में नहीं', list: 'नेटवर्क के राज्य', listSub: 'जहाँ महासंघ के एफपीओ और साझेदार सक्रिय हैं' },
+  mr: { eyebrow: 'आमचे नेटवर्क', head: 'संपूर्ण भारतात पसरलेले नेटवर्क', legendOn: 'महासंघाच्या नेटवर्कमधील राज्ये', legendOff: 'इतर राज्ये', hint: 'एखाद्या राज्यावर कर्सर न्या', inNet: 'नेटवर्कमध्ये समाविष्ट', notYet: 'अद्याप नेटवर्कमध्ये नाही', list: 'नेटवर्कमधील राज्ये', listSub: 'जिथे महासंघाचे एफपीओ आणि भागीदार सक्रिय आहेत' },
+  gu: { eyebrow: 'અમારું નેટવર્ક', head: 'સમગ્ર ભારતમાં ફેલાયેલું નેટવર્ક', legendOn: 'મહાસંઘના નેટવર્કમાંનાં રાજ્યો', legendOff: 'અન્ય રાજ્યો', hint: 'કોઈ રાજ્ય પર કર્સર લઈ જાઓ', inNet: 'નેટવર્કમાં સામેલ', notYet: 'હજી નેટવર્કમાં નથી', list: 'નેટવર્કનાં રાજ્યો', listSub: 'જ્યાં મહાસંઘના એફપીઓ અને ભાગીદારો સક્રિય છે' },
+};
+
 export function StatesMap() {
   useSeo('states');
   const c = useC(); const lang = useLang(); const h = c.hub.states;
   const on = new Set(networkStates);
-  const nameOf = (sh) => (lang === 'hi' ? sh.hi : sh.en) || sh.en || sh.id;
+  const nameOf = (sh) => pick(sh, lang) || sh.id;
   const [hover, setHover] = useState(null);
   const [spot, setSpot] = useState(null);
   const [entered, setEntered] = useState(false);
@@ -115,10 +123,8 @@ export function StatesMap() {
   }, [hover]);
   const hi = hover || spot;
   const shape = INDIA_SHAPES.find((x) => x.id === hi);
-  const active = ids.map((x) => ({ id: x.id, n: String(nameOf(x)) })).sort((p, q) => p.n.localeCompare(q.n, lang === 'hi' ? 'hi' : 'en'));
-  const L = lang === 'hi'
-    ? { eyebrow: 'हमारा नेटवर्क', head: 'पूरे भारत में फैला नेटवर्क', legendOn: 'महासंघ नेटवर्क वाले राज्य', legendOff: 'अन्य राज्य', hint: 'किसी राज्य पर कर्सर ले जाएँ', inNet: 'नेटवर्क में शामिल', notYet: 'अभी नेटवर्क में नहीं', list: 'नेटवर्क के राज्य', listSub: 'जहाँ महासंघ के एफपीओ और साझेदार सक्रिय हैं' }
-    : { eyebrow: 'Our network', head: 'A network spread across India', legendOn: 'States in the Federation network', legendOff: 'Other states', hint: 'Hover over a state', inNet: 'In the network', notYet: 'Not in the network yet', list: 'Network states', listSub: 'Where Federation FPOs and partners are active' };
+  const active = ids.map((x) => ({ id: x.id, n: String(nameOf(x)) })).sort((p, q) => p.n.localeCompare(q.n, LOCALES[lang]));
+  const L = MAP_TEXT[lang] || MAP_TEXT.en;
   return (
     <>
       <style>{MAP_CSS}</style>
@@ -169,7 +175,7 @@ export function StatesMap() {
                       const [tx, ty] = [x + l.out[0], y + l.out[1]];
                       return (<g key={id} style={{ fontSize: 8.5 }}><line x1={x} y1={y} x2={tx - Math.sign(l.out[0]) * 4} y2={ty - 3} stroke="#765F36" strokeWidth="0.8" /><circle cx={x} cy={y} r="2.6" fill="#E6A23C" stroke="#fff" strokeWidth="1" /><text x={tx} y={ty} textAnchor={l.out[0] < 0 ? 'end' : 'start'} fill="#0B3B2A" stroke="#fff" strokeWidth="2.4" style={isHi ? { fontSize: 9.5 } : undefined}>{name}</text></g>);
                     }
-                    const { lines, f } = labelLayout(name, l.r, lang === 'hi');
+                    const { lines, f } = labelLayout(name, l.r, lang !== 'en');
                     const fs = isHi ? f * 1.12 : f;
                     return (<text key={id} x={x} y={y - ((lines.length - 1) * fs * 0.55) + fs * 0.35} fill="#fff" stroke="rgba(6,35,26,0.62)" strokeWidth={Math.max(1.6, fs * 0.28)} style={{ fontSize: fs, transition: 'font-size .3s' }}>{lines.map((w, i) => <tspan key={i} x={x} dy={i ? fs * 1.08 : 0}>{w}</tspan>)}</text>);
                   })}
@@ -210,11 +216,15 @@ export function StatesMap() {
 const CAREER_STEPS = {
   en: [['Apply', 'Fill in the form with your details and upload your documents.'], ['Review', 'The Federation team reviews every application.'], ['Get in touch', 'Suitable applicants are contacted by the team.']],
   hi: [['आवेदन करें', 'अपने विवरण के साथ फ़ॉर्म भरें और दस्तावेज़ अपलोड करें।'], ['समीक्षा', 'फेडरेशन की टीम हर आवेदन की समीक्षा करती है।'], ['संपर्क', 'उपयुक्त आवेदकों से टीम संपर्क करती है।']],
+  mr: [['अर्ज करा', 'तुमच्या तपशिलांसह फॉर्म भरा आणि कागदपत्रे अपलोड करा.'], ['छाननी', 'फेडरेशनची टीम प्रत्येक अर्जाची छाननी करते.'], ['संपर्क', 'योग्य अर्जदारांशी टीम संपर्क साधते.']],
+  gu: [['અરજી કરો', 'તમારી વિગતો સાથે ફોર્મ ભરો અને દસ્તાવેજો અપલોડ કરો.'], ['સમીક્ષા', 'ફેડરેશનની ટીમ દરેક અરજીની સમીક્ષા કરે છે.'], ['સંપર્ક', 'યોગ્ય અરજદારોનો ટીમ સંપર્ક કરે છે.']],
 };
 
 const REG_STEPS = {
   en: [['Register', 'Fill in the form and upload your documents.'], ['Federation review', 'The team verifies your details and documents.'], ['Verified and connected', 'Verified members are listed and introduced to partners.']],
   hi: [['पंजीकरण करें', 'फ़ॉर्म भरें और अपने दस्तावेज़ अपलोड करें।'], ['फेडरेशन समीक्षा', 'टीम आपके विवरण और दस्तावेज़ों की जाँच करती है।'], ['सत्यापित और जुड़ा हुआ', 'सत्यापित सदस्यों को सूची में जोड़ा जाता है और भागीदारों से मिलाया जाता है।']],
+  mr: [['नोंदणी करा', 'फॉर्म भरा आणि तुमची कागदपत्रे अपलोड करा.'], ['फेडरेशनची छाननी', 'टीम तुमचे तपशील आणि कागदपत्रे तपासते.'], ['सत्यापित आणि जोडलेले', 'सत्यापित सदस्यांची यादीत नोंद होते आणि त्यांची भागीदारांशी ओळख करून दिली जाते.']],
+  gu: [['નોંધણી કરો', 'ફોર્મ ભરો અને તમારા દસ્તાવેજો અપલોડ કરો.'], ['ફેડરેશનની સમીક્ષા', 'ટીમ તમારી વિગતો અને દસ્તાવેજો તપાસે છે.'], ['ચકાસાયેલ અને જોડાયેલ', 'ચકાસાયેલ સભ્યોને યાદીમાં ઉમેરવામાં આવે છે અને ભાગીદારો સાથે તેમનો પરિચય કરાવવામાં આવે છે.']],
 };
 
 function RegSteps({ lang, steps: custom }) {

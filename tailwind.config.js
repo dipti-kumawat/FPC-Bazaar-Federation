@@ -25,9 +25,9 @@ export default {
         charcoal: '#292D29',
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', '"Noto Sans Devanagari"', 'system-ui', 'sans-serif'],
-        display: ['Fraunces', '"Noto Serif Devanagari"', 'Georgia', 'serif'],
-        serif: ['Fraunces', '"Noto Serif Devanagari"', 'Georgia', 'serif'],
+        sans: ['"Plus Jakarta Sans"', '"Noto Sans Devanagari"', '"Noto Sans Gujarati"', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', '"Noto Serif Devanagari"', '"Noto Serif Gujarati"', 'Georgia', 'serif'],
+        serif: ['Fraunces', '"Noto Serif Devanagari"', '"Noto Serif Gujarati"', 'Georgia', 'serif'],
       },
       boxShadow: {
         soft: '0 18px 50px rgba(16, 59, 45, 0.08)',

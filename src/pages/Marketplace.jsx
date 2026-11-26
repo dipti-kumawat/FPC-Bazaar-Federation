@@ -25,7 +25,8 @@ export default function Marketplace() {
       if (state && p.state !== state) return false;
       if (!needle) return true;
       const sup = supplierById(p.supplier);
-      const hay = [p.name.en, p.name.hi, sup?.name.en, sup?.name.hi, CATEGORIES.find((k) => k.id === p.cat)?.name.en, CATEGORIES.find((k) => k.id === p.cat)?.name.hi].join(' ').toLowerCase();
+      const all = (o) => (o ? Object.values(o) : []); // search matches the name in any language
+      const hay = [...all(p.name), ...all(sup?.name), ...all(CATEGORIES.find((k) => k.id === p.cat)?.name)].join(' ').toLowerCase();
       return hay.includes(needle);
     });
     if (sort === 'az') out = [...out].sort((a, b) => t(a.name).localeCompare(t(b.name)));

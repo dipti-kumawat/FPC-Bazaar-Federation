@@ -12,6 +12,13 @@ import '@fontsource/fraunces/700.css';
 import '@fontsource/noto-serif-devanagari/500.css';
 import '@fontsource/noto-serif-devanagari/600.css';
 import '@fontsource/noto-serif-devanagari/700.css';
+// Gujarati script (Devanagari above covers Hindi and Marathi).
+import '@fontsource/noto-sans-gujarati/400.css';
+import '@fontsource/noto-sans-gujarati/600.css';
+import '@fontsource/noto-sans-gujarati/800.css';
+import '@fontsource/noto-serif-gujarati/500.css';
+import '@fontsource/noto-serif-gujarati/600.css';
+import '@fontsource/noto-serif-gujarati/700.css';
 import './index.css';
 import './i18n/index.js';
 import { MotionConfig } from 'framer-motion';

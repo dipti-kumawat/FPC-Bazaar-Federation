@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLang } from '../i18n/hooks.jsx';
+import { LOCALES } from '../i18n/langs.js';
 import Reveal from './Reveal.jsx';
 import { Pin } from './Icons.jsx';
 
 export function fmtDate(d, lang) {
   if (!d) return '';
   const dt = new Date(d); if (Number.isNaN(+dt)) return '';
-  return dt.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  return dt.toLocaleDateString(LOCALES[lang] || 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 /** One news / event card. `u` is an entry of src/data/updates.js. */

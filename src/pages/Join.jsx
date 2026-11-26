@@ -1,5 +1,8 @@
 import { useSearchParams } from 'react-router-dom';
 import { useC, LLink, useLang } from '../i18n/hooks.jsx';
+import { pick } from '../i18n/langs.js';
+
+const NGO_BTN = { en: 'Register an NGO', hi: 'NGO पंजीकरण', mr: 'NGO नोंदणी करा', gu: 'NGO નોંધણી કરો' };
 import { useSeo } from '../lib/useSeo.js';
 import { PageHero, Band } from '../components/ui.jsx';
 import FormEngine from '../components/FormEngine.jsx';
@@ -14,7 +17,7 @@ export default function Join() {
     <>
       <PageHero title={c.join.title} sub={c.join.sub} crumb={c.join.crumb} kind="training" />
       <Band>
-        <LLink to="/ngo-registration" className="btn-outline mb-6">{lang === 'hi' ? 'NGO पंजीकरण' : 'Register an NGO'}</LLink>
+        <LLink to="/ngo-registration" className="btn-outline mb-6">{pick(NGO_BTN, lang)}</LLink>
         <div role="tablist" aria-label={c.join.title} className="mb-6 flex flex-wrap gap-2">
           {KEYS.map((k) => (
             <button key={k} role="tab" type="button" aria-selected={active === k} onClick={() => setParams({ form: k }, { replace: true })}

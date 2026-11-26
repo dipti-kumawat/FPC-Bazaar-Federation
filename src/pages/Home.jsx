@@ -15,6 +15,7 @@ import Reveal from '../components/Reveal.jsx';
 import CountUp from '../components/CountUp.jsx';
 import { CATEGORIES, SUPPLIER_TYPES, visibleProducts, visibleSuppliers } from '../data/marketplace.js';
 import { useT, useLang } from '../i18n/hooks.jsx';
+import { pick } from '../i18n/langs.js';
 
 const ROLE_IMG = { farmer: '/images/gaushala-hero.jpg', fpo: '/images/events/abcd-mou-gujarat.jpg', manufacturer: '/images/1.jpeg', supplier: '/images/3.jpeg' };
 const ROLE_POS = { farmer: 'center', fpo: 'center', manufacturer: 'center', supplier: 'center 30%' };
@@ -23,8 +24,17 @@ const TICKER_ICONS = { gaushala: 'inputs', gaushalaTourism: 'dairy', cluster: 'm
 const MKT_BADGES = {
   en: [['grains', 'Organic'], ['shield', 'Chemical-free'], ['dairy', 'Gaushala-based'], ['fpo', 'Direct from FPOs']],
   hi: [['grains', 'जैविक'], ['shield', 'रसायन-मुक्त'], ['dairy', 'गौशाला-आधारित'], ['fpo', 'सीधे एफपीओ से']],
+  mr: [['grains', 'सेंद्रिय'], ['shield', 'रसायनमुक्त'], ['dairy', 'गोशाळा-आधारित'], ['fpo', 'थेट एफपीओकडून']],
+  gu: [['grains', 'ઓર્ગેનિક'], ['shield', 'રસાયણમુક્ત'], ['dairy', 'ગૌશાળા-આધારિત'], ['fpo', 'સીધા એફપીઓ પાસેથી']],
 };
-const MKT_LABELS = { en: ['Products', 'Suppliers', 'Categories', 'States'], hi: ['उत्पाद', 'आपूर्तिकर्ता', 'श्रेणियाँ', 'राज्य'] };
+const MKT_LABELS = {
+  en: ['Products', 'Suppliers', 'Categories', 'States'], hi: ['उत्पाद', 'आपूर्तिकर्ता', 'श्रेणियाँ', 'राज्य'],
+  mr: ['उत्पादने', 'पुरवठादार', 'श्रेणी', 'राज्ये'], gu: ['ઉત્પાદનો', 'સપ્લાયર્સ', 'શ્રેણીઓ', 'રાજ્યો'],
+};
+const SWIPE = {
+  initiatives: { en: 'Swipe to see more initiatives', hi: 'और पहल देखने के लिए स्वाइप करें', mr: 'आणखी उपक्रम पाहण्यासाठी स्वाइप करा', gu: 'વધુ પહેલ જોવા માટે સ્વાઇપ કરો' },
+  videos: { en: 'Swipe to see more videos', hi: 'और वीडियो देखने के लिए स्वाइप करें', mr: 'आणखी व्हिडिओ पाहण्यासाठी स्वाइप करा', gu: 'વધુ વિડિયો જોવા માટે સ્વાઇપ કરો' },
+};
 
 export default function Home() {
   const lang = useLang();
@@ -34,7 +44,7 @@ export default function Home() {
   const items = initiativeList.filter((item) => !['ppp', 'gaushalaTourism'].includes(item.key)).map((item) => ({ ...item, ...c.initiatives[item.key] }));
   const products = visibleProducts().filter((_, i) => [0, 3, 7, 10].includes(i)).slice(0, 4);
   const suppliers = visibleSuppliers().filter((_, i) => [0, 5, 6, 8].includes(i)).slice(0, 4);
-  const mktStats = [[String(visibleProducts().length), ''], [String(visibleSuppliers().length), ''], [String(CATEGORIES.length), ''], [String(networkStates.length), '']].map(([v], i) => [v, MKT_LABELS[lang === 'hi' ? 'hi' : 'en'][i]]);
+  const mktStats = [[String(visibleProducts().length), ''], [String(visibleSuppliers().length), ''], [String(CATEGORIES.length), ''], [String(networkStates.length), '']].map(([v], i) => [v, (MKT_LABELS[lang] || MKT_LABELS.en)[i]]);
 
   return (
     <>
@@ -135,7 +145,7 @@ export default function Home() {
             <Reveal variant="left" delay={160}><p className="mt-5 text-lg leading-8 text-slate-600">{b.marketSub}</p></Reveal>
             <Reveal variant="up" delay={220}>
               <ul className="mt-6 flex flex-wrap gap-2.5">
-                {MKT_BADGES[lang === 'hi' ? 'hi' : 'en'].map(([ic, label], i) => (
+                {(MKT_BADGES[lang] || MKT_BADGES.en).map(([ic, label], i) => (
                   <li key={label} className="group flex items-center gap-2 border border-brand-100 bg-paper px-3.5 py-2 text-[13px] font-semibold text-brand-900 transition duration-300 hover:-translate-y-0.5 hover:border-gold-500 hover:bg-gold-50 hover:shadow-md">
                     <span className="grid h-6 w-6 place-items-center rounded-full bg-brand-800 text-gold-400 transition duration-500 group-hover:rotate-[360deg] group-hover:bg-gold-500 group-hover:text-brand-950"><Icon name={ic} className="h-3.5 w-3.5" /></span>{label}
                   </li>
@@ -281,7 +291,7 @@ export default function Home() {
       {/* INITIATIVES */}
       <Band>
         <SectionTitle sub={h.projectsSub} eyebrow={c.nav.initiatives}>{h.projects}</SectionTitle>
-        <SwipeRow three label={lang === 'hi' ? 'और पहल देखने के लिए स्वाइप करें' : 'Swipe to see more initiatives'}>{items.map((item) => <ProjectCard key={item.key} item={item} />)}</SwipeRow>
+        <SwipeRow three label={pick(SWIPE.initiatives, lang)}>{items.map((item) => <ProjectCard key={item.key} item={item} />)}</SwipeRow>
       </Band>
 
       {/* EVENTS */}
@@ -304,7 +314,7 @@ export default function Home() {
       {/* VIDEOS */}
       <Band className="bg-white">
         <SectionTitle eyebrow={b.videos.eyebrow} sub={b.videos.sub}>{b.videos.title}</SectionTitle>
-        <div className="mx-auto max-w-6xl"><SwipeRow label={lang === 'hi' ? 'और वीडियो देखने के लिए स्वाइप करें' : 'Swipe to see more videos'}>
+        <div className="mx-auto max-w-6xl"><SwipeRow label={pick(SWIPE.videos, lang)}>
           <VideoCard src="/videos/mineral-mixture.mp4" poster="/videos/mineral-mixture.jpg" title={b.videos.items[0].t} desc={b.videos.items[0].d} />
           <VideoCard src="/videos/desi-cow-ghee.mp4" poster="/videos/desi-cow-ghee.jpg" title={b.videos.items[1].t} desc={b.videos.items[1].d} />
           {videosFor('home').map((v) => <VideoCard key={v.id} src={v.src} poster={v.poster} title={v.title[lang]} desc={v.desc[lang]} />)}
